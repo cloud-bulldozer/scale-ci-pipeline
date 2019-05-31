@@ -1,7 +1,7 @@
 # SCALE-CI-PIPELINE
 Automates the installation of OCP on various cloud platforms and runs performance and scale tests related to kubelet density, control plane, http, storage, prometheus and cluster limits.
 
-NOTE: This is also maintained at [https://github.com/chaitanyaenr/aos-cd-jobs].
+NOTE: This is also maintained at openshift/aos-cd-jobs repo [https://github.com/openshift/aos-cd-jobs].
 
 ## Components
 - Properties files
