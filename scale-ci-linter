@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eo pipefail
+
+templates_path="$PWD/jjb/dynamic"
+
+pushd $templates_path
+for template in $(ls $templates_path); do 
+	if [[ "$template" != "README.md" ]]; then
+		echo "--------------------------------"	
+		echo "Running the linter for $template"
+		echo "--------------------------------"
+		yamllint -d relaxed $templates_path/$template
+	fi
+done
+popd

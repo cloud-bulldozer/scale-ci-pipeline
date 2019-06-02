@@ -3,10 +3,16 @@ Automates the installation of OCP on various cloud platforms and runs performanc
 
 NOTE: This is also maintained at openshift/aos-cd-jobs repo [https://github.com/openshift/aos-cd-jobs].
 
+### Dependencies
+```
+- Running Jenkins instance.
+```
+
 ## Components
 - Properties files
 - Pipeline scripts
 - scale-ci-watcher
+- scale-ci-linter
 
 ### Properties files
 The parameters/configuration of each Job in the scale-ci-pipeline is supplied through the properties files. It contains key=value pairs, the sample properties for all the supported jobs are hosted in scale-ci/properties.
@@ -17,7 +23,9 @@ These scripts are responsible for parsing the properties files and building the 
 ### scale-ci-watcher
 This looks for changes to the JJB templates or new templates and updates/onboards the Jobs into the scale-ci-pipeline. The watcher also supports xml format, it has the support to convert them to JJB format.
 
-### Dependencies
+### scale-ci-linter
+Validates scale-ci templates to analyze them for potential errors for every commit. This can be run locally as well in case we want to check before pushing the commit:
 ```
-- Running Jenkins instance.
+$ pip install yamllint
+$ ./scale-ci-linter.sh <path-to-the-template>
 ```

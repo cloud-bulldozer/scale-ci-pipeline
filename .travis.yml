@@ -1,0 +1,7 @@
+dist: xenial
+before_install:
+  - sudo apt-get update
+install:
+  - sudo pip install yamllint
+script:
+  - ./scale-ci-linter
