@@ -1,0 +1,251 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |-
+        if [[ ! -d "${WORKSPACE}/perf-dept" ]]; then
+        git clone https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
+        fi
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        chmod 600 ${PRIVATE_KEY}
+        http_test_dir=/root/http-ci-tests
+        ssh_opts="-o StrictHostKeyChecking=no"
+
+        if test "$USE_PROXY" = "true" ; then
+        set -- $ssh_opts -o ProxyCommand='ssh -i $PRIVATE_KEY -W %h:%p $PROXY_USER@$PROXY_HOST'
+        else
+        set -- $ssh_opts
+        fi
+
+        ssh "$@" -i $PRIVATE_KEY $JUMP_HOST_USER@$JUMP_HOST <<_SSH_
+        if [[ $CONTAINERIZED == "true" ]]; then
+        if [[ -d "/root/scale-cd-jobs" ]]; then
+        rm -rf /root/scale-cd-jobs
+        fi
+        git clone https://github.com/chaitanyaenr/scale-cd-jobs.git /root/scale-cd-jobs
+        cd /root/scale-cd-jobs/build-scripts
+        ./controller.sh
+        else
+        rm -rf $http_test_dir
+        git clone https://github.com/jmencak/http-ci-tests.git
+        cd $http_test_dir
+        TEST_CFG="$TEST_CFG"
+        KUBECONFIG="$KUBECONFIG"
+        PBENCH_USE="$PBENCH_USE"
+        PBENCH_SCRAPER_USE="$PBENCH_SCRAPER_USE"
+        CLEAR_RESULTS="$CLEAR_RESULTS"
+        MOVE_RESULTS="$MOVE_RESULTS"
+        SERVER_RESULTS="$SERVER_RESULTS"
+        LOAD_GENERATORS="$LOAD_GENERATORS"
+        LOAD_GENERATOR_NODES="$LOAD_GENERATOR_NODES"
+        CL_PROJECTS="$CL_PROJECTS"
+        CL_TEMPLATES="$CL_TEMPLATES"
+        RUN_TIME="$RUN_TIME"
+        MB_DELAY="$MB_DELAY"
+        MB_TLS_SESSION_REUSE="$MB_TLS_SESSION_REUSE"
+        MB_METHOD="$MB_METHOD"
+        MB_RESPONSE_SIZE="$MB_RESPONSE_SIZE"
+        MB_REQUEST_BODY_SIZE="$MB_REQUEST_BODY_SIZE"
+        ROUTE_TERMINATION="$ROUTE_TERMINATION"
+        SMOKE_TEST="$SMOKE_TEST"
+        NAMESPACE_CLEANUP="$NAMESPACE_CLEANUP"
+        . ./http-test.sh all
+        fi
+        _SSH_
+    concurrent: true
+    description: Run http(s) tests against HAProxy on an OCP installation.
+    disabled: false
+    name: http-scale-test
+    parameters:
+    - bool:
+        default: false
+        description: When enabled, use a controller with containerized pbench.
+        name: CONTAINERIZED
+    - string:
+        default: b1
+        description: The jump host needs to have the inventory used to install openshift
+          and kube config.
+        name: JUMP_HOST
+    - string:
+        default: root
+        description: The ssh user to connect to the JUMP_HOST.
+        name: JUMP_HOST_USER
+    - bool:
+        default: true
+        description: Use a proxy (ssh ProxyCommand) to reach the jump host.
+        name: USE_PROXY
+    - string:
+        default: ''
+        description: The server to use for the ssh ProxyCommand.
+        name: PROXY_HOST
+    - string:
+        default: ''
+        description: The ssh user to use for the ssh ProxyCommand.
+        name: PROXY_USER
+    - string:
+        default: 1router
+        description: 'Test configuration.  Value to append to pbench directories and
+          other directories with results.
+
+          '
+        name: TEST_CFG
+    - string:
+        default: /root/.kube/config
+        description: A list of paths to k8s configuration files on the JUMP_HOST.  Colon-delimited
+          for Linux.
+        name: KUBECONFIG
+    - bool:
+        default: true
+        description: When enabled, run the test wrapped with the benchmarking and
+          performance analysis framework Pbench.
+        name: PBENCH_USE
+    - bool:
+        default: false
+        description: Use Pbench scraper/wedge usage for r2r analysis.
+        name: PBENCH_SCRAPER_USE
+    - bool:
+        default: true
+        description: When set to true, clear the pbench results from previous pbench
+          runs.
+        name: CLEAR_RESULTS
+    - bool:
+        default: false
+        description: When enabled, move the benchmark results to a pbench server.
+        name: MOVE_RESULTS
+    - string:
+        default: ''
+        description: |-
+          Endpoint for collecting results from workload generator node(s).  Keep empty if copying is not required.
+          - scp://[user@]server:[path]
+          - kcp://[namespace/]pod:[path]
+          Note: when PBENCH_USE=true, path is overriden by $benchmark_run_dir
+        name: SERVER_RESULTS
+    - string:
+        default: /root/.ssh/id_rsa
+        description: 'Path to private key on JUMP_HOST when using scp:// to copy results
+          to SERVER_RESULTS.  It is mounted to workload generator container(s).
+
+          '
+        name: SERVER_RESULTS_SSH_KEY
+    - string:
+        default: '1'
+        description: 'How many workload generators to use.
+
+          '
+        name: LOAD_GENERATORS
+    - string:
+        default: ''
+        description: |-
+          Load-generator nodes described by an extended regular expression (use "oc get nodes" node names). Only supported with cluster privileges to label the nodes.
+          If unset/empty, do not pin the workload generators to any nodes.
+        name: LOAD_GENERATOR_NODES
+    - string:
+        default: '10'
+        description: Number of projects to create for each type of application (4
+          types currently).
+        name: CL_PROJECTS
+    - string:
+        default: '1'
+        description: 'Number of templates to create per project.  4*CL_PROJECTS*CL_TEMPLATES
+          will be the number of application pods/routes created.
+
+          '
+        name: CL_TEMPLATES
+    - string:
+        default: '120'
+        description: Run time of individual HTTP test iterations in seconds.
+        name: RUN_TIME
+    - string:
+        default: '0'
+        description: 'Maximum delay between client requests in ms.
+
+          '
+        name: MB_DELAY
+    - bool:
+        default: true
+        description: Use TLS session reuse.
+        name: MB_TLS_SESSION_REUSE
+    - string:
+        default: GET
+        description: HTTP method to use for backend servers (GET/POST).
+        name: MB_METHOD
+    - string:
+        default: '1024'
+        description: Backend server (200 OK) response document length.
+        name: MB_RESPONSE_SIZE
+    - string:
+        default: '1024'
+        description: Body length of POST requests in characters for backend servers.
+        name: MB_REQUEST_BODY_SIZE
+    - string:
+        default: mix
+        description: |-
+          Perform the test for the following (comma-separated) route terminations.
+          Options: mix,http,edge,passthrough,reencrypt
+        name: ROUTE_TERMINATION
+    - bool:
+        default: false
+        description: Run only a single HTTP test iteration to establish functionality.
+        name: SMOKE_TEST
+    - bool:
+        default: false
+        description: Delete all namespaces with application pods, services and routes
+          created for the purposes of HTTP tests.
+        name: NAMESPACE_CLEANUP
+    - string:
+        default: ''
+        description: 'Github token to clone github.com/redhat-performance/perf-dept.git
+
+          '
+        name: GITHUB_TOKEN
+    project-type: freestyle
+    properties:
+    - build-discarder:
+        artifact-days-to-keep: -1
+        artifact-num-to-keep: -1
+        days-to-keep: -1
+        num-to-keep: 5
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>jmencak</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    triggers: []
+    wrappers:
+    - ansicolor:
+        colormap: xterm

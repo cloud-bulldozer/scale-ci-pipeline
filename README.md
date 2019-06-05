@@ -15,13 +15,20 @@ NOTE: This is also maintained at openshift/aos-cd-jobs repo [https://github.com/
 - scale-ci-linter
 
 ### Properties files
-The parameters/configuration of each Job in the scale-ci-pipeline is supplied through the properties files. It contains key=value pairs, the sample properties for all the supported jobs are hosted in scale-ci/properties.
+The parameters for each job in the scale-ci-pipeline are supplied through a job specific properties file. It contains key=value pairs, sample properties for all the supported jobs are hosted in scale-ci-pipeline/properties-files.
 
 ### Pipeline scripts
 These scripts are responsible for parsing the properties files and building the respective Job.
 
 ### Scale-ci-watcher
-This looks for changes to the JJB templates or new templates and updates/onboards the Jobs into the scale-ci-pipeline. The watcher also supports xml format, it has the support to convert them to JJB format.
+This looks for changes to the JJB templates or new templates and updates/onboards the Jobs into the scale-ci-pipeline. The watcher also supports xml format, it has the support to convert them to JJB format. The scale-ci-watcher gets kicked off as the first job in the pipeline, it will pick up the changes made to the templates if there are any and applies them to the respective Job.
+
+It gives us an option to choose whether to update the Jobs in Jenkins and it does is by organizing the templates into dynamic and static directories inside of scale-ci-pipeline/jjb directory.
+   * #### Dynamic
+     This directory contains the dynamic job templates managed by scale-ci-watcher for the scale-ci-pipeline which is used to test OpenShift at scale.
+
+   * #### Static
+     This directory contains the static job templates in the scale-ci-pipeline which are not managed by scale-ci-watcher.
 
 ### Scale-ci-linter
 Validates scale-ci templates to analyze them for potential errors for every commit. This can be run locally as well in case we want to check before pushing the commit:
@@ -47,3 +54,5 @@ Pod Vertical | Cluster Limits | Tests pods per namespace limit | In progress | :
 Deployments per namespaces | Cluster Limits | Tests deployments per namespace limit | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Namespaces per cluster | Cluster Limits | Tests namespaces per cluster limit | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Services per namespace | Cluster Limits | Tests maximum number of services possible per namespace | In progress | :heavy_check_mark: | :heavy_check_mark: |
+
+NOTE: Services per namespace cluster limits test is covered by Deployments per ns test, creating a separate job for it is in progress.
