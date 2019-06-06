@@ -1,2 +1,2 @@
 # Jenkins Job Builder templates
-This directory contains the templates of the jobs part of the scale-ci-pipeline used to test OpenShift at scale. The templates in this directory are managed by scale-ci-watcher.
+This directory contains the dynamic job templates managed by scale-ci-watcher for the scale-ci-pipeline which is used to test OpenShift at scale.
