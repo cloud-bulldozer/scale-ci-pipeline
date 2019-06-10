@@ -1,7 +1,8 @@
 # SCALE-CI-PIPELINE
 Automates the installation of OCP on various cloud platforms and runs performance and scale tests related to kubelet density, control plane, http, storage, prometheus and cluster limits.
 
-NOTE: This is also maintained at openshift/aos-cd-jobs repo [https://github.com/openshift/aos-cd-jobs].
+NOTE: This is also maintained at [openshift/aos-cd-jobs repo](https://github.com/openshift/aos-cd-jobs).
+
 
 ### Dependencies
 ```
@@ -11,17 +12,22 @@ NOTE: This is also maintained at openshift/aos-cd-jobs repo [https://github.com/
 ## Components
 - Properties files
 - Pipeline scripts
-- scale-ci-watcher
-- scale-ci-linter
+- Scale-ci-watcher
+- Scale-ci-linter
+
+![Scale-CI workflow](images/scale-ci-workflow.png)
+
 
 ### Properties files
 The parameters for each job in the scale-ci-pipeline are supplied through a job specific properties file. It contains key=value pairs, sample properties for all the supported jobs are hosted in scale-ci-pipeline/properties-files.
 
+The properties for the OCP large scale and per sprint test runs are maintained at [scale-ci-properties](https://github.com/redhat-performance/scale-ci-properties).
+
 ### Pipeline scripts
-These scripts are responsible for parsing the properties files and building the respective Job.
+These scripts are responsible for parsing the properties files and building the respective job.
 
 ### Scale-ci-watcher
-This looks for changes to the JJB templates or new templates and updates/onboards the Jobs into the scale-ci-pipeline. The watcher also supports xml format, it has the support to convert them to JJB format. The scale-ci-watcher gets kicked off as the first job in the pipeline, it will pick up the changes made to the templates if there are any and applies them to the respective Job.
+This looks for changes to the JJB templates or new templates and updates/onboards the jobs into the scale-ci-pipeline. The watcher also supports xml format, it has the support to convert them to JJB format. The scale-ci-watcher gets kicked off as the first job in the pipeline, it will pick up the changes made to the templates if there are any and applies them to the respective job.
 
 It gives us an option to choose whether to update the Jobs in Jenkins and it does is by organizing the templates into dynamic and static directories inside of scale-ci-pipeline/jjb directory.
    * #### Dynamic
@@ -56,3 +62,25 @@ Namespaces per cluster | Cluster Limits | Tests namespaces per cluster limit | I
 Services per namespace | Cluster Limits | Tests maximum number of services possible per namespace | In progress | :heavy_check_mark: | :heavy_check_mark: |
 
 NOTE: Services per namespace cluster limits test is covered by Deployments per ns test, creating a separate job for it is in progress.
+
+### Test setup/Migrating scale-ci jobs to any Jenkins
+The following instructions will help you setup a jenkins test environment super quick so as to play around and test the changes locally before pushing them to production.
+```
+$ docker run -d --name scale-ci-jenkins -p 8080:8080 jenkins/jenkins:lts
+```
+Grab the admin password from the scale-ci-jenkins container logs:
+```
+$ docker logs scale-ci-jenkins
+```
+Access the jenkins at http://<host>:8080 and proceed with the initial setup. A new user instead of admin user and installing all the suggested plugins is highly recommended.
+Once we have the jenkins up and running, run the scale-ci-watcher to push your templates to the test jenkins instance:
+```
+$ git clone https://github.com/openshift-scale/scale-ci-pipeline.git
+$ cd scale-ci-pipeline
+$ # Set the variables in the scale-ci-watcher-env.sh and source it
+$ source scale-ci-watcher-env.sh
+$ # Set the jenkins user name, url and passwd in the scale-ci-watcher config file
+$ vi config/jjb.ini
+$ # Run the scale-ci-watcher and check the jobs in the jenkins ( Make sure python six module version is >=1.10.0 )
+$ ./scale-ci-watcher.sh
+```
