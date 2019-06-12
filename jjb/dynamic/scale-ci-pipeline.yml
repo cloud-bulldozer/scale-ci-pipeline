@@ -174,7 +174,7 @@
         description: ''
         name: OPENSHIFT_4.X_SCALEUP_PROPERTY_FILE
     - string:
-        default: ''
+        default: 'scale-ci'
         description: ''
         name: NODE_LABEL
     pipeline-scm:

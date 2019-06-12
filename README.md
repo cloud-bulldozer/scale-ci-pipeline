@@ -84,3 +84,19 @@ $ vi config/jjb.ini
 $ # Run the scale-ci-watcher and check the jobs in the jenkins ( Make sure python six module version is >=1.10.0 )
 $ ./scale-ci-watcher.sh
 ```
+
+### Scale-CI Jenkins agents/slaves
+We use bunch of dedicated slaves part of OpenShift-QE Jenkins to run Scale-CI jobs. The slaves are always online instead of the on demand slaves which take time to get ready before scheduling the jobs. There are multiple slaves and executors, so we should be able to run jobs in parallel.
+
+If a slave with different dependencies for example ansible version is needed by the job, please open an [issue](https://github.com/openshift-scale/scale-ci-pipeline/issues) and we will create a slave which will meet the requirements.
+
+Here is the list of current scale-ci labeled slaves:
+
+Slaves           | Number of executors | Label            | Ansible version |
+---------------- | ------------------- | ---------------- | --------------- |
+scale-ci-slave-1 | 3                   | scale-ci         | 2.7.10          |
+scale-ci-slave-2 | 1                   | scale-ci         | 2.7.10          |
+scale-ci-slave-3 | 1                   | scale-ci         | 2.7.10          |
+scale-ci-slave-4 | 3                   | scale-ci         | 2.7.10          |
+scale-ci-slave-5 | 1                   | scale-ci         | 2.7.10          |
+scale-ci-slave-6 | 1                   | scale-ci         | 2.7.10          |
