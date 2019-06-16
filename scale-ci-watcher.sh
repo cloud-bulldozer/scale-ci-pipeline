@@ -93,7 +93,9 @@ function update_scale_ci_jobs() {
 		popd
 	fi
 	
+	echo "------------------------------------------------------------------"
 	echo "Converting xml to jjb templates"
+	echo "------------------------------------------------------------------"
 	pushd $WORKDIR/xml
 	for xml_template in $(ls $WORKDIR/xml); do
 		if [[ "$xml_template" != "README.md" ]]; then
@@ -112,12 +114,15 @@ function update_scale_ci_jobs() {
 	pushd $WORKDIR/jjb/dynamic
 	for template in $(ls $WORKDIR/jjb/dynamic); do
         	if [[ "$template" != "README.md" ]]; then
-			echo "INFO: Fouund $template"
+			echo "--------------------------------------------------"
+			echo "INFO: Found $template"
+			echo -e "--------------------------------------------------\n"
                 	jenkins-jobs --conf "$JJB_CONFIG_PATH" update "$template"
                 	if [[ $? != 0 ]]; then
                         	echo "Failed to create/update the jenkins job, please check"
                         	exit 1
                 	fi
+			echo -e "\n"
         	fi
 	done
 	popd
