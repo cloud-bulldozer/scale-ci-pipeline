@@ -7,7 +7,7 @@ export SCALE_CI_WATCHER_REPO="https://github.com/openshift-scale/scale-ci-pipeli
 # branch to clone
 export SCALE_CI_WATCHER_REPO_BRANCH="master"
 # Location of the scale-ci-watcher repo
-export SCALE_CI_WATCHER_REPO_PATH="/root/scale-ci-pipline"
+export SCALE_CI_WATCHER_REPO_PATH="/root/scale-ci-pipeline"
 # Location of the scale-ci-watcher repo
 export WORKDIR="/root/scale-ci-pipeline"
 # Whether to update the scale-ci jobs or not
