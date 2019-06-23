@@ -63,6 +63,7 @@ Pod Vertical | Cluster Limits | Tests pods per namespace limit | In progress | :
 Deployments per namespaces | Cluster Limits | Tests deployments per namespace limit | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Namespaces per cluster | Cluster Limits | Tests namespaces per cluster limit | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Services per namespace | Cluster Limits | Tests maximum number of services possible per namespace | In progress | :heavy_check_mark: | :heavy_check_mark: |
+Baseline | Base/Idle cluster | Captures performance data of the base cluster with no user created objects | :heavy_check_mark: | NA | :heavy_check_mark: |
 
 NOTE: Services per namespace cluster limits test is covered by Deployments per ns test, creating a separate job for it is in progress.
 

@@ -85,6 +85,10 @@
         default: false
         description: ''
         name: OPENSHIFT_4.X_SCALEUP
+    - bool:
+        default: false
+        description: ''
+        name: BASELINE_SCALE_TEST
     - string:
         default: ''
         description: ''
@@ -173,6 +177,11 @@
         default: ''
         description: ''
         name: OPENSHIFT_4.X_SCALEUP_PROPERTY_FILE
+
+    - string:
+        default: ''
+        name: BASELINE_PROPERTY_FILE
+
     - string:
         default: 'scale-ci'
         description: ''
