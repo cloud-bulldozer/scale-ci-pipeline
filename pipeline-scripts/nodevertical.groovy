@@ -21,73 +21,71 @@ stage ('nodevertical_scale_test') {
 			sh "wget ${NODEVERTICAL_PROPERTY_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
 			def nodevertical_properties = readProperties file: property_file_name
-			def jump_host = nodevertical_properties['JUMP_HOST']
-			def user = nodevertical_properties['USER']
-			def setup_pbench = nodevertical_properties['SETUP_PBENCH']
-			def tooling_inventory_path = nodevertical_properties['TOOLING_INVENTORY']
-			def clear_results = nodevertical_properties['CLEAR_RESULTS']
-			def move_results = nodevertical_properties['MOVE_RESULTS']
-			def use_proxy = nodevertical_properties['USE_PROXY']
-			def proxy_user = nodevertical_properties['PROXY_USER']
-			def proxy_host = nodevertical_properties['PROXY_HOST']
-			def containerized = nodevertical_properties['CONTAINERIZED']
-			def env = nodevertical_properties['ENVIRONMENT']
-			def token = nodevertical_properties['GITHUB_TOKEN']
-			def repo = nodevertical_properties['PERF_REPO']
-			def server = nodevertical_properties['PBENCH_SERVER']
-	
-			// debug info
-			println "----------USER DEFINED OPTIONS-------------------"
-			println "-------------------------------------------------"
-			println "-------------------------------------------------"
-			println "JUMP_HOST: '${jump_host}'"
-			println "USER: '${user}'"
-			println "TOOLING_INVENTORY_PATH: '${tooling_inventory_path}'"
-			println "CLEAR_RESULTS: '${clear_results}'"
-			println "MOVE_RESULTS: '${move_results}'"
-			println "USE_PROXY: '${use_proxy}'"
-			println "PROXY_USER: '${proxy_user}'"
-			println "PROXY_HOST: '${proxy_host}'"
-			println "CONTAINERIZED: '${containerized}'"
-			println "TOKEN: '${token}'"
-			println "-------------------------------------------------"
-			println "-------------------------------------------------"
+			def cluster_user = nodevertical_properties['CLUSTER_USER']
+			def cluster_password = nodevertical_properties['CLUSTER_PASSWORD']
+			def cluster_api_url = nodevertical_properties['CLUSTER_API_URL']
+			def sshkey_token = nodevertical_properties['SSHKEY_TOKEN']
+			def orchestration_host = nodevertical_properties['ORCHESTRATION_HOST']
+			def orchestration_user = nodevertical_properties['ORCHESTRATION_USER']
+			def workload_image = nodevertical_properties['WORKLOAD_IMAGE']
+			def workload_job_node_selector = nodevertical_properties['WORKLOAD_JOB_NODE_SELECTOR']
+			def workload_job_taint = nodevertical_properties['WORKLOAD_JOB_TAINT']
+			def workload_job_privileged = nodevertical_properties['WORKLOAD_JOB_PRIVILEGED']
+			def kubeconfig_file = nodevertical_properties['KUBECONFIG_FILE']
+			def enable_pbench_agents = nodevertical_properties['ENABLE_PBENCH_AGENTS']
+			def pbench_server = nodevertical_properties['PBENCH_SERVER']
+			def scale_ci_results_token = nodevertical_properties['SCALE_CI_RESULTS_TOKEN']
+			def job_completion_poll_attempts = nodevertical_properties['JOB_COMPLETION_POLL_ATTEMPTS']
+			def nodevertical_node_count = nodevertical_properties['NODEVERTICAL_NODE_COUNT']
+			def nodevertical_test_prefix = nodevertical_properties['NODEVERTICAL_TEST_PREFIX']
+			def nodevertical_cleanup = nodevertical_properties['NODEVERTICAL_CLEANUP']
+			def nodevertical_basename = nodevertical_properties['NODEVERTICAL_BASENAME']
+			def nodevertical_maxpods = nodevertical_properties['NODEVERTICAL_MAXPODS']
+			def nodevertical_pod_image = nodevertical_properties['NODEVERTICAL_POD_IMAGE']
+			def nodevertical_stepsize = nodevertical_properties['NODEVERTICAL_STEPSIZE']
+			def nodevertical_pause = nodevertical_properties['NODEVERTICAL_PAUSE']
 
-			// copy the parameters file to jump host
-			sh "git clone https://${token}@${repo} ${WORKSPACE}/perf-dept && chmod 600 ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf"
-			sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf ${property_file_name} root@${jump_host}:/root/properties"
-
-			// Run nodevertical job
 			try {
-				nodevertical_build = build job: 'NODEVERTICAL-SCALE-TEST',
+				nodevertical_build = build job: 'ATS-SCALE-CI-NODEVERTICAL',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'StringParameterValue', name: 'JUMP_HOST', value: jump_host ],
-						[$class: 'StringParameterValue', name: 'USER', value: user ],
-						[$class: 'BooleanParameterValue', name: 'SETUP_PBENCH', value: Boolean.valueOf(setup_pbench) ],
-						[$class: 'StringParameterValue', name: 'TOOLING_INVENTORY', value: tooling_inventory_path ],
-						[$class: 'BooleanParameterValue', name: 'CLEAR_RESULTS', value: Boolean.valueOf(clear_results) ],
-						[$class: 'BooleanParameterValue', name: 'MOVE_RESULTS', value: Boolean.valueOf(move_results) ],	
-						[$class: 'BooleanParameterValue', name: 'USE_PROXY', value: Boolean.valueOf(use_proxy) ],
-						[$class: 'StringParameterValue', name: 'PROXY_USER', value: proxy_user ],
-						[$class: 'StringParameterValue', name: 'PROXY_HOST', value: proxy_host ],
-						[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: env ],
-						[$class: 'StringParameterValue', name: 'GITHUB_TOKEN', value: token ],
-						[$class: 'BooleanParameterValue', name: 'CONTAINERIZED', value: Boolean.valueOf(containerized) ]]
+						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+						[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_NODE_SELECTOR', value: Boolean.valueOf(workload_job_node_selector) ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_AGENTS', value: Boolean.valueOf(enable_pbench_agents)  ],
+						[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ],
+						[$class: 'StringParameterValue', name: 'SCALE_CI_RESULTS_TOKEN', value: scale_ci_results_token ],
+						[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_NODE_COUNT', value: nodevertical_node_count ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_TEST_PREFIX', value: nodevertical_test_prefix ],
+						[$class: 'BooleanParameterValue', name: 'NODEVERTICAL_CLEANUP', value: Boolean.valueOf(nodevertical_cleanup)  ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_BASENAME', value: nodevertical_basename ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_MAXPODS', value: nodevertical_maxpods ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_POD_IMAGE', value: nodevertical_pod_image ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_STEPSIZE', value: nodevertical_stepsize ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_PAUSE', value: nodevertical_pause ]]
 			} catch ( Exception e) {
-				echo "NODEVERTICAL-SCALE-TEST Job failed with the following error: "
+				echo "ATS-SCALE-CI-NODEVERTICAL Job failed with the following error: "
 				echo "${e.getMessage()}"
 				echo "Sending an email"
 				mail(
 					to: 'nelluri@redhat.com',
-					subject: 'Nodevertical-scale-test job failed',
+					subject: 'ats-scale-ci-nodevertical job failed',
 					body: """\
-						Encoutered an error while running the nodevertical-scale-test job: ${e.getMessage()}\n\n
+						Encoutered an error while running the ats-scale-ci-nodevertical job: ${e.getMessage()}\n\n
 						Jenkins job: ${env.BUILD_URL}
 				""")
 				currentBuild.result = "FAILURE"
  				sh "exit 1"
 			}
-			println "NODE-VERTICAL-SCALE-TEST build ${nodevertical_build.getNumber()} completed successfully"
+			println "ATS-SCALE-CI-NODEVERTICAL build ${nodevertical_build.getNumber()} completed successfully"
 		}
 	}
 }

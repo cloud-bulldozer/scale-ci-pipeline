@@ -18,7 +18,7 @@ def podvertical = PODVERTICAL.toString().toUpperCase()
 def deployments_per_ns = DEPLOYMENTS_PER_NS.toString().toUpperCase()
 def ns_per_cluster = NS_PER_CLUSTER.toString().toUpperCase()
 def scale_ci_update_jobs = SCALE_CI_UPDATE_JOBS.toString().toUpperCase()
-def networking = NETWORKING.toString().toUpperCase() 
+def networking = NETWORKING.toString().toUpperCase()
 def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def ocp_4.x_scaleup = OPENSHIFT_4.X_SCALEUP.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
@@ -28,7 +28,7 @@ node (node_label) {
 	stage('cloning pipeline repo') {
 		checkout scm
 	}
-	
+
 	// creates/updates jenkins jobs using the jjb templates
 	if (scale_ci_update_jobs == "TRUE") {
 		load "scale-ci/pipeline-scripts/scale_ci_update_jobs.groovy"
@@ -66,7 +66,7 @@ node (node_label) {
 
 	// stage to run nodevertical scale test
 	if (nodevertical == "TRUE") {
-		load "scale-ci/pipeline-scripts/nodevertical.groovy"
+		load "pipeline-scripts/nodevertical.groovy"
 	}
 
 	// stage to run http scale test
@@ -123,7 +123,7 @@ node (node_label) {
 	if (byo == "TRUE") {
 		load "scale-ci/pipeline-scripts/byo.groovy"
 	}
-	
+
 	// stage to run OCP 4.X scaleup
 	if (ocp_4.x_scaleup == "TRUE") {
 		load "scale-ci/pipeline-scripts/OCP-4.X/scaleup.groovy"
