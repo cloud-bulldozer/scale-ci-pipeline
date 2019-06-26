@@ -4,6 +4,9 @@ Automates the installation of OCP on various cloud platforms and runs performanc
 NOTE: This is also maintained at [openshift/aos-cd-jobs repo](https://github.com/openshift/aos-cd-jobs).
 
 
+![Scale-CI](images/scale-ci.png)
+
+
 ### Dependencies
 ```
 - Running Jenkins instance.
@@ -100,3 +103,6 @@ scale-ci-slave-3 | 1                   | scale-ci         | 2.7.10          |
 scale-ci-slave-4 | 3                   | scale-ci         | 2.7.10          |
 scale-ci-slave-5 | 1                   | scale-ci         | 2.7.10          |
 scale-ci-slave-6 | 1                   | scale-ci         | 2.7.10          |
+
+### Credits
+Thanks to Mary Shakshober for designing the logo.
