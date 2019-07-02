@@ -86,6 +86,8 @@ $ # Set the jenkins user name, url and passwd in the scale-ci-watcher config fil
 $ vi config/jjb.ini
 $ # Run the scale-ci-watcher and check the jobs in the jenkins ( Make sure python six module version is >=1.10.0 )
 $ ./scale-ci-watcher.sh
+$ # Running the scale-ci-watcher when we don't have the SSL certs needed to verify https when hitting Jenkins api ( check if needed )
+$ export PYTHONHTTPSVERIFY=0; ./scale-ci-watcher.sh
 ```
 
 ### Scale-CI Jenkins agents/slaves
