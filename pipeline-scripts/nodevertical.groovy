@@ -32,7 +32,9 @@ stage ('nodevertical_scale_test') {
 			def workload_job_taint = nodevertical_properties['WORKLOAD_JOB_TAINT']
 			def workload_job_privileged = nodevertical_properties['WORKLOAD_JOB_PRIVILEGED']
 			def kubeconfig_file = nodevertical_properties['KUBECONFIG_FILE']
+			def pbench_instrumentation = nodevertical_properties['PBENCH_INSTRUMENTATION']
 			def enable_pbench_agents = nodevertical_properties['ENABLE_PBENCH_AGENTS']
+			def enable_pbench_copy = nodevertical_properties['ENABLE_PBENCH_COPY']
 			def pbench_server = nodevertical_properties['PBENCH_SERVER']
 			def scale_ci_results_token = nodevertical_properties['SCALE_CI_RESULTS_TOKEN']
 			def job_completion_poll_attempts = nodevertical_properties['JOB_COMPLETION_POLL_ATTEMPTS']
@@ -44,6 +46,8 @@ stage ('nodevertical_scale_test') {
 			def nodevertical_pod_image = nodevertical_properties['NODEVERTICAL_POD_IMAGE']
 			def nodevertical_stepsize = nodevertical_properties['NODEVERTICAL_STEPSIZE']
 			def nodevertical_pause = nodevertical_properties['NODEVERTICAL_PAUSE']
+			def nodevertical_ts_timeout = nodevertical_properties['NODEVERTICAL_TS_TIMEOUT']
+			def expected_nodevertical_duration = nodevertical_properties['EXPECTED_NODEVERTICAL_DURATION']
 
 			try {
 				nodevertical_build = build job: 'ATS-SCALE-CI-NODEVERTICAL',
@@ -59,7 +63,9 @@ stage ('nodevertical_scale_test') {
 						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
 						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
 						[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
+						[$class: 'BooleanParameterValue', name: 'PBENCH_INSTRUMENTATION', value: Boolean.valueOf(pbench_instrumentation)  ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_AGENTS', value: Boolean.valueOf(enable_pbench_agents)  ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_COPY', value: Boolean.valueOf(enable_pbench_copy)  ],
 						[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ],
 						[$class: 'StringParameterValue', name: 'SCALE_CI_RESULTS_TOKEN', value: scale_ci_results_token ],
 						[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
@@ -70,7 +76,9 @@ stage ('nodevertical_scale_test') {
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_MAXPODS', value: nodevertical_maxpods ],
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_POD_IMAGE', value: nodevertical_pod_image ],
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_STEPSIZE', value: nodevertical_stepsize ],
-						[$class: 'StringParameterValue', name: 'NODEVERTICAL_PAUSE', value: nodevertical_pause ]]
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_PAUSE', value: nodevertical_pause ],
+						[$class: 'StringParameterValue', name: 'NODEVERTICAL_TS_TIMEOUT', value: nodevertical_ts_timeout ],
+						[$class: 'StringParameterValue', name: 'EXPECTED_NODEVERTICAL_DURATION', value: expected_nodevertical_duration ]]
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-NODEVERTICAL Job failed with the following error: "
 				echo "${e.getMessage()}"
