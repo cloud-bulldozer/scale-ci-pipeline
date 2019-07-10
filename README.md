@@ -52,7 +52,7 @@ Job   | OCP component/category | Description | Managed by scale-ci-watcher | OCP
 OpenShift install | Installer | Installs OCP cluster | In progress | :heavy_check_mark: | In progress |  
 Conformance | OCP/kubernetes e2e tests | Checks if the OCP cluster is sane | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Scaleup | scaleup | Scales up OCP cluster to a desired node count | In progress | :heavy_check_mark: | :heavy_check_mark: |  
-Node Vertical | Kubelet performance and Cluster Limits | Creates max pods per compute node | In progress | :heavy_check_mark: | :heavy_check_mark: |  
+Node Vertical | Kubelet performance and Cluster Limits | Creates max pods per compute node | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
 Master Vertical | Control plane density | Creates bunch of objects to stress ApiServer, Etcd and Controller | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Networking | SDN | uperf benchmarks testing node to node, pod to pod, and svc to svc throughput and latency for TCP and UDP protocols | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Prometheus | Monitoring | prometheus density focused test that creates pods, and nodes and some workloads especially for openshift-monitoring | In progress | :heavy_check_mark: | :heavy_check_mark: |  

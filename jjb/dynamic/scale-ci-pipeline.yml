@@ -176,12 +176,11 @@
     - string:
         default: ''
         description: ''
-        name: OPENSHIFT_4.X_SCALEUP_PROPERTY_FILE
-
+        name: OPENSHIFT4_SCALEUP_PROPERTY_FILE
     - string:
         default: ''
+        description: ''
         name: BASELINE_PROPERTY_FILE
-
     - string:
         default: 'scale-ci'
         description: ''
@@ -191,8 +190,8 @@
       scm:
       - git:
           branches:
-          - '*watcher'
-          url: https://github.com/chaitanyaenr/aos-cd-jobs.git
+          - '*master'
+          url: https://github.com/openshift-scale/scale-ci-pipeline.git
           wipe-workspace: true
       script-path: scale-ci/Jenkinsfile
     project-type: pipeline

@@ -6,8 +6,8 @@ def node_label = NODE_LABEL.toString()
 def run_job = OPENSHIFT_4.X_SCALEUP.toString().toUpperCase()
 def job_name = "SCALE-CI-OCP-4.X-SCALEUP"
 def stage_name = "openshift_4.X_scaleup"
-def property_file_name = "openshift_4.X_scaleup.properties"
-def property_file_uri = OPENSHIFT_4.X_SCALEUP_PROPERTY_FILE.toString()
+def property_file_name = "openshift4_scaleup.properties"
+def property_file_uri = OPENSHIFT4_SCALEUP_PROPERTY_FILE.toString()
 
 println("Current pipeline job id is '${pipeline_id}'")
 

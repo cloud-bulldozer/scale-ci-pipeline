@@ -59,7 +59,7 @@
     concurrent: true
     description: This job runs scales up OCP 4.x clusters to the desired node count.
     disabled: false
-    name: ocp-4.x-scaleup
+    name: SCALE-CI-OCP-4.X-SCALEUP
     node: cucushift && oc311
     parameters:
     - string:
