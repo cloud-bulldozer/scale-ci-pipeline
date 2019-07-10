@@ -67,15 +67,15 @@
         description: Container image that runs the workload script.
         name: WORKLOAD_IMAGE
     - bool:
-        default: true
+        default: false
         description: Enables/disables the node selector that places the workload job on the `pbench` node.
         name: WORKLOAD_JOB_NODE_SELECTOR
     - bool:
-        default: true
+        default: false
         description: Enables/disables the toleration on the workload job to permit the `controller` taint.
         name: WORKLOAD_JOB_TAINT
     - bool:
-        default: true
+        default: false
         description: Enables/disables running the workload pod as privileged.
         name: WORKLOAD_JOB_PRIVILEGED
     - string:
@@ -83,9 +83,17 @@
         description: Location of kubeconfig on orchestration host.
         name: KUBECONFIG_FILE
     - bool:
-        default: true
+        default: false
+        description: Enables/disables running the workload wrapped by pbench-user-benchmark. When enabled, pbench agents can then be enabled (ENABLE_PBENCH_AGENTS) for further instrumentation data and pbench-copy-results can be enabled (ENABLE_PBENCH_COPY) to export captured data for further analysis.
+        name: PBENCH_INSTRUMENTATION
+    - bool:
+        default: false
         description: Enables/disables the collection of pbench data on the pbench agent pods. These pods are deployed by the tooling playbook.
         name: ENABLE_PBENCH_AGENTS
+    - bool:
+        default: false
+        description: Enables/disables the copying of pbench data to a remote results server for further analysis.
+        name: ENABLE_PBENCH_COPY
     - string:
         default: ""
         description: DNS address of the pbench results server.
@@ -100,7 +108,7 @@
         name: JOB_COMPLETION_POLL_ATTEMPTS
     - string:
         default: 4
-        description: Test to prefix the pbench results.
+        description: Number of nodes to apply the nodevertical label to. This isolates the NodeVertical Pods to achieve kubelet density. You will have to adjust the value here for clusters < 5 nodes.
         name: NODEVERTICAL_NODE_COUNT
     - string:
         default: "nodevertical"
@@ -130,6 +138,14 @@
         default: 60
         description: Period of time (in seconds) for cluster loader to pause after creating pods and waiting for them to be running.
         name: NODEVERTICAL_PAUSE
+    - string:
+        default: 180
+        description: Period of time (in seconds) that cluster loader will wait for pods to come up to "Running" state per tuningset before sleeping NODEVERTICAL_PAUSE. The tuningset is determined by NODEVERTICAL_STEPSIZE and NODEVERTICAL_PAUSE thus if you have a very large stepsize you will need a greater period of time to allow the Pods to come to "Running" state. This value prevents waiting infinitely for Pods that would otherwise never come up.
+        name: NODEVERTICAL_TS_TIMEOUT
+    - string:
+        default: 600
+        description: Pass/fail criteria. Value to determine if NodeVertical workload executed in duration expected.
+        name: EXPECTED_NODEVERTICAL_DURATION
     project-type: freestyle
     properties:
     - raw:
