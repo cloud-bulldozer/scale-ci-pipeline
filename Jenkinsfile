@@ -21,6 +21,7 @@ def scale_ci_update_jobs = SCALE_CI_UPDATE_JOBS.toString().toUpperCase()
 def networking = NETWORKING.toString().toUpperCase()
 def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def ocp_4.x_scaleup = OPENSHIFT_4.X_SCALEUP.toString().toUpperCase()
+def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 
 node (node_label) {
@@ -127,6 +128,11 @@ node (node_label) {
 	// stage to run OCP 4.X scaleup
 	if (ocp_4.x_scaleup == "TRUE") {
 		load "scale-ci/pipeline-scripts/OCP-4.X/scaleup.groovy"
+	}
+
+	// stage to run baseline test
+	if (baseline == "TRUE" ) {
+		load "pipeline-scripts/baseline.groovy"
 	}
 
 	// cleanup the workspace

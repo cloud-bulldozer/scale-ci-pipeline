@@ -1,0 +1,163 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |-
+        set -eo pipefail
+
+        # Disable logging
+        set +x
+        oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL}
+        # Re-enable logging
+        set -x
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        chmod 600 ${PRIVATE_KEY}
+
+        # Create inventory File:
+        echo "[orchestration]" > inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory
+
+        export ANSIBLE_FORCE_COLOR=true
+        ansible --version
+
+        # Run the workload
+        time ansible-playbook -vv -i inventory workloads/baseline.yml
+
+        # stream workload pod logs
+        oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-baseline
+        # check the status of the job
+        oc get job -n scale-ci-tooling scale-ci-baseline -o json | jq -e '.status.succeeded==1'
+    concurrent: true
+    description: This job runs the baseline workload to look at the base cluster resource
+      usage and check how the OCP product is moving<!-- Managed by Jenkins Job Builder
+      -->
+    disabled: false
+    name: BASELINE-SCALE-TEST
+    node: scale-ci
+    parameters:
+    - string:
+        default: "kubeadmin"
+        description: User name to access cluster.
+        name: CLUSTER_USER
+    - string:
+        default: ""
+        description: Password for CLUSTER_USER to access cluster.
+        name: CLUSTER_PASSWORD
+    - string:
+        default: ""
+        description: The URL address to the openshift cluster to login to.
+        name: CLUSTER_API_URL
+    - string:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - string:
+        default: "localhost"
+        description: The machine intended to run the oc commands and launch the workload.
+        name: ORCHESTRATION_HOST
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: quay.io/openshift-scale/scale-ci-workload
+        description: ''
+        name: WORKLOAD_IMAGE
+        trim: 'false'
+    - bool:
+        default: ''
+        description: ''
+        name: WORKLOAD_JOB_NODE_SELECTOR
+        trim: 'false'
+    - bool:
+        default: ''
+        description: ''
+        name: WORKLOAD_JOB_TAINT
+        trim: 'false'
+    - bool:
+        default: ''
+        description: ''
+        name: WORKLOAD_JOB_PRIVILEGED
+        trim: 'false'
+    - bool:
+        default: ''
+        description: ''
+        name: ENABLE_PBENCH_AGENTS
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: SCALE_CI_RESULTS_TOKEN
+        trim: 'false'
+    - string:
+        default: '0'
+        description: ''
+        name: JOB_COMPLETION_POLL_ATTEMPTS
+        trim: 'false'
+    - string:
+        default: 'baseline'
+        description: ''
+        name: BASELINE_TEST_PREFIX
+        trim: 'false'
+    - string:
+        default: '15m'
+        description: 'Duration to run'
+        name: BASELINE_WORKLOAD_DURATION
+        trim: 'false'
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml:
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/openshift-scale/workloads.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm
