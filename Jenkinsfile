@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 def contact = "nelluri@redhat.com"
-def setup_tooling = SETUP_TOOLING.toString().toUpperCase()
+def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
 def openshift_install = OPENSHIFT_INSTALL.toString().toUpperCase()
 def nodevertical = NODEVERTICAL_SCALE_TEST.toString().toUpperCase()
@@ -51,7 +51,7 @@ node (node_label) {
 	}
 
 	// stage to setup pbench
-	if (setup_tooling == "TRUE") {
+	if (tooling == "TRUE") {
 		load "pipeline-scripts/tooling.groovy"
 	}
 

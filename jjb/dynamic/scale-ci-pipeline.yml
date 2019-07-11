@@ -24,7 +24,7 @@
     - bool:
         default: false
         description: ''
-        name: SETUP_TOOLING
+        name: TOOLING
     - bool:
         default: false
         description: ''
@@ -108,7 +108,7 @@
     - string:
         default: ''
         description: ''
-        name: SETUP_PBENCH_PROPERTY_FILE
+        name: TOOLING_PROPERTY_FILE
     - string:
         default: ''
         description: ''
