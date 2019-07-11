@@ -12,7 +12,7 @@ NOTE: This is also maintained at [openshift/aos-cd-jobs repo](https://github.com
 - Running Jenkins instance.
 ```
 
-## Components
+### Components
 - Properties files
 - Pipeline scripts
 - Scale-ci-watcher
@@ -46,7 +46,7 @@ $ pip install yamllint
 $ ./scale-ci-linter.sh <path-to-the-template>
 ```
 
-### Supported Jobs by Scale-CI
+### Scale-CI Jobs
 Job   | OCP component/category | Description | Managed by scale-ci-watcher | OCP-3.X | OCP-4.X
 ----------------- | --------- | -------------------- | ----------- | ------------------ | ----------- |  
 OpenShift install | Installer | Installs OCP cluster | In progress | :heavy_check_mark: | In progress |  
@@ -66,6 +66,29 @@ Services per namespace | Cluster Limits | Tests maximum number of services possi
 Baseline | Base/Idle cluster | Captures performance data of the base cluster with no user created objects | :heavy_check_mark: | NA | :heavy_check_mark: |
 
 NOTE: Services per namespace cluster limits test is covered by Deployments per ns test, creating a separate job for it is in progress.
+
+
+### Modifying/Adding new workloads to the scale-ci-pipeline
+
+Adding new workloads is managed by scale-ci-watcher and it expects the following:
+- JJB template: It is the job definition in yaml ( xml is also supported, watcher takes care of converting it to yaml )
+- Pipeline-build script for the Job and a properties file: The script is responsible for building the job as a stage looking with the configutation/parameters specified in the properties file.
+
+There are many existing jobs in scale-ci-pipeline which can serve as an example/template job. One example is the NodeVertical scale test. To create a new workload using NodeVertical as a template, follow these steps:
+```
+$ # step 1: copy one of the existing job template and edit it with the workload specific stuff
+$ cp scale-ci-pipeline/jjb/dynamic/scale-ci_nodevertical.yml scale-ci-pipeline/jjb/dynamic/scale-ci_$workload.yaml
+$ # step 2: copy one of the existing pipeline-build script and edit it with the workload specific stuff
+$ cp scale-ci-pipeline/pipeline-scripts/nodevertical.groovy scale-ci-pipeline/pipeline-scripts/$workload.groovy
+$ # step 3: copy the properties file and edit it with the workload specific stuff
+$ cp scale-ci-pipeline/properties-files/nodevertical.properties scale-ci-pipeline/properties-files/$workload.properties
+$ # step 4: add the new workload to the Jenkinsfile to load the pipeline-build script ( Applicable only in the case of a new workload, this is not needed for a existing workload )
+$ vi scale-ci-pipeline/Jenkinsfile
+$ # step 5: add the workoad to the scale-ci-pipeline ( workload option and properties file path vars, applicable only in the case of a new workload )
+$ vi scale-ci-pipeline/jjb/dynamic/scale-ci-pipeline
+$ # step 6: update the Scale-CI jobs section in the readme.
+```
+#### NOTE: Modifying the existing workload just needs changes to the existing template, build script and properties file.
 
 ### Test setup/Migrating scale-ci jobs to any Jenkins
 The following instructions will help you setup a jenkins test environment super quick so as to play around and test the changes locally before pushing them to production.

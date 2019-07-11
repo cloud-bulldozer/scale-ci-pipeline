@@ -3,7 +3,7 @@
     description: 'Collection of Jenkins jobs to setup osp, ocp and run various scale
       tests on OpenShift. '
     disabled: false
-    name: scale-ci-pipeline
+    name: SCALE-CI-PIPELINE
     parameters:
     - bool:
         default: false
