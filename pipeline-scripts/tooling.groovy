@@ -2,13 +2,13 @@
 
 def pipeline_id = env.BUILD_ID
 def node_label = NODE_LABEL.toString()
-def setup_tooling = SETUP_TOOLING.toString().toUpperCase()
-def property_file_name = "set_pbench.properties"
+def tooling = TOOLING.toString().toUpperCase()
+def property_file_name = "tooling.properties"
 
 println "Current pipeline job build id is '${pipeline_id}'"
-// setup tooling
-stage ('setup_pbench') {
-	if (setup_tooling == "TRUE") {
+
+stage ('tooling') {
+	if (tooling == "TRUE") {
 		currentBuild.result = "SUCCESS"
 		node(node_label) {
 			// get properties file
@@ -17,57 +17,37 @@ stage ('setup_pbench') {
 				sh "rm ${property_file_name}"
 			}
 			// get properties file
-			sh "wget ${SETUP_PBENCH_PROPERTY_FILE} -O ${property_file_name}"
+			sh "wget ${TOOLING_PROPERTY_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
-			def pbench_properties = readProperties file: property_file_name
-			def jump_host = pbench_properties['JUMP_HOST']
-			def user = pbench_properties['USER']
-			def tooling_inventory_path = pbench_properties['TOOLING_INVENTORY']
-			def openshift_inventory = pbench_properties['OPENSHIFT_INVENTORY']
-			def use_proxy = pbench_properties['USE_PROXY']
-			def proxy_user = pbench_properties['PROXY_USER']	
-			def proxy_host = pbench_properties['PROXY_HOST']
-			def containerized = pbench_properties['CONTAINERIZED']
-			def all_nodes = pbench_properties['REGISTER_ALL_NODES']
-			def token = pbench_properties['GITHUB_TOKEN']
-			def repo = pbench_properties['PERF_REPO']
-			def server = pbench_properties['PBENCH_SERVER']
+			def tooling_properties = readProperties file: property_file_name
+			def cluster_user = tooling_properties['CLUSTER_USER']
+			def cluster_password = tooling_properties['CLUSTER_PASSWORD']
+			def cluster_api_url = tooling_properties['CLUSTER_API_URL']
+			def sshkey_token = tooling_properties['SSHKEY_TOKEN']
+			def orchestration_host = tooling_properties['ORCHESTRATION_HOST']
+			def orchestration_user = tooling_properties['ORCHESTRATION_USER']
+			def pbench_image = tooling_properties['PBENCH_IMAGE']
+			def kubeconfig_file = tooling_properties['KUBECONFIG_FILE']
+			def pbench_server = tooling_properties['PBENCH_SERVER']
 
-			// copy the parameters file to jump host
-			sh "git clone https://${token}@${repo} ${WORKSPACE}/perf-dept && chmod 600 ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf"
-			sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf ${property_file_name} root@${jump_host}:/root/properties"
-
-			// debug info
-			println "----------USER DEFINED OPTIONS-------------------"
-			println "-------------------------------------------------"
-			println "-------------------------------------------------"
-			println "JUMP_HOST: '${jump_host}'"
-			println "USER: '${user}'"
-			println "TOOLING_INVENTORY_PATH: '${tooling_inventory_path}'"
-			println "OPENSHIFT_INVENTORY_PATH: '${openshift_inventory}'"
-			println "TOKEN: '${token}'"
-			println "-------------------------------------------------"
-			println "-------------------------------------------------"
-
-			// Run setup-tooling job
 			try {
-				setup_pbench_build = build job: 'SETUP-TOOLING',
+				tooling_build = build job: 'SETUP-TOOLING',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'StringParameterValue', name: 'JUMP_HOST', value: jump_host ],
-						[$class: 'StringParameterValue', name: 'USER', value: user ],
-						[$class: 'StringParameterValue', name: 'TOOLING_INVENTORY', value: tooling_inventory_path ],															   [$class: 'StringParameterValue', name: 'OPENSHIFT_INVENTORY', value: openshift_inventory ],
-						[$class: 'BooleanParameterValue', name: 'USE_PROXY', value: Boolean.valueOf(use_proxy) ],
-						[$class: 'StringParameterValue', name: 'PROXY_USER', value: proxy_user ],
-						[$class: 'StringParameterValue', name: 'PROXY_HOST', value: proxy_host ],
-						[$class: 'BooleanParameterValue', name: 'REGISTER_ALL_NODES', value: Boolean.valueOf(all_nodes) ],
-						[$class: 'BooleanParameterValue', name: 'CONTAINERIZED', value: Boolean.valueOf(containerized) ],
-						[$class: 'StringParameterValue', name: 'GITHUB_TOKEN', value: token ]]
+						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+						[$class: 'StringParameterValue', name: 'PBENCH_IMAGE', value: pbench_image ],
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
+						[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ]]
 			} catch ( Exception e) {
-				echo "SETUP_TOOLING Job failed with the following error: "
+				echo "TOOLING Job failed with the following error: "
 				echo "${e.getMessage()}"
 				mail(
 					to: 'nelluri@redhat.com',
-					subject: 'Setup-tooling job failed',
+					subject: 'tooling job failed',
 					body: """\
 						Encoutered an error while running the setup-tooling job: ${e.getMessage()}\n\n
 						Jenkins job: ${env.BUILD_URL}
@@ -75,7 +55,7 @@ stage ('setup_pbench') {
 				currentBuild.result = "FAILURE"
 				sh "exit 1"
 			}
-			println "SETUP_TOOLING build ${setup_pbench_build.getNumber()} completed successfully"
+			println "TOOLING build ${tooling_build.getNumber()} completed successfully"
 		}
 	}
 }
