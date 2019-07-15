@@ -20,59 +20,64 @@ stage ('deployments_per_ns_scale_test') {
 			// get properties file
 			sh "wget ${DEPLOYMENTS_PER_NS_PROPERTY_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
-			def deployments_per_ns_properties = readProperties file: property_file_name
-			def jump_host = deployments_per_ns_properties['JUMP_HOST']
-			def user = deployments_per_ns_properties['USER']
-			def tooling_inventory_path = deployments_per_ns_properties['TOOLING_INVENTORY']
-			def clear_results = deployments_per_ns_properties['CLEAR_RESULTS']
-			def move_results = deployments_per_ns_properties['MOVE_RESULTS']
-			def use_proxy = deployments_per_ns_properties['USE_PROXY']
-			def proxy_user = deployments_per_ns_properties['PROXY_USER']
-			def proxy_host = deployments_per_ns_properties['PROXY_HOST']
-			def containerized = deployments_per_ns_properties['CONTAINERIZED']
-			def deployments = deployments_per_ns_properties['DEPLOYMENTS']
-			def token = deployments_per_ns_properties['GITHUB_TOKEN']
-			def setup_pbench = deployments_per_ns_properties['SETUP_PBENCH']
-			def repo = deployments_per_ns_properties['PERF_REPO']
-			def server = deployments_per_ns_properties['PBENCH_SERVER']
-
-			// copy the parameters file to jump host
-			sh "git clone https://${token}@${repo} ${WORKSPACE}/perf-dept && chmod 600 ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf"
-			sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf ${property_file_name} root@${jump_host}:/root/properties"
-
+			def deployments_per_ns_properties =readProperties file: property_file_name
+			def cluster_user = deployments_per_ns_properties['CLUSTER_USER']
+			def cluster_password = deployments_per_ns_properties['CLUSTER_PASSWORD']
+			def cluster_api_url = deployments_per_ns_properties['CLUSTER_API_URL']
+			def sshkey_token = deployments_per_ns_properties['SSHKEY_TOKEN']
+			def orchestration_host = deployments_per_ns_properties['ORCHESTRATION_HOST']
+			def orchestration_user = deployments_per_ns_properties['ORCHESTRATION_USER']
+			def workload_image = deployments_per_ns_properties['WORKLOAD_IMAGE']
+			def workload_job_node_selector = deployments_per_ns_properties['WORKLOAD_JOB_NODE_SELECTOR']
+			def workload_job_taint = deployments_per_ns_properties['WORKLOAD_JOB_TAINT']
+			def workload_job_privileged = deployments_per_ns_properties['WORKLOAD_JOB_PRIVILEGED']
+			def kubeconfig_file = deployments_per_ns_properties['KUBECONFIG_FILE']
+			def pbench_instrumentation = deployments_per_ns_properties['PBENCH_INSTRUMENTATION']
+			def enable_pbench_agents = deployments_per_ns_properties['ENABLE_PBENCH_AGENTS']
+			def enable_pbench_copy = deployments_per_ns_properties['ENABLE_PBENCH_COPY']
+			def pbench_server = deployments_per_ns_properties['PBENCH_SERVER']
+			def scale_ci_results_token = deployments_per_ns_properties['SCALE_CI_RESULTS_TOKEN']
+			def job_completion_poll_attempts = deployments_per_ns_properties['JOB_COMPLETION_POLL_ATTEMPTS']
+			def deployments_per_ns_test_prefix = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_TEST_PREFIX']
+			def deployments_per_ns_cleanup = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_CLEANUP']
+			def deployments_per_ns_basename = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_BASENAME']
+			def deployments_per_ns_count = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_COUNT']
+			def deployments_per_ns_pod_image = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_POD_IMAGE']
+			
 			// debug info
 			println "----------USER DEFINED OPTIONS-------------------"
 			println "-------------------------------------------------"
-			println "-------------------------------------------------"
-			println "JUMP_HOST: '${jump_host}'"
-			println "USER: '${user}'"
-			println "TOOLING_INVENTORY_PATH: '${tooling_inventory_path}'"
-			println "CLEAR_RESULTS: '${clear_results}'"
-			println "MOVE_RESULTS: '${move_results}'"
-			println "USE_PROXY: '${use_proxy}'"
-			println "PROXY_USER: '${proxy_user}'"
-			println "PROXY_HOST: '${proxy_host}'"
-			println "CONTAINERIZED: '${containerized}'"
-			println "TOKEN: '${token}'"
+			println "DEPLOYMENTS_PER_NS_COUNT: '${deployments_per_ns_count}'"
+			println "JOB_COMPLETION_POLL_ATTEMPTS: '${job_completion_poll_attempts}'"
 			println "-------------------------------------------------"
 			println "-------------------------------------------------"
 
 			// Run deployments_per_ns job
 			try {
-				deployments_per_ns_build = build job: 'DEPLOYMENTS_PER_NS',
+				deployments_per_ns_build = build job: 'ATS-SCALE-CI-DEPLOYMENTS-PER-NS',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'StringParameterValue', name: 'JUMP_HOST', value: jump_host ],
-						[$class: 'StringParameterValue', name: 'USER', value: user ],
-						[$class: 'StringParameterValue', name: 'TOOLING_INVENTORY', value: tooling_inventory_path ],
-						[$class: 'BooleanParameterValue', name: 'CLEAR_RESULTS', value: Boolean.valueOf(clear_results) ],
-						[$class: 'BooleanParameterValue', name: 'SETUP_PBENCH', value: Boolean.valueOf(setup_pbench) ],
-						[$class: 'BooleanParameterValue', name: 'MOVE_RESULTS', value: Boolean.valueOf(move_results) ],
-						[$class: 'BooleanParameterValue', name: 'USE_PROXY', value: Boolean.valueOf(use_proxy) ],
-						[$class: 'StringParameterValue', name: 'PROXY_USER', value: proxy_user ],
-						[$class: 'StringParameterValue', name: 'PROXY_HOST', value: proxy_host ],
-						[$class: 'StringParameterValue', name: 'DEPLOYMENTS', value: deployments ],
-						[$class: 'BooleanParameterValue', name: 'CONTAINERIZED', value: Boolean.valueOf(containerized) ],
-						[$class: 'StringParameterValue', name: 'GITHUB_TOKEN', value: token ]]
+						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+						[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_NODE_SELECTOR', value: Boolean.valueOf(workload_job_node_selector) ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
+						[$class: 'BooleanParameterValue', name: 'PBENCH_INSTRUMENTATION', value: Boolean.valueOf(pbench_instrumentation)  ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_AGENTS', value: Boolean.valueOf(enable_pbench_agents)  ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_COPY', value: Boolean.valueOf(enable_pbench_copy)  ],
+						[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ],
+						[$class: 'StringParameterValue', name: 'SCALE_CI_RESULTS_TOKEN', value: scale_ci_results_token ],
+						[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
+						[$class: 'StringParameterValue', name: 'DEPLOYMENTS_PER_NS_TEST_PREFIX', value: deployments_per_ns_test_prefix ],
+						[$class: 'BooleanParameterValue', name: 'DEPLOYMENTS_PER_NS_CLEANUP', value: Boolean.valueOf(deployments_per_ns_cleanup)  ],
+						[$class: 'StringParameterValue', name: 'DEPLOYMENTS_PER_NS_BASENAME', value: deployments_per_ns_basename ],
+						[$class: 'StringParameterValue', name: 'DEPLOYMENTS_PER_NS_COUNT', value: deployments_per_ns_count ],
+						[$class: 'StringParameterValue', name: 'DEPLOYMENTS_PER_NS_POD_IMAGE', value: deployments_per_ns_pod_image ]]
 			} catch ( Exception e) {
 				echo "DEPLOYMENTS_PER_NS Job failed with the following error: "
 				echo "${e.getMessage()}"
