@@ -21,75 +21,70 @@ stage('mastervertical_scale_test') {
 			sh "wget ${MASTERVERTICAL_PROPERTY_FILE} -O ${property_file_name}"
                         sh "cat ${property_file_name}"
 			def mastervertical_properties = readProperties file: property_file_name
-			def jump_host = mastervertical_properties['JUMP_HOST']
-			def user = mastervertical_properties['USER']
-			def tooling_inventory_path = mastervertical_properties['TOOLING_INVENTORY']
-			def clear_results = mastervertical_properties['CLEAR_RESULTS']
-			def move_results = mastervertical_properties['MOVE_RESULTS']
-			def containerized = mastervertical_properties['CONTAINERIZED']
-			def use_proxy = mastervertical_properties['USE_PROXY']
-			def proxy_user = mastervertical_properties['PROXY_USER']
-			def proxy_host = mastervertical_properties['PROXY_HOST']
-			def projects = mastervertical_properties['PROJECTS']
-			def setup_pbench = mastervertical_properties['SETUP_PBENCH']
-			def first_run = mastervertical_properties['FIRST_RUN_PROJECTS']
-			def second_run = mastervertical_properties['SECOND_RUN_PROJECTS']
-			def third_run = mastervertical_properties['THIRD_RUN_PROJECTS']
-			def token = mastervertical_properties['GITHUB_TOKEN']
-			def repo = mastervertical_properties['PERF_REPO']
-			def server = mastervertical_properties['PBENCH_SERVER']	
-			def mode = mastervertical_properties['MODE']
-
-			// debug info
-			println "JUMP_HOST: '${jump_host}'"
-			println "USER: '${user}'"
-			println "TOOLING_INVENTORY_PATH: '${tooling_inventory_path}'"
-			println "CLEAR_RESULTS: '${clear_results}'"
-			println "MOVE_RESULTS: '${move_results}'"
-			println "CONTAINERIZED: '${containerized}'"
-			println "PROXY_USER: '${proxy_user}'"
-			println "PROXY_HOST: '${proxy_host}'"
-			println "PROJECTS: '${projects}'"
-			println "TOKEN: '${token}'"
-			
-			// copy the parameters file to jump host
-			sh "git clone https://${token}@${repo} ${WORKSPACE}/perf-dept && chmod 600 ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf"
-			sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf ${property_file_name} root@${jump_host}:/root/properties"
+			def cluster_user = mastervertical_properties['CLUSTER_USER']
+			def cluster_password = mastervertical_properties['CLUSTER_PASSWORD']
+			def cluster_api_url = mastervertical_properties['CLUSTER_API_URL']
+			def sshkey_token = mastervertical_properties['SSHKEY_TOKEN']
+			def orchestration_host = mastervertical_properties['ORCHESTRATION_HOST']
+			def orchestration_user = mastervertical_properties['ORCHESTRATION_USER']
+			def workload_image = mastervertical_properties['WORKLOAD_IMAGE']
+			def workload_job_node_selector = mastervertical_properties['WORKLOAD_JOB_NODE_SELECTOR']
+			def workload_job_taint = mastervertical_properties['WORKLOAD_JOB_TAINT']
+			def workload_job_privileged = mastervertical_properties['WORKLOAD_JOB_PRIVILEGED']
+			def kubeconfig_file = mastervertical_properties['KUBECONFIG_FILE']
+			def pbench_instrumentation = mastervertical_properties['PBENCH_INSTRUMENTATION']
+			def enable_pbench_agents = mastervertical_properties['ENABLE_PBENCH_AGENTS']
+			def enable_pbench_copy = mastervertical_properties['ENABLE_PBENCH_COPY']
+			def pbench_server = mastervertical_properties['PBENCH_SERVER']
+			def scale_ci_results_token = mastervertical_properties['SCALE_CI_RESULTS_TOKEN']
+			def job_completion_poll_attempts = mastervertical_properties['JOB_COMPLETION_POLL_ATTEMPTS']
+			def mastervertical_test_prefix = mastervertical_properties['MASTERVERTICAL_TEST_PREFIX']
+			def mastervertical_cleanup = mastervertical_properties['MASTERVERTICAL_CLEANUP']
+			def mastervertical_basename = mastervertical_properties['MASTERVERTICAL_BASENAME']
+			def mastervertical_projects = mastervertical_properties['MASTERVERTICAL_PROJECTS']
+			def mastervertical_expected_duration = mastervertical_properties['EXPECTED_MASTERVERTICAL_DURATION']
 
 			// Run mastervertical job
 			try {
-				mastervertical_build = build job: 'mastervert-scale-test',
+				mastervertical_build = build job: 'ATS-SCALE-CI-MASTERVERTICAL',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'StringParameterValue', name: 'JUMP_HOST', value: jump_host ],
-						[$class: 'StringParameterValue', name: 'USER', value: user ],
-						[$class: 'StringParameterValue', name: 'TOOLING_INVENTORY', value: tooling_inventory_path ],
-						[$class: 'BooleanParameterValue', name: 'CLEAR_RESULTS', value: Boolean.valueOf(clear_results) ],
-						[$class: 'BooleanParameterValue', name: 'MOVE_RESULTS', value: Boolean.valueOf(move_results) ],
-						[$class: 'BooleanParameterValue', name: 'CONTAINERIZED', value: Boolean.valueOf(containerized) ],
-						[$class: 'StringParameterValue', name: 'PROXY_USER', value: proxy_user ],
-						[$class: 'StringParameterValue', name: 'PROXY_HOST', value: proxy_host ],
-						[$class: 'BooleanParameterValue', name: 'USE_PROXY', value: Boolean.valueOf(use_proxy) ],
-						[$class: 'BooleanParameterValue', name: 'SETUP_PBENCH', value: Boolean.valueOf(setup_pbench) ],
-						[$class: 'StringParameterValue', name: 'FIRST_RUN_PROJECTS', value: first_run ],
-						[$class: 'StringParameterValue', name: 'SECOND_RUN_PROJECTS', value: second_run ],
-						[$class: 'StringParameterValue', name: 'THIRD_RUN_PROJECTS', value: third_run ],
-						[$class: 'StringParameterValue', name: 'MODE', value: mode ],
-						[$class: 'StringParameterValue', name: 'GITHUB_TOKEN', value: token ]]
+						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+						[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_NODE_SELECTOR', value: Boolean.valueOf(workload_job_node_selector) ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
+						[$class: 'BooleanParameterValue', name: 'PBENCH_INSTRUMENTATION', value: Boolean.valueOf(pbench_instrumentation)  ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_AGENTS', value: Boolean.valueOf(enable_pbench_agents)  ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_COPY', value: Boolean.valueOf(enable_pbench_copy)  ],
+						[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ],
+						[$class: 'StringParameterValue', name: 'SCALE_CI_RESULTS_TOKEN', value: scale_ci_results_token ],
+						[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
+						[$class: 'StringParameterValue', name: 'MASTERVERTICAL_TEST_PREFIX', value: mastervertical_test_prefix ],
+						[$class: 'BooleanParameterValue', name: 'MASTERVERTICAL_CLEANUP', value: Boolean.valueOf(mastervertical_cleanup)  ],
+						[$class: 'StringParameterValue', name: 'MASTERVERTICAL_BASENAME', value: mastervertical_basename ],
+						[$class: 'StringParameterValue', name: 'MASTERVERTICAL_PROJECTS', value: mastervertical_projects ],
+						[$class: 'StringParameterValue', name: 'EXPECTED_MASTERVERTICAL_DURATION', value: mastervertical_expected_duration ]]
 			} catch ( Exception e) {
-				echo "MASTERVERTICAL-SCALE-TEST Job failed with the following error: "
+				echo "MASTERVERTICAL SCALE TEST Job failed with the following error: "
 				echo "${e.getMessage()}"
 				echo "Sending an email"
 				mail(
       					to: 'nelluri@redhat.com',
-      					subject: 'Mastervertical-scale-test job failed',
+      					subject: 'MasterVertical scale test job failed',
       					body: """\
-						Encoutered an error while running the mastervertical-scale-test job: ${e.getMessage()}\n\n
+						Encoutered an error while running the MasterVertical scale test job: ${e.getMessage()}\n\n
 						Jenkins job: ${env.BUILD_URL}
 				""")
 				currentBuild.result = "FAILURE"
 				sh "exit 1"
 			}
-			println "MASTERVERTICAL-SCALE-TEST build ${mastervertical_build.getNumber()} completed successfully"
+			println "MASTERVERTICAL SCALE TEST build ${mastervertical_build.getNumber()} completed successfully"
 		}
 	}
 }
