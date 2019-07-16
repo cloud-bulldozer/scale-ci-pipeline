@@ -50,6 +50,7 @@ $ ./scale-ci-linter.sh <path-to-the-template>
 Job   | OCP component/category | Description | Managed by scale-ci-watcher | OCP-3.X | OCP-4.X
 ----------------- | --------- | -------------------- | ----------- | ------------------ | ----------- |  
 OpenShift install | Installer | Installs OCP cluster | In progress | :heavy_check_mark: | In progress |  
+Tooling | Tooling | Sets up pbench-agents to collect perf data | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 Conformance | OCP/kubernetes e2e tests | Checks if the OCP cluster is sane | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Scaleup | scaleup | Scales up OCP cluster to a desired node count | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Node Vertical | Kubelet performance and Cluster Limits | Creates max pods per compute node | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
@@ -59,7 +60,7 @@ Prometheus | Monitoring | prometheus density focused test that creates pods, and
 HTTP | Router | Data-plane workload generator that runs http requests through HAProxy into deployed pods | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Pgbench | Storage | Checks how well Postgresql performs with RHOCS for glusterfs and gluster-block storage backend | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 MongoDB | Storage | Checks how MongoDB performs with RHOCS for glusterfs and gluster-block storage backend | In progess | :heavy_check_mark: | :heavy_check_mark: |  
-Pod Vertical | Cluster Limits | Tests pods per namespace limit | In progress | :heavy_check_mark: | :heavy_check_mark: |  
+Pod Vertical | Cluster Limits | Tests pods per namespace limit | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
 Deployments per namespaces | Cluster Limits | Tests deployments per namespace limit | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Namespaces per cluster | Cluster Limits | Tests namespaces per cluster limit | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Services per namespace | Cluster Limits | Tests maximum number of services possible per namespace | In progress | :heavy_check_mark: | :heavy_check_mark: |
