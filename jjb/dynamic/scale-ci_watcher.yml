@@ -1,0 +1,123 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |-
+        set -exo pipefail
+
+        export SCALE_CI_WATCHER_REPO_PATH=$WORKSPACE
+        export JJB_CONFIG_PATH=$WORKSPACE/config/jjb.ini
+        export WORKDIR=$WORKSPACE
+
+        # Setup config to talk to Jenkins api
+        sed -i "/user/c \user=$JENKINS_USER" $JJB_CONFIG_PATH
+        sed -i "/password/c \password=$JENKINS_PASSWORD" $JJB_CONFIG_PATH
+        sed -i "/url/c \url=$JENKINS_URL" $JJB_CONFIG_PATH
+
+        # Run the watcher
+        cd $SCALE_CI_WATCHER_REPO_PATH
+        export PYTHONHTTPSVERIFY=0; ./scale-ci-watcher.sh
+    concurrent: false
+    disabled: false
+    name: ATS-SCALE-CI-WATCHER
+    node: scale-ci
+    parameters:
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_URL
+    - string:
+        default: https://github.com/openshift-scale/scale-ci-pipeline.git
+        description: ''
+        name: SCALE_CI_WATCHER_REPO
+    - string:
+        default: master
+        description: ''
+        name: SCALE_CI_WATCHER_REPO_BRANCH
+    - string:
+        default: 'true'
+        description: ''
+        name: UPDATE_SCALE_CI_JOBS
+    - string:
+        default: 'false'
+        description: ''
+        name: ADD_PUBLIC_KEY
+    - string:
+        default: '""'
+        description: ''
+        name: PUBLIC_KEY
+    - string:
+        default: /root/.ssh/authorized_key
+        description: ''
+        name: KEYS_PATH
+    project-type: freestyle
+    properties:
+    - build-discarder:
+        artifact-days-to-keep: -1
+        artifact-num-to-keep: -1
+        days-to-keep: -1
+        num-to-keep: 5
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers:
+    - workspace-cleanup:
+        clean-if:
+        - success: true
+        - unstable: false
+        - failure: false
+        - not-built: false
+        - aborted: true
+        clean-parent: false
+        dirmatch: false
+        exclude: []
+        fail-build: true
+        include: []
+    scm:
+    - git:
+        branches:
+        - '*/$SCALE_CI_WATCHER_REPO_BRANCH'
+        url: $SCALE_CI_WATCHER_REPO
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - mask-passwords
+    - ansicolor:
+        colormap: xterm

@@ -1,6 +1,7 @@
 #!/usr/bin/env groovy
 
 def contact = "nelluri@redhat.com"
+def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
 def openshift_install = OPENSHIFT_INSTALL.toString().toUpperCase()
@@ -17,7 +18,6 @@ def mongodb_ycsb_test = MONGODB_YCSB_TEST.toString().toUpperCase()
 def podvertical = PODVERTICAL.toString().toUpperCase()
 def deployments_per_ns = DEPLOYMENTS_PER_NS.toString().toUpperCase()
 def ns_per_cluster = NS_PER_CLUSTER.toString().toUpperCase()
-def scale_ci_update_jobs = SCALE_CI_UPDATE_JOBS.toString().toUpperCase()
 def networking = NETWORKING.toString().toUpperCase()
 def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
@@ -31,8 +31,8 @@ node (node_label) {
 	}
 
 	// creates/updates jenkins jobs using the jjb templates
-	if (scale_ci_update_jobs == "TRUE") {
-		load "pipeline-scripts/scale_ci_update_jobs.groovy"
+	if (watcher == "TRUE") {
+		load "pipeline-scripts/scale_ci_watcher.groovy"
 	}
 
 	// stage to install openstack

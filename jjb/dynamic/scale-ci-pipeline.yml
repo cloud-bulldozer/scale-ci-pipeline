@@ -6,9 +6,9 @@
     name: SCALE-CI-PIPELINE
     parameters:
     - bool:
-        default: false
+        default: true
         description: ''
-        name: SCALE_CI_UPDATE_JOBS
+        name: SCALE_CI_WATCHER
     - bool:
         default: false
         description: ''
@@ -92,7 +92,7 @@
     - string:
         default: ''
         description: ''
-        name: JOBS_PROPERTY_FILE
+        name: SCALE_CI_WATCHER_PROPERTY_FILE
     - string:
         default: ''
         description: ''
