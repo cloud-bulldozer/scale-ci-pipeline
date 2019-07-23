@@ -53,7 +53,7 @@ OpenShift install | Installer | Installs OCP cluster | In progress | :heavy_chec
 Scale-ci-pipeline | Orchestrator | Orchestrates scale-ci job stages | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 Watcher | Onboards/updates workloads | Creates/updates jobs based on changes to the templates | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 Tooling | Tooling | Sets up pbench-agents to collect perf data | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-Conformance | OCP/kubernetes e2e tests | Checks if the OCP cluster is sane | In progress | :heavy_check_mark: | :heavy_check_mark: |  
+Conformance | OCP/kubernetes e2e tests | Checks if the OCP cluster is sane | :heavy_check_mark: | :x: | :heavy_check_mark: |  
 Scaleup | scaleup | Scales up OCP cluster to a desired node count | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Node Vertical | Kubelet performance and Cluster Limits | Creates max pods per compute node | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
 Master Vertical | Control plane density | Creates bunch of objects to stress ApiServer, Etcd and Controller | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  

@@ -8,7 +8,6 @@ def property_file_name = "conformance.properties"
 println "Current pipeline job build id is '${pipeline_id}'"
 
 // run conformance
-// use master host instead of jump host for conformance tests
 stage ('conformance') {
 		if (run_conformance == "TRUE") {
 		currentBuild.result = "SUCCESS"
@@ -22,41 +21,46 @@ stage ('conformance') {
 			sh "wget ${CONFORMANCE_PROPERTY_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
 			def conformance_properties = readProperties file: property_file_name
-			def master_hostname = conformance_properties['MASTER_HOSTNAME']
-			def user = conformance_properties['USER']
-			def enable_pbench = conformance_properties['ENABLE_PBENCH']
-			def use_proxy = conformance_properties['USE_PROXY']
-			def proxy_user = conformance_properties['PROXY_USER']
-			def proxy_host = conformance_properties['PROXY_HOST']
-			def token = conformance_properties['GITHUB_TOKEN']
-			def version = conformance_properties['OCP_4']
-
-			// debug info
-			println "----------USER DEFINED OPTIONS-------------------"
-			println "-------------------------------------------------"
-			println "-------------------------------------------------"
-			println "MASTER_HOSTNAME: '${master_hostname}'"
-			println "USER: '${user}'"
-			println "ENABLE_PBENCH: '${enable_pbench}'"
-			println "USE_PROXY: '${use_proxy}'"
-			println "PROXY_USER: '${proxy_user}'"
-			println "PROXY_HOST: '${proxy_host}'"
-			println "TOKEN: '${token}'"
-			println "-------------------------------------------------"
-			println "-------------------------------------------------"	
-		
-			// Run conformance job
+			def cluster_user = conformance_properties['CLUSTER_USER']
+			def cluster_password = conformance_properties['CLUSTER_PASSWORD']
+			def cluster_api_url = conformance_properties['CLUSTER_API_URL']
+			def sshkey_token = conformance_properties['SSHKEY_TOKEN']
+			def orchestration_host = conformance_properties['ORCHESTRATION_HOST']
+			def orchestration_user = conformance_properties['ORCHESTRATION_USER']
+			def workload_image = conformance_properties['WORKLOAD_IMAGE']
+			def workload_job_node_selector = conformance_properties['WORKLOAD_JOB_NODE_SELECTOR']
+			def workload_job_taint = conformance_properties['WORKLOAD_JOB_TAINT']
+			def workload_job_privileged = conformance_properties['WORKLOAD_JOB_PRIVILEGED']
+			def kubeconfig_file = conformance_properties['KUBECONFIG_FILE']
+			def pbench_instrumentation = conformance_properties['PBENCH_INSTRUMENTATION']
+			def enable_pbench_agents = conformance_properties['ENABLE_PBENCH_AGENTS']
+			def enable_pbench_copy = conformance_properties['ENABLE_PBENCH_COPY']
+			def pbench_server = conformance_properties['PBENCH_SERVER']
+			def scale_ci_results_token = conformance_properties['SCALE_CI_RESULTS_TOKEN']
+			def job_completion_poll_attempts = conformance_properties['JOB_COMPLETION_POLL_ATTEMPTS']	
+			def conformance_test_prefix = conformance_properties['CONFORMANCE_TEST_PREFIX']
+			
 			try {
-				conformance_build = build job: 'SVT_conformance',
+				conformance_build = build job: 'ATS-SCALE-CI-CONFORMANCE',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'StringParameterValue', name: 'MASTER_HOSTNAME', value: master_hostname ],
-						[$class: 'StringParameterValue', name: 'MASTER_USER', value: user ],
-						[$class: 'StringParameterValue', name: 'ENABLE_PBENCH', value: enable_pbench ],
-						[$class: 'BooleanParameterValue', name: 'USE_PROXY', value: Boolean.valueOf(use_proxy) ],
-						[$class: 'StringParameterValue', name: 'PROXY_USER', value: proxy_user ],
-						[$class: 'StringParameterValue', name: 'PROXY_HOST', value: proxy_host ],
-						[$class: 'BooleanParameterValue', name: 'OCP_4', value: Boolean.valueOf(version) ],
-						[$class: 'StringParameterValue', name: 'GITHUB_TOKEN', value: token ]]
+						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+						[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_NODE_SELECTOR', value: Boolean.valueOf(workload_job_node_selector) ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
+						[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
+						[$class: 'BooleanParameterValue', name: 'PBENCH_INSTRUMENTATION', value: Boolean.valueOf(pbench_instrumentation)  ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_AGENTS', value: Boolean.valueOf(enable_pbench_agents)  ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_COPY', value: Boolean.valueOf(enable_pbench_copy)  ],
+						[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ],
+						[$class: 'StringParameterValue', name: 'SCALE_CI_RESULTS_TOKEN', value: scale_ci_results_token ],
+						[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
+						[$class: 'StringParameterValue', name: 'CONFORMANCE_TEST_PREFIX', value: conformance_test_prefix ]]
 			} catch ( Exception e) {
 				echo "CONFORMANCE Job failed with the following error: "
 				echo "${e.getMessage()}"
