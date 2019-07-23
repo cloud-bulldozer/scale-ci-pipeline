@@ -50,6 +50,8 @@ $ ./scale-ci-linter.sh <path-to-the-template>
 Job   | OCP component/category | Description | Managed by scale-ci-watcher | OCP-3.X | OCP-4.X
 ----------------- | --------- | -------------------- | ----------- | ------------------ | ----------- |  
 OpenShift install | Installer | Installs OCP cluster | In progress | :heavy_check_mark: | In progress |  
+Scale-ci-pipeline | Orchestrator | Orchestrates scale-ci job stages | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+Watcher | Onboards/updates workloads | Creates/updates jobs based on changes to the templates | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 Tooling | Tooling | Sets up pbench-agents to collect perf data | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 Conformance | OCP/kubernetes e2e tests | Checks if the OCP cluster is sane | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 Scaleup | scaleup | Scales up OCP cluster to a desired node count | In progress | :heavy_check_mark: | :heavy_check_mark: |  

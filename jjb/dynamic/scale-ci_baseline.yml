@@ -36,7 +36,7 @@
       usage and check how the OCP product is moving<!-- Managed by Jenkins Job Builder
       -->
     disabled: false
-    name: BASELINE-SCALE-TEST
+    name: ATS-BASELINE-SCALE-TEST
     node: scale-ci
     parameters:
     - string:
