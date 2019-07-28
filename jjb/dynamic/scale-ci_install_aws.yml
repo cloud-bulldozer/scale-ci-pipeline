@@ -1,0 +1,311 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -o pipefail
+        set -eux
+
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        chmod 600 ${PRIVATE_KEY}
+
+        # Create inventory File:
+        echo "[orchestration]" > inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory
+
+        export ANSIBLE_FORCE_COLOR=true
+        ansible --version
+        time ansible-playbook -vv -i inventory OCP-4.X/install-on-aws.yml
+    concurrent: true
+    description: |
+      Installs and configures OCP 4.x cluster on AWS.
+      This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
+    disabled: false
+    name: ATS-SCALE-CI-OCP-AWS-DEPLOY
+    node: scale-ci
+    parameters:
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: ""
+        description: Host with the kubeconfig and oc client.
+        name: ORCHESTRATION_HOST
+    - password:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - bool:
+        default: false
+        description: destroys the cluster created using scale-ci-deploy.
+        name: OPENSHIFT_CLEANUP
+    - bool:
+        default: true
+        description: Installs OCP cluster on AWS.
+        name: OPENSHIFT_INSTALL
+    - bool:
+        default: true
+        description: Creates workload and infra nodes post install.
+        name: OPENSHIFT_POST_INSTALL
+    - bool:
+        default: true
+        description: Configures the cluster to enable running workloads.
+        name: OPENSHIFT_POST_CONFIG
+    - bool:
+        default: false
+        description: Enables debugging i.e ssh to the cluster nodes.
+        name: OPENSHIFT_DEBUG_CONFIG
+    - bool:
+        default: ''
+        description: OC client url.
+        name: OPENSHIFT_CLIENT_LOCATION
+    - string:
+        default: ''
+        description: Image to use for the ocp install.
+        name: OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE
+    - string:
+        default: "v1"
+        description: openshift apiversion
+        name: OPENSHIFT_INSTALL_APIVERSION
+    - string:
+        default: ""
+        description: Path to the public key to add to each openshift host.
+        name: OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE
+    - password:
+        default: ""
+        description: pull secret
+        name: OPENSHIFT_INSTALL_PULL_SECRET
+    - password:
+        default: ""
+        description: Registry token to talk to quay registry
+        name: OPENSHIFT_INSTALL_QUAY_REGISTRY_TOKEN
+    - string:
+        default: ""
+        description: Image registry to use to pull down the images
+        name: OPENSHIFT_INSTALL_IMAGE_REGISTRY
+    - password:
+        default: ""
+        description: Registry token to talk to the image registry registry being used
+        name: OPENSHIFT_INSTALL_REGISTRY_TOKEN
+    - bool:
+        default: false
+        description: Build the installer binary from source code
+        name: OPENSHIFT_INSTALL_INSTALLER_FROM_SOURCE
+    - string:
+        default: "master"
+        description: Source version to use to build the installer binary
+        name: OPENSHIFT_INSTALL_INSTALLER_FROM_SOURCE_VERSION
+    - string:
+        default: "/root/.go"
+        description: gopath
+        name: GOPATH
+    - string:
+        default: "default"
+        description: Default AWS profile to use.
+        name: AWS_PROFILE
+    - password:
+        default: ''
+        description: AWS access key id.
+        name: AWS_ACCESS_KEY_ID
+    - password:
+        default: ''
+        description: AWS secret access key.
+        name: AWS_SECRET_ACCESS_KEY
+    - string:
+        default: ""
+        description: AWS region to host the instances on which ocp is installed.
+        name: AWS_REGION
+    - string:
+        default: ""
+        description: Base domain for OCP install.
+        name: OPENSHIFT_BASE_DOMAIN
+    - string:
+        default: ""
+        description: openshift cluster name.
+        name: OPENSHIFT_CLUSTER_NAME
+    - string:
+        default: "3"
+        description: openshift master node count.
+        name: OPENSHIFT_MASTER_COUNT
+    - string:
+        default: "5"
+        description: openshift worker node count.
+        name: OPENSHIFT_WORKER_COUNT
+    - string:
+        default: "m5.large"
+        description: openshift master instance type.
+        name: OPENSHIFT_MASTER_INSTANCE_TYPE
+    - string:
+        default: "m5.large"
+        description: openshift worker instance type.
+        name: OPENSHIFT_WORKER_INSTANCE_TYPE
+    - string:
+        default: "64"
+        description: openshift master root volume size.
+        name: OPENSHIFT_MASTER_ROOT_VOLUME_SIZE
+    - string:
+        default: "gp2"
+        description: openshift master root volume type.
+        name: OPENSHIFT_MASTER_ROOT_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: openshift master root volume iops
+        name: OPENSHIFT_MASTER_ROOT_VOLUME_IOPS
+    - string:
+        default: "64"
+        description: openshift worker root volume size
+        name: OPENSHIFT_WORKER_ROOT_VOLUME_SIZE
+    - string:
+        default: "gp2"
+        description: openshift worker root volume type
+        name: OPENSHIFT_WORKER_ROOT_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: openshift worker root volume iops
+        name: OPENSHIFT_WORKER_ROOT_VOLUME_IOPS
+    - string:
+        default: "10.128.0.0/14"
+        description: openshift install cidr
+        name: OPENSHIFT_CIDR
+    - string:
+        default: "10.0.0.0/16"
+        description: openshift install machine cidr
+        name: OPENSHIFT_MACHINE_CIDR
+    - string:
+        default: "172.30.0.0/16"
+        description: openshift install service network
+        name: OPENSHIFT_SERVICE_NETWORK
+    - string:
+        default: "23"
+        description: openshift install host prefix
+        name: OPENSHIFT_HOST_PREFIX
+    - string:
+        default: "600"
+        description: Poll attempts to finish post install before failing
+        name: OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS
+    - bool:
+        default: true
+        description: Enables/disables infra node creation using machinesets
+        name: OPENSHIFT_TOGGLE_INFRA_NODE
+    - bool:
+        default: true
+        description: Enables/Disables dedicated workload node creation using machinesets
+        name: OPENSHIFT_TOGGLE_WORKLOAD_NODE
+    - string:
+        default: "machine.openshift.io"
+        description: Machineset label prefix
+        name: MACHINESET_METADATA_LABEL_PREFIX
+    - string:
+        default: "m5.large"
+        description: Infra node instance type
+        name: OPENSHIFT_INFRA_NODE_INSTANCE_TYPE
+    - string:
+        default: "m5.large"
+        description: Workload node instance type
+        name: OPENSHIFT_WORKLOAD_NODE_INSTANCE_TYPE
+    - string:
+        default: "64"
+        description: Infra node volume size
+        name: OPENSHIFT_INFRA_NODE_VOLUME_SIZE
+    - string:
+        default: "gp2"
+        description: Infra node volume type
+        name: OPENSHIFT_INFRA_NODE_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: Infra node volume IOPS
+        name: OPENSHIFT_INFRA_NODE_VOLUME_IOPS
+    - string:
+        default: "64"
+        description: Workload node volume size
+        name: OPENSHIFT_WORKLOAD_NODE_VOLUME_SIZE
+    - string:
+        default: "gp2"
+        description: Workload node volume type
+        name: OPENSHIFT_WORKLOAD_NODE_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: Workload node volume IOPS
+        name: OPENSHIFT_WORLOAD_NODE_VOLUME_IOPS
+    - string:
+        default: "15d"
+        description: Retention period for the prometheus data
+        name: OPENSHIFT_PROMETHEUS_RETENTION_PERIOD
+    - string:
+        default: "gp2"
+        description: Prometheus stprage class
+        name: OPENSHIFT_PROMETHEUS_STORAGE_CLASS
+    - string:
+        default: "10Gi"
+        description: Prometheus storage size
+        name: OPENSHIFT_PROMETHEUS_STORAGE_SIZE
+    - string:
+        default: "gp2"
+        description: Alertmanager storage class
+        name: OPENSHIFT_ALERTMANAGER_STORAGE_CLASS
+    - string:
+        default: "2Gi"
+        description: Alertmanager storage size
+        name: OPENSHIFT_ALERTMANAGER_STORAGE_SIZE
+    - string:
+        default: ""
+        description: Path to the auth dir where the kubeconfig exists, this var is used with flexy install jobs.
+        name: KUBECONFIG_AUTH_DIR_PATH
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/openshift-scale/scale-ci-deploy.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm

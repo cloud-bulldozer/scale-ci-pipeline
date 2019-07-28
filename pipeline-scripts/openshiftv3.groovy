@@ -3,11 +3,11 @@
 def contact = "nelluri@redhat.com"
 def pipeline_id = env.BUILD_ID
 def node_label = NODE_LABEL.toString()
-def run_job = OPENSHIFT_INSTALL.toString().toUpperCase()
+def run_job = OPENSHIFTv3_INSTALL.toString().toUpperCase()
 def job_name = "scale-ci_install_OpenShift"
 def stage_name = "openshift_install"
 def property_file_name = "openshift.properties"
-def property_file_uri = OPENSHIFT_PROPERTY_FILE.toString()
+def property_file_uri = OPENSHIFTv4_PROPERTY_FILE.toString()
 
 println("Current pipeline job id is '${pipeline_id}'")
 
