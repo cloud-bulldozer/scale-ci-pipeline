@@ -15,6 +15,7 @@ def logging = LOGGING_SCALE_TEST.toString().toUpperCase()
 def pgbench_test = PGBENCH_TEST.toString().toUpperCase()
 def prometheus_test = PROMETHEUS_TEST.toString().toUpperCase()
 def mongodb_ycsb_test = MONGODB_YCSB_TEST.toString().toUpperCase()
+def services_per_namespace = SERVICES_PER_NAMESPACE.toString().toUpperCase()
 def podvertical = PODVERTICAL.toString().toUpperCase()
 def deployments_per_ns = DEPLOYMENTS_PER_NS.toString().toUpperCase()
 def ns_per_cluster = NS_PER_CLUSTER.toString().toUpperCase()
@@ -73,6 +74,11 @@ node (node_label) {
 	// stage to run http scale test
 	if (http == "TRUE") {
 		load "pipeline-scripts/http.groovy"
+	}
+
+	// stage to run services per namespace test
+	if (services_per_namespace == "TRUE") {
+		load "pipeline-scripts/services_per_namespace.groovy"
 	}
 
 	// stage to run deployments per ns test

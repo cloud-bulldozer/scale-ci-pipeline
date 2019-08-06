@@ -44,6 +44,10 @@
     - bool:
         default: false
         description: ''
+        name: SERVICES_PER_NAMESPACE
+    - bool:
+        default: false
+        description: ''
         name: DEPLOYMENTS_PER_NS
     - bool:
         default: false
@@ -125,6 +129,10 @@
         default: ''
         description: ''
         name: HTTP_TEST_PROPERTY_FILE
+    - string:
+        default: ''
+        description: ''
+        name: SERVICES_PER_NAMESPACE_PROPERTY_FILE
     - string:
         default: ''
         description: ''
