@@ -20,75 +20,72 @@ stage('ns_per_cluster_scale_test') {
 			// get properties file
 			sh "wget ${NS_PER_CLUSTER_PROPERTY_FILE} -O ${property_file_name}"
                         sh "cat ${property_file_name}"
-			def ns_per_cluster_properties = readProperties file: property_file_name
-			def jump_host = ns_per_cluster_properties['JUMP_HOST']
-			def user = ns_per_cluster_properties['USER']
-			def tooling_inventory_path = ns_per_cluster_properties['TOOLING_INVENTORY']
-			def clear_results = ns_per_cluster_properties['CLEAR_RESULTS']
-			def move_results = ns_per_cluster_properties['MOVE_RESULTS']
-			def containerized = ns_per_cluster_properties['CONTAINERIZED']
-			def use_proxy = ns_per_cluster_properties['USE_PROXY']
-			def proxy_user = ns_per_cluster_properties['PROXY_USER']
-			def proxy_host = ns_per_cluster_properties['PROXY_HOST']
-			def projects = ns_per_cluster_properties['PROJECTS']
-			def setup_pbench = ns_per_cluster_properties['SETUP_PBENCH']
-			def first_run = ns_per_cluster_properties['FIRST_RUN_PROJECTS']
-			def second_run = ns_per_cluster_properties['SECOND_RUN_PROJECTS']
-			def third_run = ns_per_cluster_properties['THIRD_RUN_PROJECTS']
-			def repo = ns_per_cluster_properties['PERF_REPO']
-			def token = ns_per_cluster_properties['GITHUB_TOKEN']
-			def server = ns_per_cluster_properties['PBENCH_SERVER']
-			def mode = ns_per_cluster_properties['MODE']
-
-			// debug info
-			println "JUMP_HOST: '${jump_host}'"
-			println "USER: '${user}'"
-			println "TOOLING_INVENTORY_PATH: '${tooling_inventory_path}'"
-			println "CLEAR_RESULTS: '${clear_results}'"
-			println "MOVE_RESULTS: '${move_results}'"
-			println "CONTAINERIZED: '${containerized}'"
-			println "PROXY_USER: '${proxy_user}'"
-			println "PROXY_HOST: '${proxy_host}'"
-
-			// copy the parameters file to jump host
-			sh "git clone https://${token}@${repo} ${WORKSPACE}/perf-dept && chmod 600 ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf"
-			sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf ${property_file_name} root@${jump_host}:/root/properties"
-
-			// Run ns_per_clusterical job
+			def namespaces_per_cluster_properties = readProperties file: property_file_name
+			def cluster_user = namespaces_per_cluster_properties['CLUSTER_USER']
+			def cluster_password = namespaces_per_cluster_properties['CLUSTER_PASSWORD']
+			def cluster_api_url = namespaces_per_cluster_properties['CLUSTER_API_URL']
+			def sshkey_token = namespaces_per_cluster_properties['SSHKEY_TOKEN']
+			def orchestration_host = namespaces_per_cluster_properties['ORCHESTRATION_HOST']
+			def orchestration_user = namespaces_per_cluster_properties['ORCHESTRATION_USER']
+			def workload_image = namespaces_per_cluster_properties['WORKLOAD_IMAGE']
+			def workload_job_node_selector = namespaces_per_cluster_properties['WORKLOAD_JOB_NODE_SELECTOR']
+			def workload_job_taint = namespaces_per_cluster_properties['WORKLOAD_JOB_TAINT']
+			def workload_job_privileged = namespaces_per_cluster_properties['WORKLOAD_JOB_PRIVILEGED']
+			def kubeconfig_file = namespaces_per_cluster_properties['KUBECONFIG_FILE']
+			def pbench_instrumentation = namespaces_per_cluster_properties['PBENCH_INSTRUMENTATION']
+			def enable_pbench_agents = namespaces_per_cluster_properties['ENABLE_PBENCH_AGENTS']
+			def enable_pbench_copy = namespaces_per_cluster_properties['ENABLE_PBENCH_COPY']
+			def pbench_server = namespaces_per_cluster_properties['PBENCH_SERVER']
+			def scale_ci_results_token = namespaces_per_cluster_properties['SCALE_CI_RESULTS_TOKEN']
+			def job_completion_poll_attempts = namespaces_per_cluster_properties['JOB_COMPLETION_POLL_ATTEMPTS']
+			def namespaces_per_cluster_test_prefix = namespaces_per_cluster_properties['NAMESPACES_PER_CLUSTER_TEST_PREFIX']
+			def namespaces_per_cluster_cleanup = namespaces_per_cluster_properties['NAMESPACES_PER_CLUSTER_CLEANUP']
+			def namespaces_per_cluster_basename = namespaces_per_cluster_properties['NAMESPACES_PER_CLUSTER_BASENAME']
+			def namespaces_per_cluster_projects = namespaces_per_cluster_properties['NAMESPACES_PER_CLUSTER_PROJECTS']
+			def namespaces_per_cluster_count = namespaces_per_cluster_properties['NAMESPACES_PER_CLUSTER_COUNT']
+			def expected_namespaces_per_cluster_duration = namespaces_per_cluster_properties['EXPECTED_NAMESPACES_PER_CLUSTER_DURATION']
+	
+			// Run namespaces per cluster job
 			try {
-				ns_per_clusterical_build = build job: 'NS_PER_CLUSTER',
+				ns_per_clusterical_build = build job: 'ATS-SCALE-CI-NAMESPACES-PER-CLUSTER',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'StringParameterValue', name: 'JUMP_HOST', value: jump_host ],
-						[$class: 'StringParameterValue', name: 'USER', value: user ],
-						[$class: 'StringParameterValue', name: 'TOOLING_INVENTORY', value: tooling_inventory_path ],
-						[$class: 'BooleanParameterValue', name: 'CLEAR_RESULTS', value: Boolean.valueOf(clear_results) ],
-						[$class: 'BooleanParameterValue', name: 'MOVE_RESULTS', value: Boolean.valueOf(move_results) ],
-						[$class: 'BooleanParameterValue', name: 'CONTAINERIZED', value: Boolean.valueOf(containerized) ],
-						[$class: 'BooleanParameterValue', name: 'SETUP_PBENCH', value: Boolean.valueOf(setup_pbench) ],
-						[$class: 'StringParameterValue', name: 'PROXY_USER', value: proxy_user ],
-						[$class: 'StringParameterValue', name: 'PROXY_HOST', value: proxy_host ],
-						[$class: 'BooleanParameterValue', name: 'USE_PROXY', value: Boolean.valueOf(use_proxy) ],
-						[$class: 'BooleanParameterValue', name: 'SETUP_PBENCH', value: Boolean.valueOf(setup_pbench) ],
-						[$class: 'StringParameterValue', name: 'FIRST_RUN_PROJECTS', value: first_run ],
-						[$class: 'StringParameterValue', name: 'SECOND_RUN_PROJECTS', value: second_run ],
-						[$class: 'StringParameterValue', name: 'GITHUB_TOKEN', value: token ],
-						[$class: 'StringParameterValue', name: 'MODE', value: mode ],
-						[$class: 'StringParameterValue', name: 'THIRD_RUN_PROJECTS', value: third_run ]]
+				[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
+				[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
+				[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
+				[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+				[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+				[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+				[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
+				[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_NODE_SELECTOR', value: Boolean.valueOf(workload_job_node_selector) ],
+				[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
+				[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
+				[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
+				[$class: 'BooleanParameterValue', name: 'PBENCH_INSTRUMENTATION', value: Boolean.valueOf(pbench_instrumentation)  ],
+				[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_AGENTS', value: Boolean.valueOf(enable_pbench_agents)  ],
+				[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_COPY', value: Boolean.valueOf(enable_pbench_copy)  ],
+				[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ],
+				[$class: 'StringParameterValue', name: 'SCALE_CI_RESULTS_TOKEN', value: scale_ci_results_token ],
+				[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
+				[$class: 'StringParameterValue', name: 'NAMESPACES_PER_CLUSTER_TEST_PREFIX', value: namespaces_per_cluster_test_prefix ],
+				[$class: 'BooleanParameterValue', name: 'NAMESPACES_PER_CLUSTER_CLEANUP', value: Boolean.valueOf(namespaces_per_cluster_cleanup)  ],
+				[$class: 'StringParameterValue', name: 'NAMESPACES_PER_CLUSTER_BASENAME', value: namespaces_per_cluster_basename ],
+				[$class: 'StringParameterValue', name: 'NAMESPACES_PER_CLUSTER_COUNT', value: namespaces_per_cluster_count ],
+				[$class: 'StringParameterValue', name: 'EXPECTED_NAMESPACES_PER_CLUSTER_DURATION', value: expected_namespaces_per_cluster_duration ]] 
 			} catch ( Exception e) {
 				echo "NS_PER_CLUSTER Job failed with the following error: "
 				echo "${e.getMessage()}"
 				echo "Sending an email"
 				mail(
       					to: 'nelluri@redhat.com',
-      					subject: 'NS_PER_CLUSTER job failed',
+      					subject: 'ATS-SCALE-CI-NAMESPACES-PER-CLUSTER job failed',
       					body: """\
-						Encoutered an error while running the ns_per_clusterical-scale-test job: ${e.getMessage()}\n\n
+						Encoutered an error while running the ATS-SCALE-CI-NAMESPACES-PER-CLUSTER job: ${e.getMessage()}\n\n
 						Jenkins job: ${env.BUILD_URL}
 				""")
 				currentBuild.result = "FAILURE"
 				sh "exit 1"
 			}
-			println "NS_PER_CLUSTER build ${ns_per_clusterical_build.getNumber()} completed successfully"
+			println "ATS-SCALE-CI-NAMESPACES-PER-CLUSTER build ${ns_per_clusterical_build.getNumber()} completed successfully"
 		}
 	}
 }

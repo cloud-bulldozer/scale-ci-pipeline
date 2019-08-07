@@ -201,7 +201,7 @@
           - '*master'
           url: https://github.com/openshift-scale/scale-ci-pipeline.git
           wipe-workspace: true
-      script-path: scale-ci/Jenkinsfile
+      script-path: Jenkinsfile
     project-type: pipeline
     properties:
     - raw:
