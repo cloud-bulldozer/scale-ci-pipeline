@@ -4,12 +4,14 @@ def contact = "nelluri@redhat.com"
 def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
-def openshift_install = OPENSHIFT_INSTALL.toString().toUpperCase()
+def openshiftv4_install = OPENSHIFTv4_INSTALL.toString().toUpperCase()
+def openshiftv3_install = OPENSHIFTv3_INSTALL.toString().toUpperCase()
+def ocpv3_scaleup = OPENSHIFTv3_SCALEUP.toString().toUpperCase()
+def ocpv4_scaleup = OPENSHIFTv4_SCALEUP.toString().toUpperCase()
 def nodevertical = NODEVERTICAL_SCALE_TEST.toString().toUpperCase()
 def mastervertical = MASTERVERTICAL_SCALE_TEST.toString().toUpperCase()
 def install_openstack = OPENSTACK_INSTALL.toString().toUpperCase()
 def browbeat = BROWBEAT_INSTALL.toString().toUpperCase()
-def scaleup = OPENSHIFT_SCALEUP.toString().toUpperCase()
 def http = HTTP_TEST.toString().toUpperCase()
 def logging = LOGGING_SCALE_TEST.toString().toUpperCase()
 def pgbench_test = PGBENCH_TEST.toString().toUpperCase()
@@ -22,7 +24,6 @@ def ns_per_cluster = NS_PER_CLUSTER.toString().toUpperCase()
 def networking = NETWORKING.toString().toUpperCase()
 def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
-def ocp4_scaleup = OPENSHIFT4_SCALEUP.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 
 node (node_label) {
@@ -46,9 +47,14 @@ node (node_label) {
 		load "pipeline-scripts/browbeat.groovy"
 	}
 
-	// stage to install openshift
-	if (openshift_install == "TRUE") {
-		load "pipeline-scripts/openshift.groovy"
+	// stage to install openshift 3.x
+	if (openshiftv3_install == "TRUE") {
+		load "pipeline-scripts/openshiftv3.groovy"
+	}
+
+	// stage to install openshift 4.x
+	if (openshiftv4_install == "TRUE") {
+		load "pipeline-scripts/openshiftv4.groovy"
 	}
 
 	// stage to setup pbench
@@ -62,8 +68,13 @@ node (node_label) {
 	}
 
 	// stage to scaleup the cluster
-	if (scaleup == "TRUE") {
+	if (ocpv3_scaleup == "TRUE") {
 		load "pipeline-scripts/scaleup.groovy"
+	}
+
+	// stage to run OCP 4.X scaleup
+	if (ocpv4_scaleup == "TRUE") {
+		load "pipeline-scripts/scaleup_4.x.groovy"
 	}
 
 	// stage to run nodevertical scale test
@@ -129,11 +140,6 @@ node (node_label) {
 	// stage to run BYO scale test
 	if (byo == "TRUE") {
 		load "pipeline-scripts/byo.groovy"
-	}
-
-	// stage to run OCP 4.X scaleup
-	if (ocp4_scaleup == "TRUE") {
-		load "pipeline-scripts/scaleup_4.x.groovy"
 	}
 
 	// stage to run baseline test
