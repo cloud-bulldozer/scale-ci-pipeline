@@ -4,10 +4,10 @@ def contact = "nelluri@redhat.com"
 def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
-def openshiftv4_install = OPENSHIFTv4_INSTALL.toString().toUpperCase()
-def openshiftv3_install = OPENSHIFTv3_INSTALL.toString().toUpperCase()
-def ocpv3_scale = OPENSHIFTv3_SCALE.toString().toUpperCase()
-def ocpv4_scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
+def openshiftv4_install_on_aws = OPENSHIFTv4_INSTALL_ON_AWS.toString().toUpperCase()
+def openshiftv4_install_on_azure = OPENSHIFTv4_INSTALL_ON_AZURE.toString().toUpperCase()
+def ocpv3_scaleup = OPENSHIFTv3_SCALEUP.toString().toUpperCase()
+def ocpv4_scaleup = OPENSHIFTv4_SCALEUP.toString().toUpperCase()
 def nodevertical = NODEVERTICAL_SCALE_TEST.toString().toUpperCase()
 def mastervertical = MASTERVERTICAL_SCALE_TEST.toString().toUpperCase()
 def install_openstack = OPENSTACK_INSTALL.toString().toUpperCase()
@@ -52,9 +52,14 @@ node (node_label) {
 		load "pipeline-scripts/openshiftv3.groovy"
 	}
 
-	// stage to install openshift 4.x
-	if (openshiftv4_install == "TRUE") {
-		load "pipeline-scripts/openshiftv4.groovy"
+	// stage to install openshift 4.x on AWS
+	if (openshiftv4_install_on_aws == "TRUE") {
+		load "pipeline-scripts/openshiftv4_on_aws.groovy"
+	}
+
+	// stage to install openshift 4.x on Azure
+	if (openshiftv4_install_on_azure == "TRUE") {
+		load "pipeline-scripts/openshiftv4_on_azure.groovy"
 	}
 
 	// stage to setup pbench
