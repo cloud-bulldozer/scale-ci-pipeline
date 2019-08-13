@@ -1,0 +1,181 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -o pipefail
+        set -eux
+
+        # Disable logging
+        set +x
+        oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL}
+        # Re-enable logging
+        set -x
+
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        chmod 600 ${PRIVATE_KEY}
+
+        # Create inventory File:
+        echo "[orchestration]" > inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory
+
+        export ANSIBLE_FORCE_COLOR=true
+        ansible --version
+        time ansible-playbook -vv -i inventory workloads/scale.yml
+
+        oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-scale
+
+        oc get job -n scale-ci-tooling scale-ci-scale -o json | jq -e '.status.succeeded==1'
+    concurrent: true
+    description: |
+      This job gets the  OpenShift cluster to the desired node count.
+      This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
+    disabled: false
+    name: ATS-SCALE-CI-SCALE
+    node: scale-ci
+    parameters:
+    - string:
+        default: "kubeadmin"
+        description: User name to access cluster.
+        name: CLUSTER_USER
+    - string:
+        default: ""
+        description: Password for CLUSTER_USER to access cluster.
+        name: CLUSTER_PASSWORD
+    - string:
+        default: ""
+        description: The URL address to the openshift cluster to login to.
+        name: CLUSTER_API_URL
+    - string:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - string:
+        default: "localhost"
+        description: The machine intended to run the oc commands and launch the workload.
+        name: ORCHESTRATION_HOST
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: "quay.io/openshift-scale/scale-ci-workload"
+        description: Container image that runs the workload script.
+        name: WORKLOAD_IMAGE
+    - bool:
+        default: true
+        description: Enables/disables the node selector that places the workload job on the `pbench` node.
+        name: WORKLOAD_JOB_NODE_SELECTOR
+    - bool:
+        default: true
+        description: Enables/disables the toleration on the workload job to permit the `controller` taint.
+        name: WORKLOAD_JOB_TAINT
+    - bool:
+        default: false
+        description: Enables/disables running the workload pod as privileged.
+        name: WORKLOAD_JOB_PRIVILEGED
+    - string:
+        default: "/root/.kube/config"
+        description: Location of kubeconfig on orchestration host.
+        name: KUBECONFIG_FILE
+    - bool:
+        default: false
+        description: Enables/disables running the workload wrapped by pbench-user-benchmark. When enabled, pbench agents can then be enabled (ENABLE_PBENCH_AGENTS) for further instrumentation data and pbench-copy-results can be enabled (ENABLE_PBENCH_COPY) to export captured data for further analysis.
+        name: PBENCH_INSTRUMENTATION
+    - bool:
+        default: false
+        description: Enables/disables the collection of pbench data on the pbench agent pods. These pods are deployed by the tooling playbook.
+        name: ENABLE_PBENCH_AGENTS
+    - bool:
+        default: false
+        description: Enables/disables the copying of pbench data to a remote results server for further analysis.
+        name: ENABLE_PBENCH_COPY
+    - string:
+        default: ""
+        description: DNS address of the pbench results server.
+        name: PBENCH_SERVER
+    - string:
+        default: ""
+        description: Future use for pbench and prometheus scraper to place results into git repo that holds results data.
+        name: SCALE_CI_RESULTS_TOKEN
+    - string:
+        default: 0
+        description: Number of retries for Ansible to poll if the workload job has completed. Poll attempts delay 10s between polls with some additional time taken for each polling action depending on the orchestration host setup.
+        name: JOB_COMPLETION_POLL_ATTEMPTS
+    - string:
+        default: "scale"
+        description: Test to prefix the pbench results.
+        name: SCALE_TEST_PREFIX
+    - string:
+        default: "machine.openshift.io"
+        description: Depending on the release/build the openshift-machine-api may use a different prefix for the metadata label used to determine the cluster name. This is either machine.openshift.io or sigs.k8s.io
+        name: SCALE_METADATA_PREFIX
+    - string:
+        default: "5"
+        description:  Number of worker nodes to scale to. They will be spread as evenly as possible across 4 availability zones.
+        name: SCALE_WORKER_COUNT
+    - string:
+        default: "600"
+        description: Number of times to poll to determine if "Ready" worker count has scaled. Each poll has a 2 second sleep between polling attempts
+        name: SCALE_POLL_ATTEMPTS
+    - string:
+        default: "600"
+        description:  Pass/fail criteria. Value to determine if scale workload executed in duration expected
+        name: EXPECTED_SCALE_DURATION
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/openshift-scale/workloads.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm
