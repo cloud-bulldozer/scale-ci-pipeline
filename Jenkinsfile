@@ -6,8 +6,8 @@ def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
 def openshiftv4_install = OPENSHIFTv4_INSTALL.toString().toUpperCase()
 def openshiftv3_install = OPENSHIFTv3_INSTALL.toString().toUpperCase()
-def ocpv3_scaleup = OPENSHIFTv3_SCALEUP.toString().toUpperCase()
-def ocpv4_scaleup = OPENSHIFTv4_SCALEUP.toString().toUpperCase()
+def ocpv3_scale = OPENSHIFTv3_SCALE.toString().toUpperCase()
+def ocpv4_scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
 def nodevertical = NODEVERTICAL_SCALE_TEST.toString().toUpperCase()
 def mastervertical = MASTERVERTICAL_SCALE_TEST.toString().toUpperCase()
 def install_openstack = OPENSTACK_INSTALL.toString().toUpperCase()
@@ -68,13 +68,13 @@ node (node_label) {
 	}
 
 	// stage to scaleup the cluster
-	if (ocpv3_scaleup == "TRUE") {
-		load "pipeline-scripts/scaleup.groovy"
+	if (ocpv3_scale == "TRUE") {
+		load "pipeline-scripts/openshiftv3_scale.groovy"
 	}
 
 	// stage to run OCP 4.X scaleup
-	if (ocpv4_scaleup == "TRUE") {
-		load "pipeline-scripts/scaleup_4.x.groovy"
+	if (ocpv4_scale == "TRUE") {
+		load "pipeline-scripts/openshiftv4_scale.groovy"
 	}
 
 	// stage to run nodevertical scale test

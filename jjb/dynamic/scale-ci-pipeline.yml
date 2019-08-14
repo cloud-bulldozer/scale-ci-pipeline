@@ -36,11 +36,11 @@
     - bool:
         default: false
         description: ''
-        name: OPENSHIFTv3_SCALEUP
+        name: OPENSHIFTv3_SCALE
     - bool:
         default: false
         description: ''
-        name: OPENSHIFTv4_SCALEUP
+        name: OPENSHIFTv4_SCALE
     - bool:
         default: false
         description: ''
@@ -128,11 +128,11 @@
     - string:
         default: ''
         description: ''
-        name: OPENSHIFTv3_SCALEUP_PROPERTY_FILE
+        name: OPENSHIFTv3_SCALE_PROPERTY_FILE
     - string:
         default: ''
         description: ''
-        name: OPENSHIFTv4_SCALEUP_PROPERTY_FILE
+        name: OPENSHIFTv4_SCALE_PROPERTY_FILE
     - string:
         default: ''
         description: ''
