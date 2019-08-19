@@ -31,7 +31,7 @@ stage ('tooling') {
 			def pbench_server = tooling_properties['PBENCH_SERVER']
 
 			try {
-				tooling_build = build job: 'SETUP-TOOLING',
+				tooling_build = build job: 'ATS-SCALE-CI-TOOLING',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
 						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
 						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
