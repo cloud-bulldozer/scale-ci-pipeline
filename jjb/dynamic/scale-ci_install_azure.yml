@@ -58,7 +58,7 @@
         default: false
         description: Enables debugging i.e ssh to the cluster nodes.
         name: OPENSHIFT_DEBUG_CONFIG
-    - bool:
+    - string:
         default: ''
         description: Location to download and unpack the OpenShift client tool `oc`. The latest client can be found [https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/](https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/)
         name: OPENSHIFT_CLIENT_LOCATION
@@ -104,15 +104,15 @@
         name: GOPATH
     - password:
         default: ''
-        description: The id of the subscription to GCP to use. Use `az account show` to find id
+        description: The id of the subscription to Azure to use. Use `az account show` to find id
         name: AZURE_SUBSCRIPTION_ID
     - password:
         default: ''
-        description: The GCP tenantId from `az account show`
+        description: The Azure tenantId from `az account show`
         name: AZURE_TENANT_ID
     - password:
         default: ''
-        description: The GCP service principal id to use for this cluster. Create a service principal (one time) with `az ad sp create-for-rbac --role Owner --name test-sp`
+        description: The Azure service principal id to use for this cluster. Create a service principal (one time) with `az ad sp create-for-rbac --role Owner --name test-sp`
         name: AZURE_SERVICE_PRINCIPAL_CLIENT_ID
     - password:
         default: ""
@@ -124,7 +124,7 @@
         name: AZURE_BASE_DOMAIN_RESOURCE_GROUP_NAME
     - string:
         default: ""
-        description: "The GCP region to install on to. Example: `centralus`"
+        description: "The Azure region to install on to. Example: `centralus`"
         name: AZURE_REGION
     - string:
         default: ""
