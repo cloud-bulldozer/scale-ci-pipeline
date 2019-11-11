@@ -32,6 +32,8 @@ stage ('SCALE-CI-WATCHER') {
 			def add_public_key = watcher_properties['ADD_PUBLIC_KEY']
 			def public_key = watcher_properties['PUBLIC_KEY']
 			def keys_path = watcher_properties['KEYS_PATH']
+			def jenkins_user = watcher_properties['JENKINS_USER']
+			def jenkins_password = watcher_properties['JENKINS_PASSWORD']
 					
 			// Run scale-ci-watcher job
 			try {
@@ -43,7 +45,9 @@ stage ('SCALE-CI-WATCHER') {
                                                 [$class: 'StringParameterValue', name: 'UPDATE_SCALE_CI_JOBS', value: update_scale_ci_jobs ],
                                                 [$class: 'StringParameterValue', name: 'ADD_PUBLIC_KEY', value: add_public_key ],
                                                 [$class: 'StringParameterValue', name: 'PUBLIC_KEY', value: public_key ],
-                                                [$class: 'StringParameterValue', name: 'KEYS_PATH', value: keys_path ]]
+                                                [$class: 'StringParameterValue', name: 'KEYS_PATH', value: keys_path ],
+                                                [$class: 'hudson.model.PasswordParameterValue', name: 'JENKINS_USER', value: jenkins_user ],
+                                                [$class: 'hudson.model.PasswordParameterValue', name: 'JENKINS_PASSWORD', value: jenkins_password ]]
 				println("${job_name} build ${jobs_build.getNumber()} completed successfully!")
 			} catch ( Exception e) {
 				echo "{job_name} Job failed with the following error: "

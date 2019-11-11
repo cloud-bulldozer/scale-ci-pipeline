@@ -8,7 +8,11 @@
 
         # Disable logging
         set +x
-        oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL}
+        if [[ $SKIP_TLS_VERIFICATION ]]; then
+          oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL} --insecure-skip-tls-verify
+        else
+          oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL}
+        fi
         # Re-enable logging
         set -x
 
@@ -38,6 +42,10 @@
     name: ATS-SCALE-CI-MASTERVERTICAL
     node: scale-ci
     parameters:
+    - bool:
+       default: true
+       description: skips tls verification during oc login
+       name: SKIP_TLS_VERIFICATION
     - string:
         default: "kubeadmin"
         description: User name to access cluster.

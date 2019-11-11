@@ -21,6 +21,7 @@ stage ('ATS-SCALE-CI-SERVICES-PER-NAMESPACE') {
 			sh "wget ${SERVICES_PER_NAMESPACE_PROPERTY_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
 			def services_per_namespace_properties = readProperties file: property_file_name
+			def skip_tls = services_per_namespace_properties['SKIP_TLS_VERIFICATION']
 			def cluster_user = services_per_namespace_properties['CLUSTER_USER']
 			def cluster_password = services_per_namespace_properties['CLUSTER_PASSWORD']
 			def cluster_api_url = services_per_namespace_properties['CLUSTER_API_URL']
@@ -49,6 +50,7 @@ stage ('ATS-SCALE-CI-SERVICES-PER-NAMESPACE') {
 			try {
 				services_per_namespace_build = build job: 'ATS-SCALE-CI-TEST',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
+						[$class: 'BooleanParameterValue', name: 'SKIP_TLS_VERIFICATION', value: Boolean.valueOf(skip_tls) ],
 						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
 						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
 						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
