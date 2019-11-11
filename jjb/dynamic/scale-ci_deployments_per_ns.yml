@@ -8,7 +8,7 @@
 
         # Disable logging
         set +x
-        oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL}
+        oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL} --insecure-skip-tls-verify
         # Re-enable logging
         set -x
 

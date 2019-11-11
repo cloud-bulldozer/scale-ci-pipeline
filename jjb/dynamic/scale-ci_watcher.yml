@@ -3,7 +3,7 @@
     block-upstream: false
     builders:
     - shell: |-
-        set -exo pipefail
+        set -eo pipefail
 
         export SCALE_CI_WATCHER_REPO_PATH=$WORKSPACE
         export JJB_CONFIG_PATH=$WORKSPACE/config/jjb.ini
@@ -22,6 +22,10 @@
     name: ATS-SCALE-CI-WATCHER
     node: scale-ci
     parameters:
+    - bool:
+       default: true
+       description: skips tls verification during oc login
+       name: SKIP_TLS_VERIFICATION
     - string:
         default: ''
         description: ''
@@ -50,6 +54,14 @@
         default: /root/.ssh/authorized_key
         description: ''
         name: KEYS_PATH
+    - password:
+        default: ''
+        description: ''
+        name: JENKINS_USER
+    - password:
+        default: ''
+        description: ''
+        name: JENKINS_PASSWORD
     project-type: freestyle
     properties:
     - build-discarder:

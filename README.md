@@ -18,7 +18,7 @@ NOTE: This is also maintained at [openshift/aos-cd-jobs repo](https://github.com
 - Scale-ci-watcher
 - Scale-ci-linter
 
-![Scale-CI workflow](images/scale-ci-workflow.png)
+![Scale-CI workflow](images/scale-ci-architecture.png)
 
 
 ### Properties files
