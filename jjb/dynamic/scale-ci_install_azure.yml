@@ -17,7 +17,7 @@
 
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
-        time ansible-playbook -vv -i inventory OCP-4.X/install-on-azure.yml
+        time ansible-playbook -vv -i inventory OCP-4.X/install-on-azure.yml | tee $(date +"%Y%m%d-%H%M%S")-install.timing
     concurrent: true
     description: |
       Installs and configures OCP 4.x cluster on Azure.
@@ -279,7 +279,14 @@
           <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
           <paramsToUseForLimit />
           </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-    publishers: []
+    publishers:
+    - archive:
+        allow-empty: true
+        artifacts: '*timing,scale-ci-azure-artifacts/kubeconfig,scale-ci-azure-artifacts/openshift_install.log'
+        case-sensitive: true
+        default-excludes: true
+        fingerprint: false
+        only-if-success: false
     scm:
     - git:
         branches:
