@@ -44,7 +44,7 @@
         name: OPENSHIFT_CLEANUP
     - bool:
         default: true
-        description: Installs OCP cluster on AWS.
+        description: Installs OCP cluster on Azure.
         name: OPENSHIFT_INSTALL
     - bool:
         default: true

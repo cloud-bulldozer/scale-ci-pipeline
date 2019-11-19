@@ -85,7 +85,7 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_POST_INSTALL', value: Boolean.valueOf(openshift_post_install) ],
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_POST_CONFIG', value: Boolean.valueOf(openshift_post_config) ],
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_DEBUG_CONFIG', value: Boolean.valueOf(openshift_debug_config) ],
-						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_CLIENT_LOCATION', value: openshift_oc_client_url ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_CLIENT_LOCATION', value: openshift_oc_client_url ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_APIVERSION', value: openshift_install_apiversion ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE', value: openshift_install_ssh_pub_key_file ],
