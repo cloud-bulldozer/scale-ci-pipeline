@@ -67,6 +67,10 @@
         description: Image to use for the ocp install.
         name: OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE
     - string:
+        default: ''
+        description: Link to the binary url tarball to extract the openshift-install from. Find the latest builds at https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview.
+        name: OPENSHIFT_INSTALL_BINARY_URL
+    - string:
         default: "v1"
         description: openshift apiversion
         name: OPENSHIFT_INSTALL_APIVERSION
@@ -282,7 +286,7 @@
     publishers:
     - archive:
         allow-empty: true
-        artifacts: '*timing,scale-ci-azure-artifacts/kubeconfig,scale-ci-azure-artifacts/openshift_install.log'
+        artifacts: '*timing,OCP-4.X/scale-ci-azure-artifacts/kubeconfig,OCP-4.X/scale-ci-azure-artifacts/openshift_install.log'
         case-sensitive: true
         default-excludes: true
         fingerprint: false

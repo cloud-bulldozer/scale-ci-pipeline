@@ -30,6 +30,7 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_debug_config = openshiftv4_properties['OPENSHIFT_DEBUG_CONFIG']
 			def openshift_oc_client_url = openshiftv4_properties['OPENSHIFT_CLIENT_LOCATION']
 			def openshift_install_release_image_override = openshiftv4_properties['OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE']
+			def openshift_install_binary_url = openshiftv4_properties['OPENSHIFT_INSTALL_BINARY_URL']
 			def openshift_install_apiversion = openshiftv4_properties['OPENSHIFT_INSTALL_APIVERSION']
 			def openshift_install_ssh_pub_key_file = openshiftv4_properties['OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE']
 			def openshift_install_pull_secret = openshiftv4_properties['OPENSHIFT_INSTALL_PULL_SECRET']
@@ -91,9 +92,10 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_DEBUG_CONFIG', value: Boolean.valueOf(openshift_debug_config) ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_CLIENT_LOCATION', value: openshift_oc_client_url ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_BINARY_URL', value: openshift_install_binary_url ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_APIVERSION', value: openshift_install_apiversion ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE', value: openshift_install_ssh_pub_key_file ],
-                                                [$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_INSTALL_PULL_SECRET', value: openshift_install_pull_secret ],
+						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_INSTALL_PULL_SECRET', value: openshift_install_pull_secret ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_INSTALL_QUAY_REGISTRY_TOKEN', value: openshift_install_quay_registry_token ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_IMAGE_REGISTRY', value: openshift_install_image_registry ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_INSTALL_REGISTRY_TOKEN', value: openshift_install_registry_token ],
