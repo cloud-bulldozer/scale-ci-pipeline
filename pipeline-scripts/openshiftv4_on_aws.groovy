@@ -58,6 +58,7 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_worker_root_volume_iops = openshiftv4_properties['OPENSHIFT_WORKER_ROOT_VOLUME_IOPS']
 			def openshift_cidr = openshiftv4_properties['OPENSHIFT_CIDR']
 			def openshift_machine_cidr = openshiftv4_properties['OPENSHIFT_MACHINE_CIDR']
+                        def openshift_network_type = openshiftv4_properties['OPENSHIFT_NETWORK_TYPE']  
 			def openshift_service_network = openshiftv4_properties['OPENSHIFT_SERVICE_NETWORK']
 			def openshift_host_prefix = openshiftv4_properties['OPENSHIFT_HOST_PREFIX']
                         def openshift_post_install_poll_attempts = openshiftv4_properties['OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS']
@@ -118,6 +119,7 @@ stage ('OCP 4.X INSTALL') {
                                                 [$class: 'StringParameterValue', name: 'OPENSHIFT_WORKER_ROOT_VOLUME_IOPS', value: openshift_worker_root_volume_iops ],
                                                 [$class: 'StringParameterValue', name: 'OPENSHIFT_CIDR', value: openshift_cidr ],
                                                 [$class: 'StringParameterValue', name: 'OPENSHIFT_MACHINE_CIDR', value: openshift_machine_cidr ],
+                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_NETWORK_TYPE', value: openshift_network_type ],
                                                 [$class: 'StringParameterValue', name: 'OPENSHIFT_SERVICE_NETWORK', value: openshift_service_network ],
                                                 [$class: 'StringParameterValue', name: 'OPENSHIFT_HOST_PREFIX', value: openshift_host_prefix ],
                                                 [$class: 'StringParameterValue', name: 'OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS', value: openshift_post_install_poll_attempts ],
