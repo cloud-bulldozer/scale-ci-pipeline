@@ -110,6 +110,8 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_CLUSTER_NAME', value: openshift_cluster_name ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_COUNT', value: openshift_master_count ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKER_COUNT', value: openshift_worker_count ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_INSTANCE_TYPE', value: openshift_master_instance_type ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKER_INSTANCE_TYPE', value: openshift_worker_instance_type ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_ROOT_VOLUME_SIZE', value: openshift_master_root_volume_size ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_ROOT_VOLUME_TYPE', value: openshift_master_root_volume_type ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_ROOT_VOLUME_IOPS', value: openshift_master_root_volume_iops ],
