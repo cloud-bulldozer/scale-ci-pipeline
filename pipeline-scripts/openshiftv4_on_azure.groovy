@@ -45,7 +45,7 @@ stage ('OCP 4.X INSTALL') {
 			def azure_tenant_id = openshiftv4_properties['AZURE_TENANT_ID']
 			def azure_service_principal_client_id = openshiftv4_properties['AZURE_SERVICE_PRINCIPAL_CLIENT_ID']
 			def azure_service_principal_client_secret = openshiftv4_properties['AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET']
-                        def azure_base_domain_resource_group_name = openshiftv4_properties['AZURE_BASE_DOMAIN_RESOURCE_GROUP_NAME']
+			def azure_base_domain_resource_group_name = openshiftv4_properties['AZURE_BASE_DOMAIN_RESOURCE_GROUP_NAME']
 			def azure_region = openshiftv4_properties['AZURE_REGION']
 			def openshift_base_domain = openshiftv4_properties['OPENSHIFT_BASE_DOMAIN']
 			def openshift_cluster_name = openshiftv4_properties['OPENSHIFT_CLUSTER_NAME']
@@ -57,6 +57,7 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_worker_root_volume_size = openshiftv4_properties['OPENSHIFT_WORKER_ROOT_VOLUME_SIZE']
 			def openshift_cidr = openshiftv4_properties['OPENSHIFT_CIDR']
 			def openshift_machine_cidr = openshiftv4_properties['OPENSHIFT_MACHINE_CIDR']
+			def openshift_network_type = openshiftv4_properties['OPENSHIFT_NETWORK_TYPE']
 			def openshift_service_network = openshiftv4_properties['OPENSHIFT_SERVICE_NETWORK']
 			def openshift_host_prefix = openshiftv4_properties['OPENSHIFT_HOST_PREFIX']
                         def openshift_post_install_poll_attempts = openshiftv4_properties['OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS']
@@ -75,7 +76,7 @@ stage ('OCP 4.X INSTALL') {
                         def openshift_alertmanager_storage_class = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_CLASS']
                         def openshift_alertmanager_storage_size = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_SIZE']
 			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']
-
+	
 			try {
 				openshiftv4_build = build job: 'ATS-SCALE-CI-OCP-AZURE-DEPLOY',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
@@ -104,36 +105,37 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'hudson.model.PasswordParameterValue', name: 'AZURE_TENANT_ID', value: azure_tenant_id ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'AZURE_SERVICE_PRINCIPAL_CLIENT_ID', value: azure_service_principal_client_id ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET', value: azure_service_principal_client_secret ],
-                                                [$class: 'hudson.model.PasswordParameterValue', name: 'AZURE_BASE_DOMAIN_RESOURCE_GROUP_NAME', value: azure_base_domain_resource_group_name ],
+						[$class: 'hudson.model.PasswordParameterValue', name: 'AZURE_BASE_DOMAIN_RESOURCE_GROUP_NAME', value: azure_base_domain_resource_group_name ],
 						[$class: 'StringParameterValue', name: 'AZURE_REGION', value: azure_region ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_BASE_DOMAIN', value: openshift_base_domain  ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_CLUSTER_NAME', value: openshift_cluster_name ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_COUNT', value: openshift_master_count ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKER_COUNT', value: openshift_worker_count ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_VM_SIZE', value: openshift_master_vm_size ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_WORKER_VM_SIZE', value: openshift_worker_vm_size ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKER_VM_SIZE', value: openshift_worker_vm_size ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_MASTER_ROOT_VOLUME_SIZE', value: openshift_master_root_volume_size ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKER_ROOT_VOLUME_SIZE', value: openshift_worker_root_volume_size ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_CIDR', value: openshift_cidr ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_MACHINE_CIDR', value: openshift_machine_cidr ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_SERVICE_NETWORK', value: openshift_service_network ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_HOST_PREFIX', value: openshift_host_prefix ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS', value: openshift_post_install_poll_attempts ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_TOGGLE_INFRA_NODE', value: openshift_toggle_infra_node ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_TOGGLE_WORKLOAD_NODE', value: openshift_toggle_workload_node ],
-                                                [$class: 'StringParameterValue', name: 'MACHINESET_METADATA_LABEL_PREFIX', value: machineset_metadata_label_prefix ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_INFRA_NODE_VM_SIZE', value: openshift_infra_node_vm_size ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_WORKLOAD_NODE_VM_SIZE', value: openshift_workload_node_vm_size ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_INFRA_NODE_VOLUME_SIZE', value: openshift_infra_node_volume_size ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_INFRA_NODE_VOLUME_TYPE', value: openshift_infra_node_volume_type ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_WORKLOAD_NODE_VOLUME_SIZE', value: openshift_workload_node_volume_size ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_WORKLOAD_NODE_VOLUME_TYPE', value: openshift_workload_node_volume_type ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_PROMETHEUS_RETENTION_PERIOD', value: openshift_prometheus_retention_period ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_PROMETHEUS_STORAGE_CLASS', value: openshift_prometheus_storage_class ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_PROMETHEUS_STORAGE_SIZE', value: openshift_prometheus_storage_size ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_ALERTMANAGER_STORAGE_CLASS', value: openshift_alertmanager_storage_class ],
-                                                [$class: 'StringParameterValue', name: 'OPENSHIFT_ALERTMANAGER_STORAGE_SIZE', value: openshift_alertmanager_storage_size ],
-                                                [$class: 'StringParameterValue', name: 'KUBECONFIG_AUTH_DIR_PATH', value: kubeconfig_auth_dir_path ]]
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_CIDR', value: openshift_cidr ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_MACHINE_CIDR', value: openshift_machine_cidr ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_NETWORK_TYPE', value: openshift_network_type ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_SERVICE_NETWORK', value: openshift_service_network ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_HOST_PREFIX', value: openshift_host_prefix ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS', value: openshift_post_install_poll_attempts ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_TOGGLE_INFRA_NODE', value: openshift_toggle_infra_node ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_TOGGLE_WORKLOAD_NODE', value: openshift_toggle_workload_node ],
+						[$class: 'StringParameterValue', name: 'MACHINESET_METADATA_LABEL_PREFIX', value: machineset_metadata_label_prefix ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_INFRA_NODE_VM_SIZE', value: openshift_infra_node_vm_size ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKLOAD_NODE_VM_SIZE', value: openshift_workload_node_vm_size ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_INFRA_NODE_VOLUME_SIZE', value: openshift_infra_node_volume_size ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_INFRA_NODE_VOLUME_TYPE', value: openshift_infra_node_volume_type ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKLOAD_NODE_VOLUME_SIZE', value: openshift_workload_node_volume_size ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_WORKLOAD_NODE_VOLUME_TYPE', value: openshift_workload_node_volume_type ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_PROMETHEUS_RETENTION_PERIOD', value: openshift_prometheus_retention_period ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_PROMETHEUS_STORAGE_CLASS', value: openshift_prometheus_storage_class ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_PROMETHEUS_STORAGE_SIZE', value: openshift_prometheus_storage_size ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_ALERTMANAGER_STORAGE_CLASS', value: openshift_alertmanager_storage_class ],
+						[$class: 'StringParameterValue', name: 'OPENSHIFT_ALERTMANAGER_STORAGE_SIZE', value: openshift_alertmanager_storage_size ],
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_AUTH_DIR_PATH', value: kubeconfig_auth_dir_path ]]
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-OCP-AZURE-DEPLOY Job failed with the following error: "
 				echo "${e.getMessage()}"

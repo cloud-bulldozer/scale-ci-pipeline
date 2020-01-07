@@ -183,6 +183,10 @@
         description: openshift install machine cidr
         name: OPENSHIFT_MACHINE_CIDR
     - string:
+        default: ""
+        description: The network type used for the cluster, for OVS it is OpenShiftSDN and for OVN it is OVNKubernetes.
+        name: OPENSHIFT_NETWORK_TYPE
+    - string:
         default: "172.30.0.0/16"
         description: openshift install service network
         name: OPENSHIFT_SERVICE_NETWORK
