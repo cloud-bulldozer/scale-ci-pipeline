@@ -58,7 +58,7 @@
         default: false
         description: Enables debugging i.e ssh to the cluster nodes.
         name: OPENSHIFT_DEBUG_CONFIG
-    - bool:
+    - string:
         default: ''
         description: OC client url.
         name: OPENSHIFT_CLIENT_LOCATION
