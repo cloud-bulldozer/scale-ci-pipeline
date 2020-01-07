@@ -98,6 +98,10 @@
         default: false
         description: Build the installer binary from source code
         name: OPENSHIFT_INSTALL_INSTALLER_FROM_SOURCE
+    - bool:
+        default: true
+        description: Enable mutable grafana instnace
+        name: ENABLE_DITTYBOPPER
     - string:
         default: "master"
         description: Source version to use to build the installer binary
