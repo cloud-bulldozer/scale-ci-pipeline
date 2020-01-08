@@ -30,6 +30,8 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_debug_config = openshiftv4_properties['OPENSHIFT_DEBUG_CONFIG']
 			def openshift_oc_client_url = openshiftv4_properties['OPENSHIFT_CLIENT_LOCATION']
 			def enable_dittybopper = openshiftv4_properties['ENABLE_DITTYBOPPER']
+			def enable_remote_write = openshiftv4_properties['ENABLE_REMOTE_WRITE']
+			def sincgars_remote_write_url = openshiftv4_properties['SINCGARS_REMOTE_WRITE_URL']
 			def openshift_install_release_image_override = openshiftv4_properties['OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE']
 			def openshift_install_binary_url = openshiftv4_properties['OPENSHIFT_INSTALL_BINARY_URL']
 			def openshift_install_apiversion = openshiftv4_properties['OPENSHIFT_INSTALL_APIVERSION']
@@ -59,9 +61,9 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_worker_root_volume_iops = openshiftv4_properties['OPENSHIFT_WORKER_ROOT_VOLUME_IOPS']
 			def openshift_cidr = openshiftv4_properties['OPENSHIFT_CIDR']
 			def openshift_machine_cidr = openshiftv4_properties['OPENSHIFT_MACHINE_CIDR']
-			def openshift_network_type = openshiftv4_properties['OPENSHIFT_NETWORK_TYPE']  
+			def openshift_network_type = openshiftv4_properties['OPENSHIFT_NETWORK_TYPE']
 			def openshift_service_network = openshiftv4_properties['OPENSHIFT_SERVICE_NETWORK']
-			def openshift_host_prefix = openshiftv4_properties['OPENSHIFT_HOST_PREFIX']                     
+			def openshift_host_prefix = openshiftv4_properties['OPENSHIFT_HOST_PREFIX']
 			def openshift_post_install_poll_attempts = openshiftv4_properties['OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS']
 			def openshift_toggle_infra_node = openshiftv4_properties['OPENSHIFT_TOGGLE_INFRA_NODE']
 			def openshift_toggle_workload_node = openshiftv4_properties['OPENSHIFT_TOGGLE_WORKLOAD_NODE']
@@ -79,8 +81,8 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_prometheus_storage_size = openshiftv4_properties['OPENSHIFT_PROMETHEUS_STORAGE_SIZE']
 			def openshift_alertmanager_storage_class = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_CLASS']
 			def openshift_alertmanager_storage_size = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_SIZE']
-			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']			
-	
+			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']
+
 			try {
 				openshiftv4_build = build job: 'ATS-SCALE-CI-OCP-AWS-DEPLOY',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
@@ -96,6 +98,8 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_BINARY_URL', value: openshift_install_binary_url ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_DITTYBOPPER', value: Boolean.valueOf(enable_dittybopper) ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_REMOTE_WRITE', value: Boolean.valueOf(enable_remote_write) ],
+						[$class: 'StringParameterValue', name: 'SINCGARS_REMOTE_WRITE_URL', value: Boolean.valueOf(sincgars_remote_write_url) ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_APIVERSION', value: openshift_install_apiversion ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE', value: openshift_install_ssh_pub_key_file ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_INSTALL_PULL_SECRET', value: openshift_install_pull_secret ],
