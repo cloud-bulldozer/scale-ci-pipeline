@@ -30,6 +30,8 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_debug_config = openshiftv4_properties['OPENSHIFT_DEBUG_CONFIG']
 			def openshift_oc_client_url = openshiftv4_properties['OPENSHIFT_CLIENT_LOCATION']
 			def enable_dittybopper = openshiftv4_properties['ENABLE_DITTYBOPPER']
+			def enable_remote_write = openshiftv4_properties['ENABLE_REMOTE_WRITE']
+			def sincgars_remote_write_url = openshiftv4_properties['SINCGARS_REMOTE_WRITE_URL']
 			def openshift_install_release_image_override = openshiftv4_properties['OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE']
 			def openshift_install_binary_url = openshiftv4_properties['OPENSHIFT_INSTALL_BINARY_URL']
 			def openshift_install_apiversion = openshiftv4_properties['OPENSHIFT_INSTALL_APIVERSION']
@@ -76,7 +78,7 @@ stage ('OCP 4.X INSTALL') {
                         def openshift_alertmanager_storage_class = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_CLASS']
                         def openshift_alertmanager_storage_size = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_SIZE']
 			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']
-	
+
 			try {
 				openshiftv4_build = build job: 'ATS-SCALE-CI-OCP-AZURE-DEPLOY',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
@@ -92,6 +94,8 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_BINARY_URL', value: openshift_install_binary_url ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_DITTYBOPPER', value: Boolean.valueOf(enable_dittybopper) ],
+						[$class: 'BooleanParameterValue', name: 'ENABLE_REMOTE_WRITE', value: Boolean.valueOf(enable_remote_write) ],
+						[$class: 'StringParameterValue', name: 'SINCGARS_REMOTE_WRITE_URL', value: Boolean.valueOf(sincgars_remote_write_url) ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_APIVERSION', value: openshift_install_apiversion ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE', value: openshift_install_ssh_pub_key_file ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_INSTALL_PULL_SECRET', value: openshift_install_pull_secret ],

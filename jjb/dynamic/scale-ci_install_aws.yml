@@ -100,8 +100,16 @@
         name: OPENSHIFT_INSTALL_INSTALLER_FROM_SOURCE
     - bool:
         default: true
-        description: Enable mutable grafana instnace
+        description: Enable mutable grafana instance
         name: ENABLE_DITTYBOPPER
+    - bool:
+        default: false
+        description: Enable remote write
+        name: ENABLE_REMOTE_WRITE
+    - string:
+        default: ""
+        description: remote write url when remote write is set to true
+        name: SINCGARS_REMOTE_WRITE_URL
     - string:
         default: "master"
         description: Source version to use to build the installer binary
