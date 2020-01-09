@@ -151,7 +151,7 @@
         description: openshift worker node count.
         name: OPENSHIFT_WORKER_COUNT
     - string:
-        default: "m5.large"
+        default: "m5.xlarge"
         description: openshift master instance type.
         name: OPENSHIFT_MASTER_INSTANCE_TYPE
     - string:
@@ -219,11 +219,11 @@
         description: Machineset label prefix
         name: MACHINESET_METADATA_LABEL_PREFIX
     - string:
-        default: "m5.large"
+        default: "m5.xlarge"
         description: Infra node instance type
         name: OPENSHIFT_INFRA_NODE_INSTANCE_TYPE
     - string:
-        default: "m5.large"
+        default: "m5.xlarge"
         description: Workload node instance type
         name: OPENSHIFT_WORKLOAD_NODE_INSTANCE_TYPE
     - string:

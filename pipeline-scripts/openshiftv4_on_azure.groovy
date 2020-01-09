@@ -95,7 +95,7 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_BINARY_URL', value: openshift_install_binary_url ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_DITTYBOPPER', value: Boolean.valueOf(enable_dittybopper) ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_REMOTE_WRITE', value: Boolean.valueOf(enable_remote_write) ],
-						[$class: 'StringParameterValue', name: 'SINCGARS_REMOTE_WRITE_URL', value: Boolean.valueOf(sincgars_remote_write_url) ],
+						[$class: 'StringParameterValue', name: 'SINCGARS_REMOTE_WRITE_URL', value: sincgars_remote_write_url ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_APIVERSION', value: openshift_install_apiversion ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE', value: openshift_install_ssh_pub_key_file ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'OPENSHIFT_INSTALL_PULL_SECRET', value: openshift_install_pull_secret ],
