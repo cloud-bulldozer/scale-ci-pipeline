@@ -43,6 +43,26 @@
     name: ATS-SCALE-CI-NODEVERTICAL
     node: scale-ci
     parameters:
+    - string:
+        default: ''
+        description: this is a var to help idenfity cluster loaders results.
+        name: SNAFU_USER
+    - string:
+        default: ''
+        description: cluster name is a var to help idenfity cluster loaders results.(defaults to clustername found in machinset label)
+        name: SNAFU_CLUSTER_NAME
+    - string:
+        default: ''
+        description: Elasticsearch server host address (currently used by snafu), set to index results from cluster loader
+        name: ES_HOST
+    - string:
+        default: ''
+        description: Elasticsearch server port (currently used by snafu), set to index results from cluster loader
+        name: ES_PORT
+    - string:
+        default: ''
+        description: Elasticsearch server index prefix (currently used by snafu). (defaults to snafu through the workloads repo)
+        name: ES_INDEX_PREFIX
     - bool:
        default: true
        description: skips tls verification during oc login

@@ -49,6 +49,12 @@ stage ('nodevertical_scale_test') {
 			def nodevertical_pause = nodevertical_properties['NODEVERTICAL_PAUSE']
 			def nodevertical_ts_timeout = nodevertical_properties['NODEVERTICAL_TS_TIMEOUT']
 			def expected_nodevertical_duration = nodevertical_properties['EXPECTED_NODEVERTICAL_DURATION']
+			def snafu_user = nodevertical_properties['SNAFU_USER']
+			def snafu_cluster_name = nodevertical_properties['SNAFU_CLUSTER_NAME']
+			def es_host = nodevertical_properties['ES_HOST']
+			def es_port = nodevertical_properties['ES_PORT']
+			def es_index_prefix = nodevertical_properties['ES_INDEX_PREFIX']
+
 
 			try {
 				nodevertical_build = build job: 'ATS-SCALE-CI-NODEVERTICAL',
@@ -80,6 +86,11 @@ stage ('nodevertical_scale_test') {
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_STEPSIZE', value: nodevertical_stepsize ],
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_PAUSE', value: nodevertical_pause ],
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_TS_TIMEOUT', value: nodevertical_ts_timeout ],
+						[$class: 'StringParameterValue', name: 'SNAFU_USER', value: snafu_user ],
+						[$class: 'StringParameterValue', name: 'SNAFU_CLUSTER_NAME', value: snafu_cluster_name ],
+						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
+						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
 						[$class: 'StringParameterValue', name: 'EXPECTED_NODEVERTICAL_DURATION', value: expected_nodevertical_duration ]]
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-NODEVERTICAL Job failed with the following error: "

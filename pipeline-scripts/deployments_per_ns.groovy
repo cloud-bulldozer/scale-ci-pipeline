@@ -44,7 +44,13 @@ stage ('deployments_per_ns_scale_test') {
 			def deployments_per_ns_basename = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_BASENAME']
 			def deployments_per_ns_count = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_COUNT']
 			def deployments_per_ns_pod_image = deployments_per_ns_properties['DEPLOYMENTS_PER_NS_POD_IMAGE']
-			
+			def snafu_user = deployments_per_ns_properties['SNAFU_USER']
+			def snafu_cluster_name = deployments_per_ns_properties['SNAFU_CLUSTER_NAME']
+			def es_host = deployments_per_ns_properties['ES_HOST']
+			def es_port = deployments_per_ns_properties['ES_PORT']
+			def es_index_prefix = deployments_per_ns_properties['ES_INDEX_PREFIX']
+
+
 			// debug info
 			println "----------USER DEFINED OPTIONS-------------------"
 			println "-------------------------------------------------"
@@ -79,6 +85,11 @@ stage ('deployments_per_ns_scale_test') {
 						[$class: 'BooleanParameterValue', name: 'DEPLOYMENTS_PER_NS_CLEANUP', value: Boolean.valueOf(deployments_per_ns_cleanup)  ],
 						[$class: 'StringParameterValue', name: 'DEPLOYMENTS_PER_NS_BASENAME', value: deployments_per_ns_basename ],
 						[$class: 'StringParameterValue', name: 'DEPLOYMENTS_PER_NS_COUNT', value: deployments_per_ns_count ],
+						[$class: 'StringParameterValue', name: 'SNAFU_USER', value: snafu_user ],
+						[$class: 'StringParameterValue', name: 'SNAFU_CLUSTER_NAME', value: snafu_cluster_name ],
+						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
+						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
 						[$class: 'StringParameterValue', name: 'DEPLOYMENTS_PER_NS_POD_IMAGE', value: deployments_per_ns_pod_image ]]
 			} catch ( Exception e) {
 				echo "DEPLOYMENTS_PER_NS Job failed with the following error: "

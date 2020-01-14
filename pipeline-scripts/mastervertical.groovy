@@ -20,7 +20,7 @@ stage('mastervertical_scale_test') {
 			// get properties file
 			sh "wget ${MASTERVERTICAL_PROPERTY_FILE} -O ${property_file_name}"
                         sh "cat ${property_file_name}"
-			def mastervertical_properties = readProperties file: property_file_name	
+			def mastervertical_properties = readProperties file: property_file_name
 			def skip_tls = mastervertical_properties['SKIP_TLS_VERIFICATION']
 			def cluster_user = mastervertical_properties['CLUSTER_USER']
 			def cluster_password = mastervertical_properties['CLUSTER_PASSWORD']
@@ -44,6 +44,11 @@ stage('mastervertical_scale_test') {
 			def mastervertical_basename = mastervertical_properties['MASTERVERTICAL_BASENAME']
 			def mastervertical_projects = mastervertical_properties['MASTERVERTICAL_PROJECTS']
 			def mastervertical_expected_duration = mastervertical_properties['EXPECTED_MASTERVERTICAL_DURATION']
+			def snafu_user = mastervertical_properties['SNAFU_USER']
+			def snafu_cluster_name = mastervertical_properties['SNAFU_CLUSTER_NAME']
+			def es_host = mastervertical_properties['ES_HOST']
+			def es_port = mastervertical_properties['ES_PORT']
+			def es_index_prefix = mastervertical_properties['ES_INDEX_PREFIX']
 
 			// Run mastervertical job
 			try {
@@ -71,6 +76,11 @@ stage('mastervertical_scale_test') {
 						[$class: 'BooleanParameterValue', name: 'MASTERVERTICAL_CLEANUP', value: Boolean.valueOf(mastervertical_cleanup)  ],
 						[$class: 'StringParameterValue', name: 'MASTERVERTICAL_BASENAME', value: mastervertical_basename ],
 						[$class: 'StringParameterValue', name: 'MASTERVERTICAL_PROJECTS', value: mastervertical_projects ],
+						[$class: 'StringParameterValue', name: 'SNAFU_USER', value: snafu_user ],
+						[$class: 'StringParameterValue', name: 'SNAFU_CLUSTER_NAME', value: snafu_cluster_name ],
+						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
+						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
 						[$class: 'StringParameterValue', name: 'EXPECTED_MASTERVERTICAL_DURATION', value: mastervertical_expected_duration ]]
 			} catch ( Exception e) {
 				echo "MASTERVERTICAL SCALE TEST Job failed with the following error: "

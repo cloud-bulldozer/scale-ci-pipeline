@@ -45,7 +45,12 @@ stage('ns_per_cluster_scale_test') {
 			def namespaces_per_cluster_projects = namespaces_per_cluster_properties['NAMESPACES_PER_CLUSTER_PROJECTS']
 			def namespaces_per_cluster_count = namespaces_per_cluster_properties['NAMESPACES_PER_CLUSTER_COUNT']
 			def expected_namespaces_per_cluster_duration = namespaces_per_cluster_properties['EXPECTED_NAMESPACES_PER_CLUSTER_DURATION']
-	
+			def snafu_user = namespaces_per_cluster_properties['SNAFU_USER']
+			def snafu_cluster_name = namespaces_per_cluster_properties['SNAFU_CLUSTER_NAME']
+			def es_host = namespaces_per_cluster_properties['ES_HOST']
+			def es_port = namespaces_per_cluster_properties['ES_PORT']
+			def es_index_prefix = namespaces_per_cluster_properties['ES_INDEX_PREFIX']
+
 			// Run namespaces per cluster job
 			try {
 				ns_per_clusterical_build = build job: 'ATS-SCALE-CI-NAMESPACES-PER-CLUSTER',
@@ -72,7 +77,12 @@ stage('ns_per_cluster_scale_test') {
 				[$class: 'BooleanParameterValue', name: 'NAMESPACES_PER_CLUSTER_CLEANUP', value: Boolean.valueOf(namespaces_per_cluster_cleanup)  ],
 				[$class: 'StringParameterValue', name: 'NAMESPACES_PER_CLUSTER_BASENAME', value: namespaces_per_cluster_basename ],
 				[$class: 'StringParameterValue', name: 'NAMESPACES_PER_CLUSTER_COUNT', value: namespaces_per_cluster_count ],
-				[$class: 'StringParameterValue', name: 'EXPECTED_NAMESPACES_PER_CLUSTER_DURATION', value: expected_namespaces_per_cluster_duration ]] 
+				[$class: 'StringParameterValue', name: 'SNAFU_USER', value: snafu_user ],
+				[$class: 'StringParameterValue', name: 'SNAFU_CLUSTER_NAME', value: snafu_cluster_name ],
+				[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
+				[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+				[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
+				[$class: 'StringParameterValue', name: 'EXPECTED_NAMESPACES_PER_CLUSTER_DURATION', value: expected_namespaces_per_cluster_duration ]]
 			} catch ( Exception e) {
 				echo "NS_PER_CLUSTER Job failed with the following error: "
 				echo "${e.getMessage()}"
