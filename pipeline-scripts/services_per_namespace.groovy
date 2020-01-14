@@ -44,7 +44,12 @@ stage ('ATS-SCALE-CI-SERVICES-PER-NAMESPACE') {
 			def services_per_namespace_basename = services_per_namespace_properties['SERVICES_PER_NAMESPACE_BASENAME']
 			def services_per_namespace_projects = services_per_namespace_properties['SERVICES_PER_NAMESPACE_PROJECTS']
 			def services_per_namespace_count = services_per_namespace_properties['SERVICES_PER_NAMESPACE_COUNT']
-			def expected_services_per_namespace_duration = services_per_namespace_properties['EXPECTED_SERVICES_PER_NAMESPACE_DURATION']			
+			def expected_services_per_namespace_duration = services_per_namespace_properties['EXPECTED_SERVICES_PER_NAMESPACE_DURATION']
+			def snafu_user = services_per_namespace_properties['SNAFU_USER']
+			def snafu_cluster_name = services_per_namespace_properties['SNAFU_CLUSTER_NAME']
+			def es_host = services_per_namespace_properties['ES_HOST']
+			def es_port = services_per_namespace_properties['ES_PORT']
+			def es_index_prefix = services_per_namespace_properties['ES_INDEX_PREFIX']
 
 			// Run services_per_namespace job
 			try {
@@ -73,7 +78,12 @@ stage ('ATS-SCALE-CI-SERVICES-PER-NAMESPACE') {
 						[$class: 'StringParameterValue', name: 'SERVICES_PER_NAMESPACE_BASENAME', value: services_per_namespace_basename ],
 						[$class: 'StringParameterValue', name: 'SERVICES_PER_NAMESPACE_PROJECTS', value: services_per_namespace_projects ],
 						[$class: 'StringParameterValue', name: 'SERVICES_PER_NAMESPACE_COUNT', value: services_per_namespace_count ],
-						[$class: 'StringParameterValue', name: 'EXPECTED_SERVICES_PER_NAMESPACE_DURATION', value: expected_services_per_namespace_duration ]]	
+						[$class: 'StringParameterValue', name: 'SNAFU_USER', value: snafu_user ],
+						[$class: 'StringParameterValue', name: 'SNAFU_CLUSTER_NAME', value: snafu_cluster_name ],
+						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
+						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
+						[$class: 'StringParameterValue', name: 'EXPECTED_SERVICES_PER_NAMESPACE_DURATION', value: expected_services_per_namespace_duration ]]
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-SERVICES-PER-NAMESPACE Job failed with the following error: "
 				echo "${e.getMessage()}"

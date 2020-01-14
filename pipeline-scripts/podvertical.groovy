@@ -47,7 +47,12 @@ stage ('podvertical_scale_test') {
 			def podvertical_stepsize = podvertical_properties['PODVERTICAL_STEPSIZE']
 			def podvertical_pause = podvertical_properties['PODVERTICAL_PAUSE']
 			def podvertical_ts_timeout = podvertical_properties['PODVERTICAL_TS_TIMEOUT']
-			def expected_podvertical_duration = podvertical_properties['EXPECTED_PODVERTICAL_DURATION']			
+			def expected_podvertical_duration = podvertical_properties['EXPECTED_PODVERTICAL_DURATION']
+			def snafu_user = podvertical_properties['SNAFU_USER']
+			def snafu_cluster_name = podvertical_properties['SNAFU_CLUSTER_NAME']
+			def es_host = podvertical_properties['ES_HOST']
+			def es_port = podvertical_properties['ES_PORT']
+			def es_index_prefix = podvertical_properties['ES_INDEX_PREFIX']
 
 			// debug info
 			println "----------USER DEFINED OPTIONS-------------------"
@@ -87,7 +92,12 @@ stage ('podvertical_scale_test') {
 						[$class: 'StringParameterValue', name: 'PODVERTICAL_STEPSIZE', value: podvertical_stepsize ],
 						[$class: 'StringParameterValue', name: 'PODVERTICAL_PAUSE', value: podvertical_pause ],
 						[$class: 'StringParameterValue', name: 'PODVERTICAL_TS_TIMEOUT', value: podvertical_ts_timeout ],
-						[$class: 'StringParameterValue', name: 'EXPECTED_PODVERTICAL_DURATION', value: expected_podvertical_duration ]]	
+						[$class: 'StringParameterValue', name: 'SNAFU_USER', value: snafu_user ],
+						[$class: 'StringParameterValue', name: 'SNAFU_CLUSTER_NAME', value: snafu_cluster_name ],
+						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
+						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
+						[$class: 'StringParameterValue', name: 'EXPECTED_PODVERTICAL_DURATION', value: expected_podvertical_duration ]]
 			} catch ( Exception e) {
 				echo "PODVERTICAL Job failed with the following error: "
 				echo "${e.getMessage()}"
