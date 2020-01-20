@@ -31,8 +31,29 @@
         ansible --version
         time ansible-playbook -vv -i inventory workloads/cluster-limits-services-per-ns.yml
 
+        # logging
+        logs_counter=0
+        logs_counter_limit=100
         oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-services-per-namespace
+        while true; do
+          logs_counter=$((logs_counter+1))
+          if [[ $(oc get job -n scale-ci-tooling scale-ci-services-per-namespace -o json | jq -e '.status.active==1') == "true" ]]; then
+            if [[ $logs_counter -le $logs_counter_limit ]]; then
+              echo "=================================================================================================================================================================="
+              echo "Attempt $logs_counter to reconnect and fetch the controller pod logs"
+              echo "=================================================================================================================================================================="
+              oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-services-per-namespace
+            else
+              echo "Exceeded the retry limit trying to get the controller logs: $logs_counter_limit, exiting."
+              exit 1
+            fi
+          else
+            echo "Job completed"
+            break
+          fi
+        done
 
+        # status
         oc get job -n scale-ci-tooling scale-ci-services-per-namespace -o json | jq -e '.status.succeeded==1'
     concurrent: true
     description: |
