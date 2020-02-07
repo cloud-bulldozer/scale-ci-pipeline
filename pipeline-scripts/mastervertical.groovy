@@ -49,6 +49,7 @@ stage('mastervertical_scale_test') {
 			def es_host = mastervertical_properties['ES_HOST']
 			def es_port = mastervertical_properties['ES_PORT']
 			def es_index_prefix = mastervertical_properties['ES_INDEX_PREFIX']
+			def profile_cluster_ops = mastervertical_properties['PROFILE_CLUSTER_OPS']
 
 			// Run mastervertical job
 			try {
@@ -81,7 +82,8 @@ stage('mastervertical_scale_test') {
 						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
 						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
-						[$class: 'StringParameterValue', name: 'EXPECTED_MASTERVERTICAL_DURATION', value: mastervertical_expected_duration ]]
+						[$class: 'StringParameterValue', name: 'EXPECTED_MASTERVERTICAL_DURATION', value: mastervertical_expected_duration ],
+						[$class: 'BooleanParameterValue', name: 'PROFILE_CLUSTER_OPS', value: Boolean.valueOf(profile_cluster_ops)  ]]
 			} catch ( Exception e) {
 				echo "MASTERVERTICAL SCALE TEST Job failed with the following error: "
 				echo "${e.getMessage()}"

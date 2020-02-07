@@ -54,6 +54,7 @@ stage ('nodevertical_scale_test') {
 			def es_host = nodevertical_properties['ES_HOST']
 			def es_port = nodevertical_properties['ES_PORT']
 			def es_index_prefix = nodevertical_properties['ES_INDEX_PREFIX']
+			def profile_cluster_ops = nodevertical_properties['PROFILE_CLUSTER_OPS']
 
 
 			try {
@@ -91,7 +92,8 @@ stage ('nodevertical_scale_test') {
 						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
 						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
-						[$class: 'StringParameterValue', name: 'EXPECTED_NODEVERTICAL_DURATION', value: expected_nodevertical_duration ]]
+						[$class: 'StringParameterValue', name: 'EXPECTED_NODEVERTICAL_DURATION', value: expected_nodevertical_duration ],
+						[$class: 'BooleanParameterValue', name: 'PROFILE_CLUSTER_OPS', value: Boolean.valueOf(profile_cluster_ops)  ]]
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-NODEVERTICAL Job failed with the following error: "
 				echo "${e.getMessage()}"

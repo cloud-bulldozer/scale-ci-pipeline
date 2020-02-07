@@ -53,6 +53,7 @@ stage ('podvertical_scale_test') {
 			def es_host = podvertical_properties['ES_HOST']
 			def es_port = podvertical_properties['ES_PORT']
 			def es_index_prefix = podvertical_properties['ES_INDEX_PREFIX']
+			def profile_cluster_ops = podvertical_properties['PROFILE_CLUSTER_OPS']
 
 			// debug info
 			println "----------USER DEFINED OPTIONS-------------------"
@@ -97,7 +98,8 @@ stage ('podvertical_scale_test') {
 						[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host ],
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
 						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
-						[$class: 'StringParameterValue', name: 'EXPECTED_PODVERTICAL_DURATION', value: expected_podvertical_duration ]]
+						[$class: 'StringParameterValue', name: 'EXPECTED_PODVERTICAL_DURATION', value: expected_podvertical_duration ],
+						[$class: 'BooleanParameterValue', name: 'PROFILE_CLUSTER_OPS', value: Boolean.valueOf(profile_cluster_ops)  ]]
 			} catch ( Exception e) {
 				echo "PODVERTICAL Job failed with the following error: "
 				echo "${e.getMessage()}"

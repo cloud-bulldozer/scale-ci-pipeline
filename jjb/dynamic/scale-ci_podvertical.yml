@@ -192,6 +192,10 @@
         default: 600
         description: Pass/fail criteria. Value to determine if PodVertical workload executed in duration expected.
         name: EXPECTED_PODVERTICAL_DURATION
+    - bool:
+        default: true
+        description: "Collect profiling information from kube-controller-manager and kube-apiserver"
+        name: PROFILE_CLUSTER_OPS
     project-type: freestyle
     properties:
     - raw:
