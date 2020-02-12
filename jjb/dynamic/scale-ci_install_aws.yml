@@ -62,6 +62,14 @@
         default: ''
         description: OC client url.
         name: OPENSHIFT_CLIENT_LOCATION
+    - bool:
+        default: false
+        description: ''
+        name: SCALE_CI_BUILD_TRIGGER
+    - string:
+        default: ''
+        description: ''
+        name: SCALE_CI_BUILD_TRIGGER_URL
     - string:
         default: ''
         description: Image to use for the ocp install.

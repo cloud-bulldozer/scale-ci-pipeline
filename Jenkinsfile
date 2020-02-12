@@ -2,6 +2,7 @@
 
 def contact = "nelluri@redhat.com"
 def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
+def build_tracker = SCALE_CI_BUILD_TRACKER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
 def openshiftv4_install_on_aws = OPENSHIFTv4_INSTALL_ON_AWS.toString().toUpperCase()
@@ -35,6 +36,11 @@ node (node_label) {
 	// creates/updates jenkins jobs using the jjb templates
 	if (watcher == "TRUE") {
 		load "pipeline-scripts/scale_ci_watcher.groovy"
+	}
+
+	// Queries UMB message to capture the OCP 4.x payloads
+	if ( build_tracker == "TRUE") {
+		load "pipeline-scripts/scale_ci_build_tracker.groovy"
 	}
 
 	// stage to install openstack

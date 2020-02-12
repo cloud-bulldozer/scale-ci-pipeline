@@ -12,6 +12,10 @@
     - bool:
         default: false
         description: ''
+        name: SCALE_CI_BUILD_TRACKER
+    - bool:
+        default: false
+        description: ''
         name: OPENSTACK_INSTALL
     - bool:
         default: false
@@ -105,6 +109,9 @@
         default: ''
         description: ''
         name: SCALE_CI_WATCHER_PROPERTY_FILE
+    - string:
+        default: ''
+        name: SCALE_CI_BUILD_TRACKER_PROPERTY_FILE
     - string:
         default: ''
         description: ''

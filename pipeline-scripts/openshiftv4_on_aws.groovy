@@ -29,6 +29,8 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_post_config = openshiftv4_properties['OPENSHIFT_POST_CONFIG']
 			def openshift_debug_config = openshiftv4_properties['OPENSHIFT_DEBUG_CONFIG']
 			def openshift_oc_client_url = openshiftv4_properties['OPENSHIFT_CLIENT_LOCATION']
+			def scale_ci_build_trigger = openshiftv4_properties['SCALE_CI_BUILD_TRIGGER']
+			def scale_ci_build_trigger_url = openshiftv4_properties['SCALE_CI_BUILD_TRIGGER_URL']
 			def enable_dittybopper = openshiftv4_properties['ENABLE_DITTYBOPPER']
 			def enable_remote_write = openshiftv4_properties['ENABLE_REMOTE_WRITE']
 			def sincgars_remote_write_url = openshiftv4_properties['SINCGARS_REMOTE_WRITE_URL']
@@ -82,6 +84,20 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_alertmanager_storage_class = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_CLASS']
 			def openshift_alertmanager_storage_size = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_SIZE']
 			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']
+			
+			// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigget is set
+			if ( scale_ci_build_trigger.toBoolean() ) {
+				sh "curl ${scale_ci_build_trigger_url}/payload -o /tmp/payload"
+				sh "curl ${scale_ci_build_trigger_url}/build.status -o /tmp/status"
+				status = readFile "/tmp/status"
+				if ( status.toString().trim().equals("PROCEED") ) {
+					println "Build status is set to ${status}, proceeding with the cluster build"
+					openshift_install_release_image_override = readFile "/tmp/payload"
+				} else {
+					println "Build status is set to ${status}, exiting without building the cluster"
+					return 0
+				}
+			}
 
 			try {
 				openshiftv4_build = build job: 'ATS-SCALE-CI-OCP-AWS-DEPLOY',
@@ -95,6 +111,8 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_POST_CONFIG', value: Boolean.valueOf(openshift_post_config) ],
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_DEBUG_CONFIG', value: Boolean.valueOf(openshift_debug_config) ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_CLIENT_LOCATION', value: openshift_oc_client_url ],
+						[$class: 'BooleanParameterValue', name: 'SCALE_CI_BUILD_TRIGGER', value: Boolean.valueOf(scale_ci_build_trigger) ],
+						[$class: 'StringParameterValue', name: 'SCALE_CI_BUILD_TRIGGER_URL', value: scale_ci_build_trigger_url ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_BINARY_URL', value: openshift_install_binary_url ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_DITTYBOPPER', value: Boolean.valueOf(enable_dittybopper) ],
