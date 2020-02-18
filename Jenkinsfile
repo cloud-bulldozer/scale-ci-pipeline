@@ -24,6 +24,7 @@ def ns_per_cluster = NS_PER_CLUSTER.toString().toUpperCase()
 def networking = NETWORKING.toString().toUpperCase()
 def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
+def run_uperf = UPERF.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 
 node (node_label) {
@@ -151,6 +152,11 @@ node (node_label) {
 	if (baseline == "TRUE" ) {
 		load "pipeline-scripts/baseline.groovy"
 	}
+
+        // stage to run uperf test
+        if (run_uperf == "TRUE" ) {
+                load "pipeline-scripts/uperf.groovy"
+        }
 
 	// cleanup the workspace
 	stage('cleaning workspace') {

@@ -1,0 +1,110 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -o pipefail
+        set -eux
+        # Disable logging
+        set +x
+        if [[ $SKIP_TLS_VERIFICATION ]]; then
+          oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL} --insecure-skip-tls-verify
+        else
+          oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL}
+        fi
+        # Run tests
+        set -x
+        pushd workloads/network-perf
+        ./run_hostnetwork_network_test_fromgit.sh
+        ./run_pod_network_test_fromgit.sh
+        ./run_serviceip_network_test_fromgit.sh
+    concurrent: true
+    description: |
+      Uperf is a network performance tool
+      This job is managed by https://github.com/cloud-bulldozer/plow.git
+    disabled: false
+    name: RIPSAW-UPERF
+    node: scale-ci
+    parameters:
+    - string:
+        default: "kubeadmin"
+        description: User name to access cluster.
+        name: CLUSTER_USER
+    - string:
+        default: ""
+        description: Password for CLUSTER_USER to access cluster.
+        name: CLUSTER_PASSWORD
+    - string:
+        default: ""
+        description: The URL address to the openshift cluster to login to.
+        name: CLUSTER_API_URL
+    - string:
+        default: ""
+        description: The elasticsearch server where the data will be indexed.
+        name: ES_SERVER
+    - string:
+        default: ""
+        description: The port for the elasticsearch server.
+        name: ES_PORT
+    - bool:
+        default: true
+        description: Enables/Disables metadata collection
+        name: METADATA_COLLECTION
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria
+        name: BASELINE_UPERF_UUID
+
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/cloud-bulldozer/plow.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm
