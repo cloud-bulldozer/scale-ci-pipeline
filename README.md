@@ -68,7 +68,7 @@ Deployments per namespaces | Cluster Limits | Tests deployments per namespace li
 Services per namespace | Cluster Limits | Tests maximum number of services possible per namespace | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 Namespaces per cluster | Cluster Limits | Tests namespaces per cluster limit | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
 Baseline | Base/Idle cluster | Captures performance data of the base cluster with no user created objects | :heavy_check_mark: | NA | :heavy_check_mark: |
-
+Uperf | Networking | uperf benchmarks testing node to node, pod to pod, and svc to svc throughput and latency for TCP and UDP protocols | :heavy_check_mark: | :x: | :heavy_check_mark: |
 ### Modifying/Adding new workloads to the scale-ci-pipeline
 
 Adding new workloads is managed by scale-ci-watcher and it expects the following:

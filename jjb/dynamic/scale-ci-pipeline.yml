@@ -105,6 +105,10 @@
         default: false
         description: ''
         name: BASELINE_SCALE_TEST
+    - bool:
+        default: false
+        description: ''
+        name: UPERF
     - string:
         default: ''
         description: ''
@@ -212,6 +216,10 @@
         default: ''
         description: ''
         name: BASELINE_PROPERTY_FILE
+    - string:
+        default: ''
+        description: ''
+        name: UPERF_PROPERTIES_FILE
     - string:
         default: 'scale-ci'
         description: ''
