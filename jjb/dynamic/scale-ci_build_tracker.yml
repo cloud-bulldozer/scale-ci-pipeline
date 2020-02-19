@@ -1,0 +1,107 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |-
+        set -eo pipefail
+
+        # enable logging
+        set -x
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
+        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        chmod 600 ${PRIVATE_KEY}
+
+        # Create inventory File:
+        echo "[orchestration]" > inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory
+
+        export ANSIBLE_FORCE_COLOR=true
+        ansible --version
+        time ansible-playbook -vv -i inventory OCP-4.X/build-info.yml
+    concurrent: true
+    description: This job queries UMB message to pick up the latest green OCP nightly
+      build.<!-- Managed by Jenkins Job Builder --><!-- Managed by Jenkins Job Builder
+      -->
+    disabled: false
+    name: SCALE-CI-BUILD-TRACKER
+    node: scale-ci
+    parameters:
+    - string:
+        default: ''
+        description: The machine intended to fetch the UMB message and store it.
+        name: ORCHESTRATION_HOST
+    - string:
+        default: root
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: ''
+        description: ''
+        name: SSHKEY_TOKEN
+    - string:
+        default: ''
+        description: ''
+        name: BUILD_INFO_URL
+    - string:
+        default: ''
+        description: ''
+        name: BUILD_INFO_DESTINATION
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        name: origin
+        refspec: +refs/heads/*:refs/remotes/origin/*
+        url: https://github.com/openshift-scale/scale-ci-deploy.git
+        wipe-workspace: true
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm
