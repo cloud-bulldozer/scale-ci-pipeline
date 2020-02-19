@@ -258,4 +258,5 @@
           <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
           <paramsToUseForLimit />
           </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-    triggers: []
+    triggers:
+    - timed: '0 10 * * 1,3,5'
