@@ -125,11 +125,11 @@ Here is the list of current scale-ci labeled slaves:
 Slaves           | Number of executors | Label            | Ansible version |
 ---------------- | ------------------- | ---------------- | --------------- |
 scale-ci-slave-1 | 3                   | scale-ci         | 2.8.2           |
-scale-ci-slave-2 | 1                   | scale-ci         | 2.8.2           |
-scale-ci-slave-3 | 1                   | scale-ci         | 2.8.2           |
+scale-ci-slave-2 | 3                   | scale-ci         | 2.8.2           |
+scale-ci-slave-3 | 3                   | scale-ci         | 2.8.2           |
 scale-ci-slave-4 | 3                   | scale-ci         | 2.8.2           |
-scale-ci-slave-5 | 1                   | scale-ci         | 2.8.2           |
-scale-ci-slave-6 | 1                   | scale-ci         | 2.8.2           |
+scale-ci-slave-5 | 3                   | scale-ci         | 2.8.2           |
+scale-ci-slave-6 | 3                   | scale-ci         | 2.8.2           |
 
 ### Credits
 Thanks to Mary Shakshober for designing the logo.
