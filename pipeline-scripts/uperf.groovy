@@ -21,10 +21,9 @@ stage ('uperf') {
 			sh "wget ${UPERF_PROPERTIES_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
 			def uperf_properties = readProperties file: property_file_name
-			def skip_tls = uperf_properties['SKIP_TLS_VERIFICATION']
-			def cluster_user = uperf_properties['CLUSTER_USER']
-			def cluster_password = uperf_properties['CLUSTER_PASSWORD']
-			def cluster_api_url = uperf_properties['CLUSTER_API_URL']
+			def orchestration_user = uperf_properties['ORCHESTRATION_USER']
+			def orchestration_host = uperf_properties['ORCHESTRATION_HOST']
+			def sshkey_token = uperf_properties['SSHKEY_TOKEN']
 			def es_server = uperf_properties['ES_SERVER']
 			def es_port = uperf_properties['ES_PORT']
 			def metadata_collection = uperf_properties['METADATA_COLLECTION']
@@ -33,10 +32,9 @@ stage ('uperf') {
 			try {
 				uperf_build = build job: 'RIPSAW-UPERF',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'BooleanParameterValue', name: 'SKIP_TLS_VERIFICATION', value: Boolean.valueOf(skip_tls) ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'hudson.model.PasswordParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'StringParameterValue', name: 'ES_SERVER', value: es_server ],
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
 						[$class: 'BooleanParameterValue', name: 'METADATA_COLLECTION', value: Boolean.valueOf(metadata_collection) ],
@@ -45,7 +43,7 @@ stage ('uperf') {
 				echo "UPERF Job failed with the following error: "
 				echo "${e.getMessage()}"
 				mail(
-					to: 'jtaleric@redhat.com', 'msheth@redhat.com',
+					to: 'jtaleric@redhat.com, msheth@redhat.com',
 					subject: 'Uperf job failed',
 					body: """\
 						Encoutered an error while running the uperf job: ${e.getMessage()}\n\n
