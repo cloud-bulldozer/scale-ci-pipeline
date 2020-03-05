@@ -53,12 +53,60 @@
         name: ES_PORT
     - bool:
         default: true
-        description: Enables/Disables metadata collection
+        description: Enables/Disables metadata collection.
         name: METADATA_COLLECTION
+    - bool:
+        default: false
+        description: Enables/Disables comparison of two uuids
+        name: COMPARE
     - string:
         default: ""
-        description: The UUID used as a reference/baseline to determine pass/fail criteria
-        name: BASELINE_UPERF_UUID
+        description: Elasticsearch server used used by the baseline run.
+        name: ES_SERVER_BASELINE
+    - string:
+        default: ""
+        description: Port number for the elasticsearch server used by the baseline run.
+        name: ES_PORT_BASELINE
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_MULTUS_UUID
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_HOSTNET_UUID
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_POD_1P_UUID
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_POD_2P_UUID
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_POD_4P_UUID
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_SVC_1P_UUID
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_SVC_2P_UUID
+    - string:
+        default: ""
+        description: The UUID used as a reference/baseline to determine pass/fail criteria.
+        name: BASELINE_SVC_4P_UUID
+    - string:
+        default: ""
+        description: The accepted throughput deviation in percentage from the baseline_uuid.
+        name: THROUGHPUT_TOLERANCE
+    - string:
+        default: ""
+        description: The accepted latency deviation in percentage from the baseline_uuid.
+        name: LATENCY_TOLERANCE
 
     project-type: freestyle
     properties:
