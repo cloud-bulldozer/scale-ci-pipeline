@@ -20,9 +20,9 @@
 
         # run tests
         pushd workloads/network-perf/
-        ./run_hostnetwork_network_test_fromgit.sh
-        ./run_pod_network_test_fromgit.sh
-        ./run_serviceip_network_test_fromgit.sh
+        ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
+        ./run_pod_network_test_fromgit.sh test_cloud $KUBECONFIG
+        ./run_serviceip_network_test_fromgit.sh test_cloud $KUBECONFIG
     concurrent: true
     description: |
       Uperf is a network performance tool
