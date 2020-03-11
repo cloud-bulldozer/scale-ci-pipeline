@@ -20,9 +20,15 @@
 
         # run tests
         pushd workloads/network-perf/
-        ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
+        if [[ ${HOSTNETWORK_TEST} ]] ; then
+          ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
+        fi
+        if [[ ${POD_TEST} ]] ; then
         ./run_pod_network_test_fromgit.sh test_cloud $KUBECONFIG
+        fi
+        if [[ ${SERVICE_TEST} ]] ; then
         ./run_serviceip_network_test_fromgit.sh test_cloud $KUBECONFIG
+        fi
     concurrent: true
     description: |
       Uperf is a network performance tool
@@ -59,6 +65,18 @@
         default: ""
         description: The UUID used as a reference/baseline to determine pass/fail criteria
         name: BASELINE_UPERF_UUID
+    - bool:
+        default: true
+        description: Enables/Disables hostnetwork_test
+        name: HOSTNETWORK_TEST
+    - bool:
+        default: true
+        description: Enables/Disables pod to pod via sdn test
+        name: POD_TEST
+    - bool:
+        default: true
+        description: Enables/Disables pod to pod via service test
+        name: SERVICE_TEST
 
     project-type: freestyle
     properties:
