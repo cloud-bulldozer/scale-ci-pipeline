@@ -28,6 +28,9 @@ stage ('uperf') {
 			def es_port = uperf_properties['ES_PORT']
 			def metadata_collection = uperf_properties['METADATA_COLLECTION']
 			def baseline_uperf_uuid = uperf_properties['BASELINE_UPERF_UUID']
+			def hostnetwork_test = uperf_properties['HOSTNETWORK_TEST']
+			def pod_test = uperf_properties['POD_TEST']
+			def service_test = uperf_properties['SERVICE_TEST']
 			
 			try {
 				uperf_build = build job: 'RIPSAW-UPERF',
@@ -38,7 +41,11 @@ stage ('uperf') {
 						[$class: 'StringParameterValue', name: 'ES_SERVER', value: es_server ],
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
 						[$class: 'BooleanParameterValue', name: 'METADATA_COLLECTION', value: Boolean.valueOf(metadata_collection) ],
-						[$class: 'StringParameterValue', name: 'BASELINE_UPERF_UUID', value: baseline_uperf_uuid ]]
+						[$class: 'StringParameterValue', name: 'BASELINE_UPERF_UUID', value: baseline_uperf_uuid ],
+						[$class: 'BooleanParameterValue', name: 'HOSTNETWORK_TEST', value: Boolean.valueOf(hostnetwork_test) ],
+						[$class: 'BooleanParameterValue', name: 'POD_TEST', value: Boolean.valueOf(pod_test) ],
+						[$class: 'BooleanParameterValue', name: 'SERVICE_TEST', value: Boolean.valueOf(service_test) ]]
+						
 			} catch ( Exception e) {
 				echo "UPERF Job failed with the following error: "
 				echo "${e.getMessage()}"
