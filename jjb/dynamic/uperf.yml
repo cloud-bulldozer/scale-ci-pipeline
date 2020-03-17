@@ -18,6 +18,14 @@
         scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:$HOME/.kube/config ${WORKSPACE}/kubeconfig
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
+        # check if cluster is up
+        date
+        oc get clusterversion
+        if [ $? == "1" ]; then
+          echo "Workload Failed, Unable to connect to the cluster"
+          exit 1
+        fi
+
         # run tests
         pushd workloads/network-perf/
         ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
