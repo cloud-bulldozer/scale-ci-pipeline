@@ -26,6 +26,9 @@ stage ('baseline_scale_test') {
 			def cluster_password = baseline_properties['CLUSTER_PASSWORD']
 			def cluster_api_url = baseline_properties['CLUSTER_API_URL']
 			def sshkey_token = baseline_properties['SSHKEY_TOKEN']
+			def sshkey_repo = baseline_properties['SSHKEY_REPO']
+			def sshkey_repopath_pub = baseline_properties['SSHKEY_REPOPATH_PUB']
+			def sshkey_repopath_priv = baseline_properties['SSHKEY_REPOPATH_PRIV']   
 			def orchestration_host = baseline_properties['ORCHESTRATION_HOST']
 			def orchestration_user = baseline_properties['ORCHESTRATION_USER']
 			def workload_image = baseline_properties['WORKLOAD_IMAGE']
@@ -49,6 +52,9 @@ stage ('baseline_scale_test') {
 						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
 						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
 						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_REPO', value: sshkey_repo ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_REPOPATH_PUB', value: sshkey_repopath_pub ],
+						[$class: 'StringParameterValue', name: 'SSHKEY_REPOPATH_PRIV', value: sshkey_repopath_priv ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],

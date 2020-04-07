@@ -14,12 +14,15 @@
         fi
         # Re-enable logging
         set -x
-        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
-        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
-        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
-        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
-        chmod 600 ${PRIVATE_KEY}
+        git clone https://${SSHKEY_TOKEN}@${SSHKEY_REPO}
+        if [ -f ${WORKSPACE}/${SSHKEY_REPOPATH_PUB} ] && [ -f ${WORKSPACE}/${SSHKEY_REPOPATH_PRIV} ]
+        then
+                export PUBLIC_KEY=${WORKSPACE}/${SSHKEY_REPOPATH_PUB}
+                export PRIVATE_KEY=${WORKSPACE}/${SSHKEY_REPOPATH_PRIV}
+                export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/${SSHKEY_REPOPATH_PUB}
+                export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/${SSHKEY_REPOPATH_PRIV}
+                chmod 600 ${PRIVATE_KEY}
+        fi
 
         # Create inventory File:
         echo "[orchestration]" > inventory
@@ -137,6 +140,19 @@
         description: 'Duration to run'
         name: BASELINE_WORKLOAD_DURATION
         trim: 'false'
+    - string:
+        default: "github.com/redhat-performance/perf-dept.git"
+        description: 'Repository containing ssh keys for Ansible and pbench server'
+        name: SSHKEY_REPO
+    - string:
+        default: "perf-dept/ssh_keys/id_rsa_perf.pub"
+        description: 'path to public key file in ssh key repository'
+        name: SSHKEY_REPOPATH_PUB
+    - string:
+        default: "perf-dept/ssh_keys/id_rsa_perf"
+        description: 'path to private key file in ssh key repository'
+        name: SSHKEY_REPOPATH_PRIV
+
     project-type: freestyle
     properties:
     - raw:
