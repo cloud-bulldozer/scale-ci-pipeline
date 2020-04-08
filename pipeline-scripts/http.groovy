@@ -54,7 +54,7 @@ stage ('http_scale_test') {
 			def http_test_server_container_image  = http_properties['HTTP_TEST_SERVER_CONTAINER_IMAGE']
 
 			try {
-				http_build = build job: 'SCALE-CI-HTTP',
+				http_build = build job: 'ATS-SCALE-CI-HTTP',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
 						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
@@ -88,12 +88,12 @@ stage ('http_scale_test') {
 						[$class: 'StringParameterValue', name: 'HTTP_TEST_STRESS_CONTAINER_IMAGE', value: http_test_stress_container_image ],
 						[$class: 'StringParameterValue', name: 'HTTP_TEST_SERVER_CONTAINER_IMAGE', value: http_test_server_container_image ]]
 			} catch ( Exception e) {
-				echo "SCALE-CI-HTTP Job failed with the following error: "
+				echo "ATS-SCALE-CI-HTTP Job failed with the following error: "
 				echo "${e.getMessage()}"
 				echo "Sending an email"
 				mail(
 					to: 'msheth@redhat.com',
-					subject: 'SCALE-CI-HTTP job failed',
+					subject: 'ATS-SCALE-CI-HTTP job failed',
 					body: """\
 						Encoutered an error while running the ats-scale-ci-http job: ${e.getMessage()}\n\n
 						Jenkins job: ${env.BUILD_URL}
@@ -101,7 +101,7 @@ stage ('http_scale_test') {
 				currentBuild.result = "FAILURE"
  				sh "exit 1"
 			}
-			println "SCALE-CI-HTTP build ${http_build.getNumber()} completed successfully"
+			println "ATS-SCALE-CI-HTTP build ${http_build.getNumber()} completed successfully"
 		}
 	}
 }

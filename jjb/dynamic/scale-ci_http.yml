@@ -12,17 +12,19 @@
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
         export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
         export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
         chmod 600 ${PRIVATE_KEY}
 
         # fetch the kubeconfig from the orchestration host
         echo "Fetching the  kubeconfig from the orchestration host"
         scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:$HOME/.kube/config ${WORKSPACE}/kubeconfig
         export KUBECONFIG=${WORKSPACE}/kubeconfig
-         ￼
         # Create inventory File:
         echo "[orchestration]" > inventory
         echo "${ORCHESTRATION_HOST}" >> inventory
 
+        unset PBENCH_SSH_PRIVATE_KEY_FILE
+        unset PBENCH_SSH_PUBLIC_KEY_FILE
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
         time ansible-playbook -vv -i inventory workloads/http.yml
@@ -56,7 +58,7 @@
       This test is a data-plane workload generator that runs http requests through HAProxy into deployed pods.
       This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
     disabled: false
-    name: SCALE-CI-HTTP
+    name: ATS-SCALE-CI-HTTP
     node: scale-ci
     parameters:
     - string:
