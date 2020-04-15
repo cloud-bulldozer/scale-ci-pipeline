@@ -4,7 +4,7 @@
     builders:
     - shell: |+
         set -o pipefail
-        set -eux
+        set -ex
         
         # get perf keys to access orchestration host and set ssh session options
         git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
