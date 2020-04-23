@@ -2,14 +2,14 @@
 
 def pipeline_id = env.BUILD_ID
 def node_label = NODE_LABEL.toString()
-def scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
-def property_file_name = "scale.properties"
+def ocpv4_scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
+def property_file_name = "openshiftv4_scale.properties"
 
 println "Current pipeline job build id is '${pipeline_id}'"
 
 // 4.x scale cluster
 stage ('4.x scale cluster') {
-	if (scale == "TRUE") {
+	if (ocpv4_scale  == "TRUE") {
 		currentBuild.result = "SUCCESS"
 		node(node_label) {
 			// get properties file
@@ -21,10 +21,6 @@ stage ('4.x scale cluster') {
 			sh "wget ${OPENSHIFTv4_SCALE_PROPERTY_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
 			def scale_properties = readProperties file: property_file_name
-			def skip_tls = scale_properties['SKIP_TLS_VERIFICATION']
-			def cluster_user = scale_properties['CLUSTER_USER']
-			def cluster_password = scale_properties['CLUSTER_PASSWORD']
-			def cluster_api_url = scale_properties['CLUSTER_API_URL']
 			def sshkey_token = scale_properties['SSHKEY_TOKEN']
 			def orchestration_host = scale_properties['ORCHESTRATION_HOST']
 			def orchestration_user = scale_properties['ORCHESTRATION_USER']
@@ -48,10 +44,6 @@ stage ('4.x scale cluster') {
 			try {
 				scale_build = build job: 'ATS-SCALE-CI-SCALE',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'BooleanParameterValue', name: 'SKIP_TLS_VERIFICATION', value: Boolean.valueOf(skip_tls) ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
 						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
