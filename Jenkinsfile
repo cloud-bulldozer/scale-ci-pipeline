@@ -51,6 +51,9 @@ node (node_label) {
 		if (openshiftv4_install_on_azure == "TRUE") {
 			load "pipeline-scripts/openshiftv4_on_azure.groovy"
 		}
+		if (openshiftv4_install_on_gcp == "TRUE") {
+                        load "pipeline-scripts/openshiftv4_on_gcp.groovy"
+                }
 		if (http == "TRUE") {
 			load "pipeline-scripts/http.groovy"
 		}
@@ -100,6 +103,11 @@ node (node_label) {
 		if (openshiftv4_install_on_azure == "TRUE") {
 			load "pipeline-scripts/openshiftv4_on_azure.groovy"
 		}
+		
+		// stage to install openshift 4.x on GCP
+                if (openshiftv4_install_on_gcp == "TRUE") {
+                        load "pipeline-scripts/openshiftv4_on_gcp.groovy"
+                }
 
 		// stage to setup pbench
 		if (tooling == "TRUE") {

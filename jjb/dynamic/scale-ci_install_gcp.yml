@@ -1,0 +1,345 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -o pipefail
+        set -ex
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        chmod 600 ${PRIVATE_KEY}
+        # Create inventory File:
+        echo "[orchestration]" > inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory
+        export ANSIBLE_FORCE_COLOR=true
+        ansible --version
+        time ansible-playbook -vv -i inventory OCP-4.X/install-on-gcp.yml | tee $(date +"%Y%m%d-%H%M%S")-install.timing
+    concurrent: true
+    description: |
+      Installs and configures OCP 4.x cluster on GCP.
+      This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
+    disabled: false
+    name: ATS-SCALE-CI-OCP-GCP-DEPLOY
+    node: scale-ci
+    parameters:
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: ""
+        description: Host with the kubeconfig and oc client.
+        name: ORCHESTRATION_HOST
+    - password:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - bool:
+        default: false
+        description: destroys the cluster created using scale-ci-deploy.
+        name: OPENSHIFT_CLEANUP
+    - bool:
+        default: true
+        description: Installs OCP cluster on GCP.
+        name: OPENSHIFT_INSTALL
+    - bool:
+        default: true
+        description: Creates workload and infra nodes post install.
+        name: OPENSHIFT_POST_INSTALL
+    - bool:
+        default: true
+        description: Configures the cluster to enable running workloads.
+        name: OPENSHIFT_POST_CONFIG
+    - bool:
+        default: false
+        description: Enables debugging i.e ssh to the cluster nodes.
+        name: OPENSHIFT_DEBUG_CONFIG
+    - string:
+        default: ''
+        description: OC client url.
+        name: OPENSHIFT_CLIENT_LOCATION
+    - bool:
+        default: false
+        description: ''
+        name: SCALE_CI_BUILD_TRIGGER
+    - string:
+        default: ''
+        description: ''
+        name: SCALE_CI_BUILD_TRIGGER_URL
+    - string:
+        default: ''
+        description: Image to use for the ocp install.
+        name: OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE
+    - string:
+        default: ''
+        description: Link to the binary url tarball to extract the openshift-install from. Find the latest builds at https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview.
+        name: OPENSHIFT_INSTALL_BINARY_URL
+    - string:
+        default: "v1"
+        description: openshift apiversion
+        name: OPENSHIFT_INSTALL_APIVERSION
+    - string:
+        default: ""
+        description: Path to the public key to add to each openshift host.
+        name: OPENSHIFT_INSTALL_SSH_PUB_KEY_FILE
+    - password:
+        default: ""
+        description: pull secret
+        name: OPENSHIFT_INSTALL_PULL_SECRET
+    - password:
+        default: ""
+        description: Registry token to talk to quay registry
+        name: OPENSHIFT_INSTALL_QUAY_REGISTRY_TOKEN
+    - string:
+        default: ""
+        description: Image registry to use to pull down the images
+        name: OPENSHIFT_INSTALL_IMAGE_REGISTRY
+    - password:
+        default: ""
+        description: Registry token to talk to the image registry registry being used
+        name: OPENSHIFT_INSTALL_REGISTRY_TOKEN
+    - bool:
+        default: false
+        description: Build the installer binary from source code
+        name: OPENSHIFT_INSTALL_INSTALLER_FROM_SOURCE
+    - bool:
+        default: true
+        description: Enable mutable grafana instance
+        name: ENABLE_DITTYBOPPER
+    - bool:
+        default: false
+        description: Enable remote write
+        name: ENABLE_REMOTE_WRITE
+    - string:
+        default: ""
+        description: remote write url when remote write is set to true
+        name: SINCGARS_REMOTE_WRITE_URL
+    - string:
+        default: "master"
+        description: Source version to use to build the installer binary
+        name: OPENSHIFT_INSTALL_INSTALLER_FROM_SOURCE_VERSION
+    - string:
+        default: "/root/.go"
+        description: gopath
+        name: GOPATH
+    - string:
+        default: ""
+        description: The service account is needed for GCP API access.
+        name: GCP_SERVICE_ACCOUNT
+    - password:
+        default: ""
+        description: Service account email.
+        name: GCP_SERVICE_ACCOUNT_EMAIL
+    - password:
+        default: ""
+        description: Path to the GCP auth key file, this is need to authenticate to google cloud.
+        name: GCP_AUTH_KEY_FILE
+    - string:
+        default: ""
+        description: Project to use.
+        name: GCP_PROJECT
+    - string:
+        default: ""
+        description: The GCP region to install on to
+        name: GCP_REGION
+    - string:
+        default: ""
+        description: Base domain for OCP install.
+        name: OPENSHIFT_BASE_DOMAIN
+    - string:
+        default: ""
+        description: openshift cluster name.
+        name: OPENSHIFT_CLUSTER_NAME
+    - string:
+        default: "3"
+        description: openshift master node count.
+        name: OPENSHIFT_MASTER_COUNT
+    - string:
+        default: "5"
+        description: openshift worker node count.
+        name: OPENSHIFT_WORKER_COUNT
+    - string:
+        default: "n1-standard-4"
+        description: openshift master instance type.
+        name: OPENSHIFT_MASTER_INSTANCE_TYPE
+    - string:
+        default: "n1-standard-4"
+        description: openshift worker instance type.
+        name: OPENSHIFT_WORKER_INSTANCE_TYPE
+    - string:
+        default: "64"
+        description: openshift master root volume size.
+        name: OPENSHIFT_MASTER_ROOT_VOLUME_SIZE
+    - string:
+        default: "gp2"
+        description: openshift master root volume type.
+        name: OPENSHIFT_MASTER_ROOT_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: openshift master root volume iops
+        name: OPENSHIFT_MASTER_ROOT_VOLUME_IOPS
+    - string:
+        default: "64"
+        description: openshift worker root volume size
+        name: OPENSHIFT_WORKER_ROOT_VOLUME_SIZE
+    - string:
+        default: "gp2"
+        description: openshift worker root volume type
+        name: OPENSHIFT_WORKER_ROOT_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: openshift worker root volume iops
+        name: OPENSHIFT_WORKER_ROOT_VOLUME_IOPS
+    - string:
+        default: "10.128.0.0/14"
+        description: openshift install cidr
+        name: OPENSHIFT_CIDR
+    - string:
+        default: "10.0.0.0/16"
+        description: openshift install machine cidr
+        name: OPENSHIFT_MACHINE_CIDR
+    - string:
+        default: ""
+        description: The network type used for the cluster, for OVS it is OpenShiftSDN and for OVN it is OVNKubernetes.
+        name: OPENSHIFT_NETWORK_TYPE
+    - string:
+        default: "172.30.0.0/16"
+        description: openshift install service network
+        name: OPENSHIFT_SERVICE_NETWORK
+    - string:
+        default: "23"
+        description: openshift install host prefix
+        name: OPENSHIFT_HOST_PREFIX
+    - string:
+        default: "600"
+        description: Poll attempts to finish post install before failing
+        name: OPENSHIFT_POST_INSTALL_POLL_ATTEMPTS
+    - bool:
+        default: true
+        description: Enables/disables infra node creation using machinesets
+        name: OPENSHIFT_TOGGLE_INFRA_NODE
+    - bool:
+        default: true
+        description: Enables/Disables dedicated workload node creation using machinesets
+        name: OPENSHIFT_TOGGLE_WORKLOAD_NODE
+    - string:
+        default: "machine.openshift.io"
+        description: Machineset label prefix
+        name: MACHINESET_METADATA_LABEL_PREFIX
+    - string:
+        default: "n1-standard-4"
+        description: Infra node instance type
+        name: OPENSHIFT_INFRA_NODE_INSTANCE_TYPE
+    - string:
+        default: "n1-standard-4"
+        description: Workload node instance type
+        name: OPENSHIFT_WORKLOAD_NODE_INSTANCE_TYPE
+    - string:
+        default: "64"
+        description: Infra node volume size
+        name: OPENSHIFT_INFRA_NODE_VOLUME_SIZE
+    - string:
+        default: "pd-ssd"
+        description: Infra node volume type
+        name: OPENSHIFT_INFRA_NODE_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: Infra node volume IOPS
+        name: OPENSHIFT_INFRA_NODE_VOLUME_IOPS
+    - string:
+        default: "64"
+        description: Workload node volume size
+        name: OPENSHIFT_WORKLOAD_NODE_VOLUME_SIZE
+    - string:
+        default: "pd-ssd"
+        description: Workload node volume type
+        name: OPENSHIFT_WORKLOAD_NODE_VOLUME_TYPE
+    - string:
+        default: "0"
+        description: Workload node volume IOPS
+        name: OPENSHIFT_WORLOAD_NODE_VOLUME_IOPS
+    - string:
+        default: "15d"
+        description: Retention period for the prometheus data
+        name: OPENSHIFT_PROMETHEUS_RETENTION_PERIOD
+    - string:
+        default: "standard"
+        description: Prometheus stprage class
+        name: OPENSHIFT_PROMETHEUS_STORAGE_CLASS
+    - string:
+        default: "10Gi"
+        description: Prometheus storage size
+        name: OPENSHIFT_PROMETHEUS_STORAGE_SIZE
+    - string:
+        default: "standard"
+        description: Alertmanager storage class
+        name: OPENSHIFT_ALERTMANAGER_STORAGE_CLASS
+    - string:
+        default: "2Gi"
+        description: Alertmanager storage size
+        name: OPENSHIFT_ALERTMANAGER_STORAGE_SIZE
+    - string:
+        default: ""
+        description: Path to the auth dir where the kubeconfig exists, this var is used with flexy install jobs.
+        name: KUBECONFIG_AUTH_DIR_PATH
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers:
+    - archive:
+        allow-empty: true
+        artifacts: '*.timing,OCP-4.X/scale-ci-gcp-artifacts/kubeconfig,OCP-4.X/scale-ci-gcp-artifacts/openshift_install.log'
+        case-sensitive: true
+        default-excludes: true
+        fingerprint: false
+        only-if-success: false
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/openshift-scale/scale-ci-deploy.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm
