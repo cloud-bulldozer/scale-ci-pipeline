@@ -20,13 +20,13 @@
 
         # run tests
         pushd workloads/network-perf/
-        if [[ ${HOSTNETWORK_TEST} ]] ; then
+        if [[ ${HOSTNETWORK_TEST} == "true" ]] ; then
           ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
         fi
-        if [[ ${POD_TEST} ]] ; then
+        if [[ ${POD_TEST} == "true" ]] ; then
         ./run_pod_network_test_fromgit.sh test_cloud $KUBECONFIG
         fi
-        if [[ ${SERVICE_TEST} ]] ; then
+        if [[ ${SERVICE_TEST} == "true" ]] ; then
         ./run_serviceip_network_test_fromgit.sh test_cloud $KUBECONFIG
         fi
     concurrent: true
