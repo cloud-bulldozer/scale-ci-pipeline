@@ -17,10 +17,10 @@
         set -x
 
         git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
-        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
-        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
-        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
 
         # Create inventory File:

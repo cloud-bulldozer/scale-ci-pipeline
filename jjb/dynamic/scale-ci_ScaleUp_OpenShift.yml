@@ -11,8 +11,8 @@
 
         # Clone the repository that has the performance department's credentials.
         git clone https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
-        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf.pub
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
 
         # Create inventory File:

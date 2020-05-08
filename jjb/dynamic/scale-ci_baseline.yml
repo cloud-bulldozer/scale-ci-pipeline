@@ -145,11 +145,11 @@
         description: 'Repository containing ssh keys for Ansible and pbench server'
         name: SSHKEY_REPO
     - string:
-        default: "perf-dept/ssh_keys/id_rsa_perf.pub"
+        default: "perf-dept/ssh_keys/id_rsa_pbench_ec2.pub"
         description: 'path to public key file in ssh key repository'
         name: SSHKEY_REPOPATH_PUB
     - string:
-        default: "perf-dept/ssh_keys/id_rsa_perf"
+        default: "perf-dept/ssh_keys/id_rsa_pbench_ec2"
         description: 'path to private key file in ssh key repository'
         name: SSHKEY_REPOPATH_PRIV
 
