@@ -8,7 +8,7 @@
         if [[ ! -d "${WORKSPACE}/perf-dept" ]]; then
         git clone https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
         fi
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
         export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
         export KUBECONFIG="/root/.kube/config"

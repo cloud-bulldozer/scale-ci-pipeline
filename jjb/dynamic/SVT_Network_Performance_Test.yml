@@ -6,16 +6,16 @@
         if [[ ! -d "${WORKSPACE}/perf-dept" ]]; then
         git clone https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
         fi
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
 
         printenv
 
-        #scp -i $WORKSPACE/private/config/keys/id_rsa_perf id_rsa.pub root@${OS_HOST_NAME}:/root/svt/networking/synthetic/id_rsa.pub
-        #scp -i $WORKSPACE/private/config/keys/id_rsa_perf config.yaml root@${OS_HOST_NAME}:/root/svt/networking/synthetic/config.yaml
+        #scp -i $WORKSPACE/private/config/keys/id_rsa_pbench_ec2 id_rsa.pub root@${OS_HOST_NAME}:/root/svt/networking/synthetic/id_rsa.pub
+        #scp -i $WORKSPACE/private/config/keys/id_rsa_pbench_ec2 config.yaml root@${OS_HOST_NAME}:/root/svt/networking/synthetic/config.yaml
         export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
-        #export PRIVATE_KEY=$WORKSPACE/private/config/keys/id_rsa_perf
-        #ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200 -i $WORKSPACE/private/config/keys/id_rsa_perf root@${OS_HOST_NAME} 'bash -s' <<ENDSSH
+        #export PRIVATE_KEY=$WORKSPACE/private/config/keys/id_rsa_pbench_ec2
+        #ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200 -i $WORKSPACE/private/config/keys/id_rsa_pbench_ec2 root@${OS_HOST_NAME} 'bash -s' <<ENDSSH
         if [[ "${USE_PROXY}" == "true" ]]; then
         ssh ${OPTIONS} -o ProxyCommand="ssh -i ${PRIVATE_KEY} -W %h:%p ${PROXY_USER}@${PROXY_HOST}" -i ${PRIVATE_KEY} ${USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
         cd /root/svt/networking/synthetic
