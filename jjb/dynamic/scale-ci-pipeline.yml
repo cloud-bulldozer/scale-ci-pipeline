@@ -12,6 +12,10 @@
     - bool:
         default: false
         description: ''
+        name: PIPELINE
+    - bool:
+        default: false
+        description: ''
         name: SCALE_CI_BUILD_TRACKER
     - bool:
         default: false
