@@ -112,6 +112,78 @@
         name: ENABLE_DITTYBOPPER
     - bool:
         default: false
+        description: Enable Cerberus
+        name: CERBERUS_ENABLE
+    - string:
+        default: "~/.kube/config"
+        description: path to the kubeconfig
+        name: KUBECONFIG_PATH
+    - string:
+        default: "~/cerberus.yaml"
+        description: path to the cerberus config
+        name: CERBERUS_CONFIG_PATH
+    - string:
+        default: "quay.io/openshift-scale/cerberus:latest"
+        description: cerberus image
+        name: CERBERUS_IMAGE
+    - string:
+        default: "http://0.0.0.0:8080"
+        description: Cerberus url where the go/no-go signal is exposed
+        name: CERBERUS_URL
+    - bool:
+        default: true
+        description: cerberus will watch the nodes when set
+        name: WATCH_NODES
+    - bool:
+        default: true
+        description: cerberus will watch cluster operators when enabled
+        name: WATCH_CLUSTER_OPERATORS
+    - string:
+        default: "[openshift-etcd, openshift-apiserver, openshift-kube-apiserver, openshift-monitoring, openshift-kube-controller, openshift-machine-api, openshift-kube-scheduler, openshift-ingress, openshift-sdn]"
+        description: list of namespaces to monitored by cerberus
+        name: WATCH_NAMESPACES
+    - bool:
+        default: true
+        description: cerberus will launch a simple http server to expose the go/no-go signal when enabled
+        name: CERBERUS_PUBLISH_STATUS
+    - bool:
+        default: false
+        description: cerberus will run inspection on the failed components when enabled. This assumes that the distribution is ocp vs kube.
+        name: INSPECT_COMPONENTS
+    - bool:
+        default: false
+        description: cerberus will report the failures on slack when enabled
+        name: SLACK_INTEGRATION
+    - string:
+        default: ""
+        description: slack token to talk the api
+        name: SLACK_API_TOKEN
+    - string:
+        default: ""
+        description: slack channel to report the failures
+        name: SLACK_CHANNEL
+    - string:
+        default: "{Monday: , Tuesday: , Wednesday: , Thursday: , Friday: , Saturday: , Sunday: }"
+        description: list of cop id's to ping in case of failures
+        name: COP_SLACK_ID
+    - string:
+        default: ""
+        description: slack alias to ping when cop id's are not defined
+        name: SLACK_TEAM_ALIAS
+    - string:
+        default: "5"
+        description: number of iterations to run when daemon mode is not enabled
+        name: ITERATIONS
+    - string:
+        default: "30"
+        description: duration to sleep/wait between each iteration
+        name: SLEEP_TIME
+    - bool:
+        default: true
+        description: when enabled will run cerberus forever
+        name: DAEMON_MODE
+    - bool:
+        default: false
         description: Enable remote write
         name: ENABLE_REMOTE_WRITE
     - string:

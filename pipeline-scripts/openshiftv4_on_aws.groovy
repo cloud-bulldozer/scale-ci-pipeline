@@ -32,6 +32,24 @@ stage ('OCP 4.X INSTALL') {
 			def scale_ci_build_trigger = openshiftv4_properties['SCALE_CI_BUILD_TRIGGER']
 			def scale_ci_build_trigger_url = openshiftv4_properties['SCALE_CI_BUILD_TRIGGER_URL']
 			def enable_dittybopper = openshiftv4_properties['ENABLE_DITTYBOPPER']
+			def cerberus_enable = openshiftv4_properties['CERBERUS_ENABLE']
+			def kubeconfig_path = openshiftv4_properties['KUBECONFIG_PATH']
+			def cerberus_config_path = openshiftv4_properties['CERBERUS_CONFIG_PATH']
+			def cerberus_image = openshiftv4_properties['CERBERUS_IMAGE']
+			def cerberus_url = openshiftv4_properties['CERBERUS_URL']
+			def watch_nodes = openshiftv4_properties['WATCH_NODES']
+			def watch_cluster_operators = openshiftv4_properties['WATCH_CLUSTER_OPERATORS']
+			def watch_namespaces = openshiftv4_properties['WATCH_NAMESPACES']
+			def cerberus_publish_status = openshiftv4_properties['CERBERUS_PUBLISH_STATUS']
+			def inspect_components = openshiftv4_properties['INSPECT_COMPONENTS']
+			def slack_integration = openshiftv4_properties['SLACK_INTEGRATION']
+			def slack_api_token = openshiftv4_properties['SLACK_API_TOKEN']
+			def slack_channel = openshiftv4_properties['SLACK_CHANNEL']
+			def cop_slack_id = openshiftv4_properties['COP_SLACK_ID']
+			def slack_team_alias = openshiftv4_properties['SLACK_TEAM_ALIAS']
+			def iterations = openshiftv4_properties['ITERATIONS']
+			def sleep_time = openshiftv4_properties['SLEEP_TIME']
+			def daemon_mode = openshiftv4_properties['DAEMON_MODE']
 			def enable_remote_write = openshiftv4_properties['ENABLE_REMOTE_WRITE']
 			def sincgars_remote_write_url = openshiftv4_properties['SINCGARS_REMOTE_WRITE_URL']
 			def openshift_install_release_image_override = openshiftv4_properties['OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE']
@@ -116,6 +134,24 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_BINARY_URL', value: openshift_install_binary_url ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_DITTYBOPPER', value: Boolean.valueOf(enable_dittybopper) ],
+						[$class: 'BooleanParameterValue', name: 'CERBERUS_ENABLE', value: Boolean.valueOf(cerberus_enable) ],
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_PATH', value: kubeconfig_path ],
+						[$class: 'StringParameterValue', name: 'CERBERUS_CONFIG_PATH', value: cerberus_config_path ],
+						[$class: 'StringParameterValue', name: 'CERBERUS_IMAGE', value: cerberus_image ],
+						[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ],
+						[$class: 'BooleanParameterValue', name: 'WATCH_NODES', value: Boolean.valueOf(watch_nodes) ],
+                                                [$class: 'BooleanParameterValue', name: 'WATCH_CLUSTER_OPERATORS', value: Boolean.valueOf(watch_cluster_operators) ],
+						[$class: 'StringParameterValue', name: 'WATCH_NAMESPACES', value: watch_namespaces ],
+						[$class: 'BooleanParameterValue', name: 'CERBERUS_PUBLISH_STATUS', value: Boolean.valueOf(cerberus_publish_status) ],
+						[$class: 'BooleanParameterValue', name: 'INSPECT_COMPONENTS', value: Boolean.valueOf(inspect_components) ],
+						[$class: 'BooleanParameterValue', name: 'SLACK_INTEGRATION', value: Boolean.valueOf(slack_integration) ],
+						[$class: 'StringParameterValue', name: 'SLACK_API_TOKEN', value: slack_api_token ],
+						[$class: 'StringParameterValue', name: 'SLACK_CHANNEL', value: slack_channel ],
+						[$class: 'StringParameterValue', name: 'COP_SLACK_ID', value: cop_slack_id ],
+						[$class: 'StringParameterValue', name: 'SLACK_TEAM_ALIAS', value: slack_team_alias ],
+						[$class: 'StringParameterValue', name: 'ITERATIONS', value: iterations ],
+						[$class: 'StringParameterValue', name: 'SLEEP_TIME', value: sleep_time ],
+						[$class: 'BooleanParameterValue', name: 'DAEMON_MODE', value: Boolean.valueOf(daemon_mode) ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_REMOTE_WRITE', value: Boolean.valueOf(enable_remote_write) ],
 						[$class: 'StringParameterValue', name: 'SINCGARS_REMOTE_WRITE_URL', value: sincgars_remote_write_url ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_APIVERSION', value: openshift_install_apiversion ],
