@@ -21,10 +21,6 @@ stage('ns_per_cluster_scale_test') {
 			sh "wget ${NS_PER_CLUSTER_PROPERTY_FILE} -O ${property_file_name}"
                         sh "cat ${property_file_name}"
 			def namespaces_per_cluster_properties = readProperties file: property_file_name
-			def skip_tls = namespaces_per_cluster_properties['SKIP_TLS_VERIFICATION']
-			def cluster_user = namespaces_per_cluster_properties['CLUSTER_USER']
-			def cluster_password = namespaces_per_cluster_properties['CLUSTER_PASSWORD']
-			def cluster_api_url = namespaces_per_cluster_properties['CLUSTER_API_URL']
 			def sshkey_token = namespaces_per_cluster_properties['SSHKEY_TOKEN']
 			def orchestration_host = namespaces_per_cluster_properties['ORCHESTRATION_HOST']
 			def orchestration_user = namespaces_per_cluster_properties['ORCHESTRATION_USER']
@@ -55,10 +51,6 @@ stage('ns_per_cluster_scale_test') {
 			try {
 				ns_per_clusterical_build = build job: 'ATS-SCALE-CI-NAMESPACES-PER-CLUSTER',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-				[$class: 'BooleanParameterValue', name: 'SKIP_TLS_VERIFICATION', value: Boolean.valueOf(skip_tls) ],
-				[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
-				[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
-				[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
 				[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 				[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 				[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],

@@ -21,10 +21,6 @@ stage ('podvertical_scale_test') {
 			sh "wget ${PODVERTICAL_PROPERTY_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
 			def podvertical_properties = readProperties file: property_file_name
-			def skip_tls = podvertical_properties['SKIP_TLS_VERIFICATION']
-			def cluster_user = podvertical_properties['CLUSTER_USER']
-			def cluster_password = podvertical_properties['CLUSTER_PASSWORD']
-			def cluster_api_url = podvertical_properties['CLUSTER_API_URL']
 			def sshkey_token = podvertical_properties['SSHKEY_TOKEN']
 			def orchestration_host = podvertical_properties['ORCHESTRATION_HOST']
 			def orchestration_user = podvertical_properties['ORCHESTRATION_USER']
@@ -66,10 +62,6 @@ stage ('podvertical_scale_test') {
 			try {
 				podvertical_build = build job: 'ATS-SCALE-CI-PODVERTICAL',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
-						[$class: 'BooleanParameterValue', name: 'SKIP_TLS_VERIFICATION', value: Boolean.valueOf(skip_tls) ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_USER', value: cluster_user ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_PASSWORD', value: cluster_password ],
-						[$class: 'StringParameterValue', name: 'CLUSTER_API_URL', value: cluster_api_url ],
 						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],

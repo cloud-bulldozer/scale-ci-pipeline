@@ -22,10 +22,6 @@
     name: ATS-SCALE-CI-WATCHER
     node: scale-ci
     parameters:
-    - bool:
-       default: true
-       description: skips tls verification during oc login
-       name: SKIP_TLS_VERIFICATION
     - string:
         default: ''
         description: ''
