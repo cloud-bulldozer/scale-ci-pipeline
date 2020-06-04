@@ -6,23 +6,18 @@
         set -o pipefail
         set -eux
 
-        # Disable logging
-        set +x
-        if [[ $SKIP_TLS_VERIFICATION ]]; then
-          oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL} --insecure-skip-tls-verify
-        else
-          oc login -u ${CLUSTER_USER} -p ${CLUSTER_PASSWORD} ${CLUSTER_API_URL}
-        fi
 
-        # Re-enable logging
-        set -x
-
+        # get perf keys to access orchestration host and set ssh session options
         git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
         export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
-        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
-        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
         chmod 600 ${PRIVATE_KEY}
+
+        # fetch the kubeconfig from the orchestration host
+        echo "Fetching the  kubeconfig from the orchestration host"
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:$HOME/.kube/config ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=${WORKSPACE}/kubeconfig
 
         # Create inventory File:
         echo "[orchestration]" > inventory
@@ -39,28 +34,12 @@
     name: ATS-SCALE-CI-TOOLING
     node: scale-ci
     parameters:
-    - bool:
-       default: true
-       description: skips tls verification during oc login
-       name: SKIP_TLS_VERIFICATION
-    - string:
-        default: "kubeadmin"
-        description: User name to access cluster.
-        name: CLUSTER_USER
-    - string:
-        default: ""
-        description: Password for CLUSTER_USER to access cluster.
-        name: CLUSTER_PASSWORD
-    - string:
-        default: ""
-        description: The URL address to the openshift cluster to login to.
-        name: CLUSTER_API_URL
     - string:
         default: ""
         description: Token to access private repo containing ssh keys.
         name: SSHKEY_TOKEN
     - string:
-        default: "localhost"
+        default: ""
         description: The machine intended to run the oc commands and launch the workload.
         name: ORCHESTRATION_HOST
     - string:

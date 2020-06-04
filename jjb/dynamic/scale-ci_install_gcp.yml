@@ -5,13 +5,16 @@
     - shell: |+
         set -o pipefail
         set -ex
+
         git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
         export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
+
         # Create inventory File:
         echo "[orchestration]" > inventory
         echo "${ORCHESTRATION_HOST}" >> inventory
+
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
         time ansible-playbook -vv -i inventory OCP-4.X/install-on-gcp.yml | tee $(date +"%Y%m%d-%H%M%S")-install.timing

@@ -10,8 +10,6 @@
         git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
         export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
-        export PBENCH_SSH_PUBLIC_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
-        export PBENCH_SSH_PRIVATE_KEY_FILE=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
         chmod 600 ${PRIVATE_KEY}
 
@@ -23,8 +21,6 @@
         echo "[orchestration]" > inventory
         echo "${ORCHESTRATION_HOST}" >> inventory
 
-        unset PBENCH_SSH_PRIVATE_KEY_FILE
-        unset PBENCH_SSH_PUBLIC_KEY_FILE
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
         time ansible-playbook -vv -i inventory workloads/scale.yml
