@@ -67,7 +67,13 @@ node (node_label) {
 
 		env.PIPELINE_STAGE=2
 		if (http == "TRUE") {
-			 load "pipeline-scripts/http.groovy"
+			load "pipeline-scripts/http.groovy"
+		}
+		if (nodevertical == "TRUE") {
+			load "pipeline-scripts/nodevertical.groovy"
+		}
+		if (mastervertical == "TRUE") {
+			load "pipeline-scripts/mastervertical.groovy"
 		}
 		if (ocpv4_scale == "TRUE") {
 			load "pipeline-scripts/openshiftv4_scale.groovy"
