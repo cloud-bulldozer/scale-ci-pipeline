@@ -26,6 +26,7 @@ stage ('build_tracker') {
 			def sshkey_token = build_tracker_properties['SSHKEY_TOKEN']
 			def build_info_url = build_tracker_properties['BUILD_INFO_URL']
 			def build_info_destination = build_tracker_properties['BUILD_INFO_DESTINATION']
+			def umb_message_format = build_tracker_properties['UMB_MESSAGE_FORMAT']
 
 			// Run build tracker job
 			try {
@@ -35,7 +36,8 @@ stage ('build_tracker') {
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'StringParameterValue', name: 'BUILD_INFO_URL', value: build_info_url ],
-						[$class: 'StringParameterValue', name: 'BUILD_INFO_DESTINATION', value: build_info_destination ]]  
+						[$class: 'StringParameterValue', name: 'BUILD_INFO_DESTINATION', value: build_info_destination ],
+						[$class: 'BooleanParameterValue', name: 'UMB_MESSAGE_FORMAT', value: Boolean.valueOf(umb_message_format) ]]
 			} catch ( Exception e) {
 				echo "SCALE-CI-BUILD-TRACKER Job failed with the following error: "
 				echo "${e.getMessage()}"
