@@ -1,7 +1,7 @@
 - job:
     concurrent: true
-    description: 'Collection of Jenkins jobs to setup osp, ocp and run various scale
-      tests on OpenShift. '
+    description: 'Collection of Jenkins jobs to install, configure, scaleup ocp and run various performance and scale
+      tests on OpenShift across various public and private clouds. '
     disabled: false
     name: SCALE-CI-PIPELINE
     parameters:

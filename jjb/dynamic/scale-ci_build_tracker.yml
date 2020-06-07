@@ -49,6 +49,10 @@
         default: ''
         description: ''
         name: BUILD_INFO_DESTINATION
+    - bool:
+        default: false
+        description: ''
+        name: UMB_MESSAGE_FORMAT
     project-type: freestyle
     properties:
     - raw:
