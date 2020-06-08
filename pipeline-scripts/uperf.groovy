@@ -31,6 +31,7 @@ stage ('uperf') {
 			def hostnetwork_test = uperf_properties['HOSTNETWORK_TEST']
 			def pod_test = uperf_properties['POD_TEST']
 			def service_test = uperf_properties['SERVICE_TEST']
+			def cerberus_url = uperf.properties['CERBERUS_URL']			
 			
 			try {
 				uperf_build = build job: 'RIPSAW-UPERF',
@@ -44,7 +45,8 @@ stage ('uperf') {
 						[$class: 'StringParameterValue', name: 'BASELINE_UPERF_UUID', value: baseline_uperf_uuid ],
 						[$class: 'BooleanParameterValue', name: 'HOSTNETWORK_TEST', value: Boolean.valueOf(hostnetwork_test) ],
 						[$class: 'BooleanParameterValue', name: 'POD_TEST', value: Boolean.valueOf(pod_test) ],
-						[$class: 'BooleanParameterValue', name: 'SERVICE_TEST', value: Boolean.valueOf(service_test) ]]
+						[$class: 'BooleanParameterValue', name: 'SERVICE_TEST', value: Boolean.valueOf(service_test) ],
+						[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ]]
 						
 			} catch ( Exception e) {
 				echo "UPERF Job failed with the following error: "

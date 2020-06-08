@@ -77,6 +77,10 @@
         default: true
         description: Enables/Disables pod to pod via service test
         name: SERVICE_TEST
+    - string:
+        default: ""
+        description: URL to check the status of the cluster using cerberus
+        name: CERBERUS_URL
 
     project-type: freestyle
     properties:
