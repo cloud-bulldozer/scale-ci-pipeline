@@ -87,7 +87,7 @@ stage ('nodevertical_scale_test') {
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
 						[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix ],
 						[$class: 'StringParameterValue', name: 'EXPECTED_NODEVERTICAL_DURATION', value: expected_nodevertical_duration ],
-						[$class: 'BooleanParameterValue', name: 'NODEVERTICAL_HEAVY', value: Boolean.valeOf(nodevertical_heavy) ],
+						[$class: 'BooleanParameterValue', name: 'NODEVERTICAL_HEAVY', value: Boolean.valueOf(nodevertical_heavy) ],
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_HEAVY_PROBE_ENDPOINT', value: nodevertical_heavy_probe_endpoint ],
 						[$class: 'StringParameterValue', name: 'NODEVERTICAL_HEAVY_PROBE_PERIOD', value: nodevertical_heavy_probe_period ]]
 
