@@ -183,6 +183,22 @@
         default: quay.io/openshift-scale/nginx
         description:  HTTP server container image.
         name: HTTP_TEST_SERVER_CONTAINER_IMAGE
+    - string:
+        default: ""
+        description: Elasticsearch server to store results
+        name: ES_SERVER
+    - string:
+        default: ""
+        description: Port number for the Elasticsearch server
+        name: ES_PORT
+    - string:
+        default: ""
+        description: Email Id to which the results in google spreadsheet will be mailed.
+        name: EMAIL_ID_FOR_RESULTS_SHEET
+    - string:
+        default: ""
+        description: The path to service account key for communicating with Google API.
+        name: GSHEET_KEY
     project-type: freestyle
     properties:
     - raw:
