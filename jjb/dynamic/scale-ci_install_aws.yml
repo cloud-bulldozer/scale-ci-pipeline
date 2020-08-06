@@ -40,6 +40,10 @@
         name: SSHKEY_TOKEN
     - bool:
         default: false
+        description: Installs OCP cluster on AWS w/FIPS.
+        name: FIPS
+    - bool:
+        default: false
         description: destroys the cluster created using scale-ci-deploy.
         name: OPENSHIFT_CLEANUP
     - bool:
