@@ -98,6 +98,7 @@ stage ('OCP 4.X INSTALL') {
                         def openshift_alertmanager_storage_class = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_CLASS']
                         def openshift_alertmanager_storage_size = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_SIZE']
 			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']
+			def fips = openshiftv4_properties['FIPS']
 
 			// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigget is set
 			if ( scale_ci_build_trigger.toBoolean() ) {
@@ -126,6 +127,7 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_DEBUG_CONFIG', value: Boolean.valueOf(openshift_debug_config) ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_CLIENT_LOCATION', value: openshift_oc_client_url ],
 						[$class: 'BooleanParameterValue', name: 'SCALE_CI_BUILD_TRIGGER', value: Boolean.valueOf(scale_ci_build_trigger) ],
+						[$class: 'BooleanParameterValue', name: 'FIPS', value: Boolean.valueOf(fips) ],
 						[$class: 'StringParameterValue', name: 'SCALE_CI_BUILD_TRIGGER_URL', value: scale_ci_build_trigger_url ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_BINARY_URL', value: openshift_install_binary_url ],

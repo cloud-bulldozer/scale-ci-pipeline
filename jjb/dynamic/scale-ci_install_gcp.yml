@@ -43,6 +43,10 @@
         description: destroys the cluster created using scale-ci-deploy.
         name: OPENSHIFT_CLEANUP
     - bool:
+        default: false
+        description: Installs OCP cluster on GCP w/FIPS.
+        name: FIPS
+    - bool:
         default: true
         description: Installs OCP cluster on GCP.
         name: OPENSHIFT_INSTALL
