@@ -55,6 +55,10 @@ stage ('http_scale_test') {
 		def http_test_namespace_cleanup = http_properties['HTTP_TEST_NAMESPACE_CLEANUP']
 		def http_test_stress_container_image = http_properties['HTTP_TEST_STRESS_CONTAINER_IMAGE']
 		def http_test_server_container_image  = http_properties['HTTP_TEST_SERVER_CONTAINER_IMAGE']
+		def es_server = http_properties['ES_SERVER']
+		def es_port = http_properties['ES_PORT']
+		def email_id_for_results_sheet = http_properties['EMAIL_ID_FOR_RESULTS_SHEET']
+		def gsheet_key = http_properties['GSHEET_KEY']
 
 		try {
 			http_build = build job: 'ATS-SCALE-CI-HTTP',
@@ -89,7 +93,11 @@ stage ('http_scale_test') {
 					[$class: 'BooleanParameterValue', name: 'HTTP_TEST_SMOKE_TEST', value: Boolean.valueOf(http_test_smoke_test) ],
 					[$class: 'BooleanParameterValue', name: 'HTTP_TEST_NAMESPACE_CLEANUP', value: Boolean.valueOf(http_test_namespace_cleanup) ],
 					[$class: 'StringParameterValue', name: 'HTTP_TEST_STRESS_CONTAINER_IMAGE', value: http_test_stress_container_image ],
-					[$class: 'StringParameterValue', name: 'HTTP_TEST_SERVER_CONTAINER_IMAGE', value: http_test_server_container_image ]]
+					[$class: 'StringParameterValue', name: 'HTTP_TEST_SERVER_CONTAINER_IMAGE', value: http_test_server_container_image ],
+					[$class: 'StringParameterValue', name: 'ES_SERVER', value: es_server ],
+					[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+					[$class: 'StringParameterValue', name: 'EMAIL_ID_FOR_RESULTS_SHEET', value: email_id_for_results_sheet ],
+					[$class: 'StringParameterValue', name: 'GSHEET_KEY', value: gsheet_key ]]
 		} catch ( Exception e) {
 			echo "ATS-SCALE-CI-HTTP Job failed with the following error: "
 			echo "${e.getMessage()}"
