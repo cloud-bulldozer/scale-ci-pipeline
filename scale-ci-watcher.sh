@@ -100,7 +100,7 @@ function update_scale_ci_jobs() {
 	for xml_template in $(ls $WORKDIR/xml); do
 		if [[ "$xml_template" != "README.md" ]]; then
 			jjb_filename=$(basename $xml_template | cut -d '.' -f1)
-			jjb_output_path=$WORKDIR/jjb/dynamic
+			jjb_output_path=$WATCHER_TARGET_DIRECTORY
 			jjwrecker -f $xml_template -n $jjb_filename -o $jjb_output_path
 			if [[ $? != 0 ]]; then
 				echo "Failed to convert xml to jjb template, please check"
@@ -111,8 +111,8 @@ function update_scale_ci_jobs() {
 	popd
 
 	echo "INFO: Template type is jjb"	
-	pushd $WORKDIR/jjb/dynamic
-	for template in $(ls $WORKDIR/jjb/dynamic); do
+	pushd $WATCHER_TARGET_DIRECTORY
+	for template in $(ls $WATCHER_TARGET_DIRECTORY); do
         	if [[ "$template" != "README.md" ]]; then
 			echo "--------------------------------------------------"
 			echo "INFO: Found $template"
