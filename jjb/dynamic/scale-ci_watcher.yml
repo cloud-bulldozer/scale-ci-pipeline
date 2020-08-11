@@ -39,6 +39,10 @@
         description: ''
         name: UPDATE_SCALE_CI_JOBS
     - string:
+        default: '/root/scale-ci-pipeline/jjb/dynamic'
+        description: 'Location of directory targeted by watcher'
+        name: WATCHER_TARGET_DIRECTORY
+    - string:
         default: 'false'
         description: ''
         name: ADD_PUBLIC_KEY

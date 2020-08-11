@@ -10,6 +10,8 @@ export SCALE_CI_WATCHER_REPO_BRANCH="master"
 export SCALE_CI_WATCHER_REPO_PATH="/root/scale-ci-pipeline"
 # Location of the scale-ci-watcher repo
 export WORKDIR="/root/scale-ci-pipeline"
+# Location of directory targeted by watcher
+export WATCHER_TARGET_DIRECTORY=/root/scale-ci-pipeline/jjb/dynamic
 # Whether to update the scale-ci jobs or not
 export UPDATE_SCALE_CI_JOBS=true
 # This is useful when running the watcher job in jenkins, it adds any public key to the jump host, this way other teams can access the jump host with having the perf key.

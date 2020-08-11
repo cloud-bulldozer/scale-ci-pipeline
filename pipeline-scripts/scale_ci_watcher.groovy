@@ -29,6 +29,7 @@ stage ('SCALE-CI-WATCHER') {
 			def repo = watcher_properties['SCALE_CI_WATCHER_REPO']
 			def branch = watcher_properties['SCALE_CI_WATCHER_REPO_BRANCH']
 			def update_scale_ci_jobs = watcher_properties['UPDATE_SCALE_CI_JOBS']
+			def watcher_target_directory = watcher_properties['WATCHER_TARGET_DIRECTORY']
 			def add_public_key = watcher_properties['ADD_PUBLIC_KEY']
 			def public_key = watcher_properties['PUBLIC_KEY']
 			def keys_path = watcher_properties['KEYS_PATH']
@@ -43,6 +44,7 @@ stage ('SCALE-CI-WATCHER') {
 						[$class: 'StringParameterValue', name: 'SCALE_CI_WATCHER_REPO', value: repo ],
 						[$class: 'StringParameterValue', name: 'SCALE_CI_WATCHER_REPO_BRANCH', value: branch ],
                                                 [$class: 'StringParameterValue', name: 'UPDATE_SCALE_CI_JOBS', value: update_scale_ci_jobs ],
+						[$class: 'StringParameterValue', name: 'WATCHER_TARGET_DIRECTORY', value: watcher_target_directory ],
                                                 [$class: 'StringParameterValue', name: 'ADD_PUBLIC_KEY', value: add_public_key ],
                                                 [$class: 'StringParameterValue', name: 'PUBLIC_KEY', value: public_key ],
                                                 [$class: 'StringParameterValue', name: 'KEYS_PATH', value: keys_path ],
