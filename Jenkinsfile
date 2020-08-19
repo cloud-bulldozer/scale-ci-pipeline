@@ -28,6 +28,7 @@ def networking = NETWORKING.toString().toUpperCase()
 def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
 def run_uperf = UPERF.toString().toUpperCase()
+def kraken = KRAKEN.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 
 node (node_label) {
@@ -41,7 +42,7 @@ node (node_label) {
 		load "pipeline-scripts/scale_ci_watcher.groovy"
 	}
 
-        if (pipeline == "TRUE") {
+	if (pipeline == "TRUE") {
 		env.PIPELINE_STAGE=1
 		if ( build_tracker == "TRUE") {
 			load "pipeline-scripts/scale_ci_build_tracker.groovy"
@@ -53,8 +54,8 @@ node (node_label) {
 			load "pipeline-scripts/openshiftv4_on_azure.groovy"
 		}
 		if (openshiftv4_install_on_gcp == "TRUE") {
-                        load "pipeline-scripts/openshiftv4_on_gcp.groovy"
-                }
+			load "pipeline-scripts/openshiftv4_on_gcp.groovy"
+		}
 		if (http == "TRUE") {
 			load "pipeline-scripts/http.groovy"
 		}
@@ -62,7 +63,7 @@ node (node_label) {
 			load "pipeline-scripts/uperf.groovy"
 		}
 		if (ocpv4_scale == "TRUE") {
-                	load "pipeline-scripts/openshiftv4_scale.groovy"
+			load "pipeline-scripts/openshiftv4_scale.groovy"
 		}
 
 		env.PIPELINE_STAGE=2
@@ -110,11 +111,11 @@ node (node_label) {
 		if (openshiftv4_install_on_azure == "TRUE") {
 			load "pipeline-scripts/openshiftv4_on_azure.groovy"
 		}
-		
+
 		// stage to install openshift 4.x on GCP
-                if (openshiftv4_install_on_gcp == "TRUE") {
-                        load "pipeline-scripts/openshiftv4_on_gcp.groovy"
-                }
+		if (openshiftv4_install_on_gcp == "TRUE") {
+			load "pipeline-scripts/openshiftv4_on_gcp.groovy"
+		}
 
 		// stage to setup pbench
 		if (tooling == "TRUE") {
@@ -209,6 +210,11 @@ node (node_label) {
 		// stage to run uperf test
 		if (run_uperf == "TRUE") {
 			load "pipeline-scripts/uperf.groovy"
+		}
+
+		// stage to run kraken test
+		if (kraken == "TRUE") {
+			load "pipeline-scripts/kraken.groovy"
 		}
 
 	}

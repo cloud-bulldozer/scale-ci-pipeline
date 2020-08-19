@@ -1,0 +1,145 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -euxo pipefail
+
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        chmod 600 ${PRIVATE_KEY}
+
+        cd ansible
+
+        # Create inventory File:
+        echo "[orchestration]" > inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory
+
+        time ansible-playbook -vv -i inventory kraken.yml
+    concurrent: true
+    description: This job runs Kraken workload
+    disabled: false
+    name: kraken
+    node: scale-ci
+    parameters:
+    - string:
+        default: ""
+        description: The machine into which chaos scenarios are to be injected.
+        name: ORCHESTRATION_HOST
+        trim: 'false'
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+        trim: 'false'
+    - string:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+        trim: 'false'
+    - string:
+        default: "/root/.kube/config"
+        description: Location of kubeconfig on orchestration host.
+        name: KUBECONFIG_PATH
+        trim: 'false'
+    - string:
+        default: "/root/kraken"
+        description: Kraken dir location on jump host.
+        name: KRAKEN_DIR
+        trim: 'false'
+    - string:
+        default: "/root/kraken/config/config.yaml"
+        description: Kraken config path location.
+        name: KRAKEN_CONFIG
+        trim: 'false'
+    - string:
+        default: "https://github.com/yashashreesuresh/kraken.git"
+        description: Kraken repository location.
+        name: KRAKEN_REPOSITORY
+        trim: 'false'
+    - string:
+        default: "CI/scenarios/"
+        description: Chaos scenarios folder path.
+        name: SCENARIOS_FOLDER_PATH
+        trim: 'false'
+    - string:
+        default: "[[scenarios/etcd.yml, scenarios/post_action_etcd_example.sh], [scenarios/openshift-apiserver.yml, scenarios/post_action_openshift-kube-apiserver.yml], [scenarios/openshift-kube-apiserver.yml, scenarios/post_action_openshift-apiserver.yml], [scenarios/regex_openshift_pod_kill.yml, scenarios/post_action_regex.py]]"
+        description: Chaos scenarios to inject.
+        name: SCENARIOS
+        trim: 'false'
+    - bool:
+        default: false
+        description: Exit when a post action scenario fails.
+        name: EXIT_ON_FAILURE
+    - bool:
+        default: false
+        description: Kraken repository location.
+        name: CERBERUS_ENABLED
+    - string:
+        default: ""
+        description: url where true/false signal from Cerberus can be accessed.
+        name: CERBERUS_URL
+    - string:
+        default: "60"
+        description: Duration to wait between each chaos scenario.
+        name: WAIT_DURATION
+    - string:
+        default: "1"
+        description: Number of times to execute the scenarios.
+        name: ITERATIONS
+    - bool:
+        default: false
+        description: Iterations are set to infinity which means that chaos scenarios are injected forever.
+        name: DAEMON_MODE
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml:
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/openshift-scale/kraken.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
