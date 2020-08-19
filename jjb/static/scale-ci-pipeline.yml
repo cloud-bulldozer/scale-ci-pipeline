@@ -117,6 +117,10 @@
         default: false
         description: ''
         name: UPERF
+    - bool:
+        default: false
+        description: ''
+        name: KRAKEN
     - string:
         default: ''
         description: ''
@@ -232,6 +236,9 @@
         default: ''
         description: ''
         name: UPERF_PROPERTIES_FILE
+    - string:
+        default: ''
+        name: KRAKEN_PROPERTY_FILE
     - string:
         default: 'scale-ci'
         description: ''
