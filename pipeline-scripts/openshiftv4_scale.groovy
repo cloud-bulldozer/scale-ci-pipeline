@@ -74,7 +74,7 @@ stage ('4.x scale cluster') {
 			echo "${e.getMessage()}"
 			echo "Sending an email"
 			mail(
-				to: 'nelluri@redhat.com',
+				to: 'nelluri@redhat.com, msheth@redhat.com',
 				subject: 'ATS-SCALE-CI-SCALE job failed',
 				body: """\
 					Encoutered an error while running the ats-scale-ci-scale job: ${e.getMessage()}\n\n

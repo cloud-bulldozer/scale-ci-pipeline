@@ -96,7 +96,7 @@ stage ('nodevertical_scale_test') {
 				echo "${e.getMessage()}"
 				echo "Sending an email"
 				mail(
-					to: 'nelluri@redhat.com',
+					to: 'nelluri@redhat.com, msheth@redhat.com',
 					subject: 'ats-scale-ci-nodevertical job failed',
 					body: """\
 						Encoutered an error while running the ats-scale-ci-nodevertical job: ${e.getMessage()}\n\n

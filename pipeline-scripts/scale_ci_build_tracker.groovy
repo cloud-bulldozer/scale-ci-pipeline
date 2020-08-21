@@ -43,7 +43,7 @@ stage ('build_tracker') {
 				echo "${e.getMessage()}"
 				echo "Sending an email"
 				mail(
-					to: 'jtaleric@redhat.com, wabouham@redhat.com, rzaleski@redhat.com, nelluri@redhat.com',
+					to: 'jtaleric@redhat.com, wabouham@redhat.com, rzaleski@redhat.com, nelluri@redhat.com, msheth@redhat.com',
 					subject: 'SCALE-CI-BUILD-TRACKER job failed',
 					body: """\
 						Encoutered an error while running the baseline-scale-test job: ${e.getMessage()}\n\n
