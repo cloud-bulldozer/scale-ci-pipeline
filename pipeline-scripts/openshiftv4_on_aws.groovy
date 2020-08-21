@@ -209,7 +209,7 @@ stage ('OCP 4.X INSTALL') {
 				echo "${e.getMessage()}"
 				echo "Sending an email"
 				mail(
-					to: 'nelluri@redhat.com',
+					to: 'nelluri@redhat.com, msheth@redhat.com',
 					subject: 'ats-scale-ci-ocp-aws-deploy job failed',
 					body: """\
 						Encoutered an error while running the ats-scale-ci-ocp-aws-deploy job: ${e.getMessage()}\n\n
