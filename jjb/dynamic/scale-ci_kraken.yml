@@ -54,7 +54,7 @@
         name: KRAKEN_CONFIG
         trim: 'false'
     - string:
-        default: "https://github.com/yashashreesuresh/kraken.git"
+        default: "https://github.com/openshift-scale/kraken.git"
         description: Kraken repository location.
         name: KRAKEN_REPOSITORY
         trim: 'false'
@@ -65,8 +65,18 @@
         trim: 'false'
     - string:
         default: "[[scenarios/etcd.yml, scenarios/post_action_etcd_example.sh], [scenarios/openshift-apiserver.yml, scenarios/post_action_openshift-kube-apiserver.yml], [scenarios/openshift-kube-apiserver.yml, scenarios/post_action_openshift-apiserver.yml], [scenarios/regex_openshift_pod_kill.yml, scenarios/post_action_regex.py]]"
-        description: Chaos scenarios to inject.
+        description: Pod chaos scenarios to inject.
         name: SCENARIOS
+        trim: 'false'
+    - string:
+        default: "[scenarios/node_scenarios_example.yml]"
+        description: Node chaos scenarios to inject.
+        name: NODE_SCENARIOS
+        trim: 'false'
+    - string:
+        default: "[scenarios/cluster_shut_down_scenario.yml]"
+        description: Cluster shutdown chaos scenarios to inject.
+        name: CLUSTER_SHUT_DOWN_SCENARIO
         trim: 'false'
     - bool:
         default: false
