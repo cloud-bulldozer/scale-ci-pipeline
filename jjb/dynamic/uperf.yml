@@ -20,6 +20,9 @@
 
         # run tests
         pushd workloads/network-perf/
+        if [[ ${SMOKE_TEST} == "true" ]] ; then
+          ./smoke_test.sh test_cloud $KUBECONFIG
+        fi
         if [[ ${HOSTNETWORK_TEST} == "true" ]] ; then
           ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
         fi
@@ -51,6 +54,14 @@
         name: SSHKEY_TOKEN
     - string:
         default: ""
+        description: Username for elasticsearch instance
+        name: ES_USER
+    - string:
+        default: ""
+        description: Password for elasticsearch instance
+        name: ES_PASSWORD
+    - string:
+        default: ""
         description: The elasticsearch server where the data will be indexed.
         name: ES_SERVER
     - string:
@@ -59,12 +70,80 @@
         name: ES_PORT
     - bool:
         default: true
+        description: Enable/Disable the ability to compare two uperf runs. If set to true, the next set of environment variables pertaining to the type of test are
+        name: COMPARE
+    - string:
+        default: ""
+        description: Username for elasticsearch instance
+        name: ES_USER_BASELINE
+    - string:
+        default: ""
+        description: Password for elasticsearch instance
+        name: ES_PASSWORD_BASELINE
+    - string:
+        default: ""
+        description: Name you would like to give your baseline cloud. It will appear as a header in the CSV file
+        name: BASELINE_CLOUD_NAME
+    - string:
+        default: ""
+        description: Elasticsearch server used used by the baseline run
+        name: ES_SERVER_BASELINE
+    - string:
+        default: ""
+        description: Port number for the elasticsearch server used by the baseline run
+        name: ES_PORT_BASELINE
+    - bool:
+        default: true
         description: Enables/Disables metadata collection
         name: METADATA_COLLECTION
     - string:
         default: ""
-        description: The UUID used as a reference/baseline to determine pass/fail criteria
-        name: BASELINE_UPERF_UUID
+        description: Baseline UUID for hostnetwork test
+        name: BASELINE_HOSTNET_UUID
+    - string:
+        default: ""
+        description: Baseline UUID for pod to pod using SDN test with 1 uperf client-server pair
+        name: BASELINE_POD_1P_UUID
+    - string:
+        default: ""
+        description: Baseline UUID for pod to pod using SDN test with 2 uperf client-server pair
+        name: BASELINE_POD_2P_UUID
+    - string:
+        default: ""
+        description: Baseline UUID for pod to pod using SDN test with 4 uperf client-server pair
+        name: BASELINE_POD_4P_UUID
+    - string:
+        default: ""
+        description: Baseline UUID for pod to pod using service test with 1 uperf client-server pair
+        name: BASELINE_SVC_1P_UUID
+    - string:
+        default: ""
+        description: Baseline UUID for pod to pod using service test with 2 uperf client-server pair
+        name: BASELINE_SVC_2P_UUID
+    - string:
+        default: ""
+        description: Baseline UUID for pod to pod using service test with 4 uperf client-server pair
+        name: BASELINE_SVC_4P_UUID
+    - string:
+        default: ""
+        description: BASELINE_MULTUS_UUID
+        name: Baseline UUID for multus test
+    - string:
+        default: ""
+        description: Accepeted deviation in percentage for throughput when compared to a baseline run
+        name: THROUGHPUT_TOLERANCE
+    - string:
+        default: ""
+        description: Accepeted deviation in percentage for latency when compared to a baseline run
+        name: LATENCY_TOLERANCE
+    - string:
+        default: ""
+        description: URL to check the status of the cluster using cerberus
+        name: CERBERUS_URL
+    - string:
+        default: ""
+        description: For this you will have to place Google Service Account Key in the $GSHEET_KEY_LOCATION. It will push your local results CSV to Google Spreadsheets and send an email with the attachment
+        name: EMAIL_ID_FOR_RESULTS_SHEET
     - bool:
         default: true
         description: Enables/Disables hostnetwork_test
@@ -77,10 +156,10 @@
         default: true
         description: Enables/Disables pod to pod via service test
         name: SERVICE_TEST
-    - string:
-        default: ""
-        description: URL to check the status of the cluster using cerberus
-        name: CERBERUS_URL
+    - bool:
+        default: true
+        description: Enables/Disables a smoke test which uses pod via sdn test
+        name: SMOKE_TEST
 
     project-type: freestyle
     properties:
