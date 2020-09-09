@@ -31,7 +31,7 @@ stage ('uperf') {
 			def hostnetwork_test = uperf_properties['HOSTNETWORK_TEST']
 			def pod_test = uperf_properties['POD_TEST']
 			def service_test = uperf_properties['SERVICE_TEST']
-			def cerberus_url = uperf.properties['CERBERUS_URL']			
+			def cerberus_url = uperf_properties['CERBERUS_URL']			
 			
 			try {
 				uperf_build = build job: 'RIPSAW-UPERF',
