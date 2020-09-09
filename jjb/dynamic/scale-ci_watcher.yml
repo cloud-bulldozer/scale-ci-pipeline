@@ -8,6 +8,7 @@
         export SCALE_CI_WATCHER_REPO_PATH=$WORKSPACE
         export JJB_CONFIG_PATH=$WORKSPACE/config/jjb.ini
         export WORKDIR=$WORKSPACE
+        export WATCHER_TARGET_DIRECTORY=$WORKSPACE/jjb/dynamic
 
         # Setup config to talk to Jenkins api
         sed -i "/user/c \user=$JENKINS_USER" $JJB_CONFIG_PATH
@@ -15,7 +16,6 @@
         sed -i "/url/c \url=$JENKINS_URL" $JJB_CONFIG_PATH
 
         # Run the watcher
-        cd $SCALE_CI_WATCHER_REPO_PATH
         export PYTHONHTTPSVERIFY=0; ./scale-ci-watcher.sh
     concurrent: false
     disabled: false

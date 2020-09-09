@@ -22,7 +22,6 @@ stage ('SCALE-CI-WATCHER') {
 			}
 			// get properties file
 			sh "wget ${SCALE_CI_WATCHER_PROPERTY_FILE} -O ${property_file_name}"
-			sh "cat ${property_file_name}"
 			def watcher_properties = readProperties file: property_file_name
 			def url = watcher_properties['JENKINS_URL']
 			def config = watcher_properties['JJB_CONFIG_PATH']
