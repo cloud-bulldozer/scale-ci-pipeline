@@ -43,6 +43,12 @@ stage ('4.x scale cluster') {
 			scale_worker_count = scale_properties['SCALE_WORKER_COUNT_V2']
 		} else if (pipeline == "TRUE" && pipeline_stage == "3") {
 			scale_worker_count = scale_properties['SCALE_WORKER_COUNT_V3']
+		} else if (pipeline == "TRUE" && pipeline_stage == "4") {
+			scale_worker_count = scale_properties['SCALE_WORKER_COUNT_V4']
+		} else if (pipeline == "TRUE" && pipeline_stage == "5") {
+			scale_worker_count = scale_properties['SCALE_WORKER_COUNT_V5']
+		} else if (pipeline == "TRUE" && pipeline_stage == "6") {
+			scale_worker_count = scale_properties['SCALE_WORKER_COUNT_V6']
 		}
 		def scale_poll_attempts = scale_properties['SCALE_POLL_ATTEMPTS']
 		def expected_scale_duration = scale_properties['EXPECTED_SCALE_DURATION']

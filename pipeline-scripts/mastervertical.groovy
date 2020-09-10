@@ -39,6 +39,15 @@ stage('mastervertical_scale_test') {
 			def mastervertical_cleanup = mastervertical_properties['MASTERVERTICAL_CLEANUP']
 			def mastervertical_basename = mastervertical_properties['MASTERVERTICAL_BASENAME']
 			def mastervertical_projects = mastervertical_properties['MASTERVERTICAL_PROJECTS']
+			if (pipeline == "TRUE" && pipeline_stage == "3") {
+				mastervertical_projects = mastervertical_properties['MASTERVERTICAL_PROJECTS_V2']
+			} else if (pipeline == "TRUE" && pipeline_stage == "4") {
+				mastervertical_projects = mastervertical_properties['MASTERVERTICAL_PROJECTS_V3']
+			} else if (pipeline == "TRUE" && pipeline_stage == "5") {
+				mastervertical_projects = mastervertical_properties['MASTERVERTICAL_PROJECTS_V4']
+			} else if (pipeline == "TRUE" && pipeline_stage == "6") {
+				mastervertical_projects = mastervertical_properties['MASTERVERTICAL_PROJECTS_V5']
+			}
 			def mastervertical_expected_duration = mastervertical_properties['EXPECTED_MASTERVERTICAL_DURATION']
 			def snafu_user = mastervertical_properties['SNAFU_USER']
 			def snafu_cluster_name = mastervertical_properties['SNAFU_CLUSTER_NAME']

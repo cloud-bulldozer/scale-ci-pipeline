@@ -3,6 +3,11 @@
 def contact = "nelluri@redhat.com"
 def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def pipeline = PIPELINE.toString().toUpperCase()
+def stage-2 = STAGE-2.toString().toUpperCase()
+def stage-3 = STAGE-3.toString().toUpperCase()
+def stage-4 = STAGE-4.toString().toUpperCase()
+def stage-5 = STAGE-5.toString().toUpperCase()
+def stage-6 = STAGE-6.toString().toUpperCase()
 def build_tracker = SCALE_CI_BUILD_TRACKER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
@@ -66,18 +71,60 @@ node (node_label) {
 			load "pipeline-scripts/openshiftv4_scale.groovy"
 		}
 
-		env.PIPELINE_STAGE=2
-		if (http == "TRUE") {
-			load "pipeline-scripts/http.groovy"
+		if (stage-2 == "TRUE") {
+			env.PIPELINE_STAGE=2
+			if (http == "TRUE") {
+				load "pipeline-scripts/http.groovy"
+			}
+			if (nodevertical == "TRUE") {
+				load "pipeline-scripts/nodevertical.groovy"
+			}
+			if (mastervertical == "TRUE") {
+				load "pipeline-scripts/mastervertical.groovy"
+			}
+			if (ocpv4_scale == "TRUE") {
+				load "pipeline-scripts/openshiftv4_scale.groovy"
+			}
 		}
-		if (nodevertical == "TRUE") {
-			load "pipeline-scripts/nodevertical.groovy"
+
+                if (stage-3 == "TRUE") {
+			env.PIPELINE_STAGE=3
+			if (mastervertical == "TRUE") {
+				load "pipeline-scripts/mastervertical.groovy"
+			}
+			if (ocpv4_scale == "TRUE") {
+ 				load "pipeline-scripts/openshiftv4_scale.groovy"
+			}
+                }
+
+		if (stage-4 == "TRUE") {
+			env.PIPELINE_STAGE=4
+			if (mastervertical == "TRUE") {
+				load "pipeline-scripts/mastervertical.groovy"
+			}
+			if (ocpv4_scale == "TRUE") {
+				load "pipeline-scripts/openshiftv4_scale.groovy"
+			}
 		}
-		if (mastervertical == "TRUE") {
-			load "pipeline-scripts/mastervertical.groovy"
+
+		if (stage-5 == "TRUE") {
+			env.PIPELINE_STAGE=5
+			if (mastervertical == "TRUE") {
+				load "pipeline-scripts/mastervertical.groovy"
+			}
+			if (ocpv4_scale == "TRUE") {
+				load "pipeline-scripts/openshiftv4_scale.groovy"
+			}
 		}
-		if (ocpv4_scale == "TRUE") {
-			load "pipeline-scripts/openshiftv4_scale.groovy"
+
+		if (stage-6 == "TRUE") {
+			env.PIPELINE_STAGE=6
+			if (mastervertical == "TRUE") {
+				load "pipeline-scripts/mastervertical.groovy"
+			}
+ 			if (ocpv4_scale == "TRUE") {
+				load "pipeline-scripts/openshiftv4_scale.groovy"
+			}
 		}
 
 	} else {
