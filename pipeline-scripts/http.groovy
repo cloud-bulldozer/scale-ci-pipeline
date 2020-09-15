@@ -57,8 +57,21 @@ stage ('http_scale_test') {
 		def http_test_server_container_image  = http_properties['HTTP_TEST_SERVER_CONTAINER_IMAGE']
 		def es_server = http_properties['ES_SERVER']
 		def es_port = http_properties['ES_PORT']
+		def es_user = http_properties['ES_USER']
+		def es_password = http_properties['ES_PASSWORD']
+		def compare = http_properties['COMPARE']
+		def baseline_cloud_name = http_properties['BASELINE_CLOUD_NAME']
+		def es_user_baseline = http_properties['ES_USER_BASELINE']
+		def es_password_baseline = http_properties['ES_PASSWORD_BASELINE']
+		def es_server_baseline = http_properties['ES_SERVER_BASELINE']
+		def es_port_baseline = http_properties['ES_PORT_BASELINE']
+		def baseline_router_uuid = http_properties['BASELINE_ROUTER_UUID']
+		def throughput_tolerance = http_properties['THROUGHPUT_TOLERANCE']
+		def latency_tolerance = http_properties['LATENCY_TOLERANCE']
+		def cerberus_url = http_properties['CERBERUS_URL']	
 		def email_id_for_results_sheet = http_properties['EMAIL_ID_FOR_RESULTS_SHEET']
 		def gsheet_key = http_properties['GSHEET_KEY']
+		def gsheet_key_location = http_properties['GSHEET_KEY_LOCATION']
 
 		try {
 			http_build = build job: 'ATS-SCALE-CI-HTTP',
@@ -96,8 +109,22 @@ stage ('http_scale_test') {
 					[$class: 'StringParameterValue', name: 'HTTP_TEST_SERVER_CONTAINER_IMAGE', value: http_test_server_container_image ],
 					[$class: 'StringParameterValue', name: 'ES_SERVER', value: es_server ],
 					[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+					[$class: 'StringParameterValue', name: 'ES_USER', value: es_user ],
+					[$class: 'StringParameterValue', name: 'ES_PASSWORD', value: es_password ],
+					[$class: 'BooleanParameterValue', name: 'COMPARE', value: Boolean.valueOf(compare) ],
+					[$class: 'StringParameterValue', name: 'BASELINE_CLOUD_NAME', value: baseline_cloud_name ],
+					[$class: 'StringParameterValue', name: 'ES_USER_BASELINE', value: es_user_baseline ],
+					[$class: 'StringParameterValue', name: 'ES_PASSWORD_BASELINE', value: es_password_baseline ],
+					[$class: 'StringParameterValue', name: 'ES_SERVER_BASELINE', value: es_server_baseline ],
+					[$class: 'StringParameterValue', name: 'ES_PORT_BASELINE', value: es_port_baseline ],
+					[$class: 'StringParameterValue', name: 'BASELINE_ROUTER_UUID', value: baseline_router_uuid ],
+					[$class: 'StringParameterValue', name: 'THROUGHPUT_TOLERANCE', value: throughput_tolerance ],
+					[$class: 'StringParameterValue', name: 'LATENCY_TOLERANCE', value: latency_tolerance ],
+					[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ],
 					[$class: 'StringParameterValue', name: 'EMAIL_ID_FOR_RESULTS_SHEET', value: email_id_for_results_sheet ],
-					[$class: 'StringParameterValue', name: 'GSHEET_KEY', value: gsheet_key ]]
+ 					[$class: 'StringParameterValue', name: 'GSHEET_KEY', value: gsheet_key ],
+					[$class: 'StringParameterValue', name: 'GSHEET_KEY_LOCATION', value: gsheet_key_location ]]
+
 		} catch ( Exception e) {
 			echo "ATS-SCALE-CI-HTTP Job failed with the following error: "
 			echo "${e.getMessage()}"
