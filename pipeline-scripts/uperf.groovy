@@ -29,6 +29,9 @@ stage ('uperf') {
 			def es_password = uperf_properties['ES_PASSWORD']
 			def es_server = uperf_properties['ES_SERVER']
 			def es_port = uperf_properties['ES_PORT']
+			def jenkins_user = uperf_properties['JENKINS_USER']
+			def jenkins_api_token = uperf_properties['JENKINS_API_TOKEN']
+			def jenkins_es_server = uperf_properties['JENKINS_ES_SERVER']
 			def metadata_collection = uperf_properties['METADATA_COLLECTION']
 			def hostnetwork_test = uperf_properties['HOSTNETWORK_TEST']
 			def pod_test = uperf_properties['POD_TEST']
@@ -67,6 +70,9 @@ stage ('uperf') {
 						[$class: 'StringParameterValue', name: 'ES_PASSWORD', value: es_password ],
 						[$class: 'StringParameterValue', name: 'ES_SERVER', value: es_server ],
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+						[$class: 'StringParameterValue', name: 'JENKINS_USER', value: jenkins_user ],
+						[$class: 'StringParameterValue', name: 'JENKINS_API_TOKEN', value: jenkins_api_token ],
+						[$class: 'StringParameterValue', name: 'JENKINS_ES_SERVER', value: jenkins_es_server ],
 						[$class: 'BooleanParameterValue', name: 'METADATA_COLLECTION', value: Boolean.valueOf(metadata_collection) ],
 						[$class: 'BooleanParameterValue', name: 'HOSTNETWORK_TEST', value: Boolean.valueOf(hostnetwork_test) ],
 						[$class: 'BooleanParameterValue', name: 'POD_TEST', value: Boolean.valueOf(pod_test) ],

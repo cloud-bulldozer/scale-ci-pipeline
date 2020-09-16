@@ -97,6 +97,9 @@ stage ('OCP 4.X INSTALL') {
 			def daemon_mode = openshiftv4_properties['DAEMON_MODE']
 			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']
 			def job_iterations = openshiftv4_properties['JOB_ITERATIONS']
+			def jenkins_user = openshiftv4_properties['JENKINS_USER']
+			def jenkins_api_token = openshiftv4_properties['JENKINS_API_TOKEN']
+			def jenkins_es_server = openshiftv4_properties['JENKINS_ES_SERVER']
 			
 			// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigget is set
 			if ( scale_ci_build_trigger.toBoolean() ) {
@@ -118,6 +121,9 @@ stage ('OCP 4.X INSTALL') {
 				openshiftv4_build = build job: 'ATS-SCALE-CI-OCP-OSP-DEPLOY',
 				parameters: [  	[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'JENKINS_USER', value: jenkins_user ],
+						[$class: 'StringParameterValue', name: 'JENKINS_API_TOKEN', value: jenkins_api_token ],
+						[$class: 'StringParameterValue', name: 'JENKINS_ES_SERVER', value: jenkins_es_server ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_INSTALL', value: Boolean.valueOf(openshift_install) ],
 						[$class: 'BooleanParameterValue', name: 'SCALE_CI_BUILD_TRIGGER', value: Boolean.valueOf(scale_ci_build_trigger) ],

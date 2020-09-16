@@ -76,6 +76,9 @@ stage ('http_scale_test') {
 		def gold_ocp_version  = http_properties['GOLD_OCP_VERSION']
 		def es_gold = http_properties['ES_GOLD']
 		def compare_with_gold = http_properties['COMPARE_WITH_GOLD']
+		def jenkins_user = http_properties['JENKINS_USER']
+		def jenkins_api_token = http_properties['JENKINS_API_TOKEN']
+		def jenkins_es_server = http_properties['JENKINS_ES_SERVER']
 
 		try {
 			http_build = build job: 'ATS-SCALE-CI-HTTP',
