@@ -1,0 +1,163 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |
+        set -eo pipefail
+
+        # get perf keys to access orchestration host and set ssh session options
+        git clone https://${SSHKEY_TOKEN}@${SSHKEY_REPO}
+        if [ -f ${WORKSPACE}/${SSHKEY_REPOPATH_PUB} ] && [ -f ${WORKSPACE}/${SSHKEY_REPOPATH_PRIV} ]
+        then
+        export PUBLIC_KEY=${WORKSPACE}/${SSHKEY_REPOPATH_PUB}
+        export PRIVATE_KEY=${WORKSPACE}/${SSHKEY_REPOPATH_PRIV}
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
+        chmod 600 ${PRIVATE_KEY}
+        fi
+
+        # fetch the kubeconfig from the orchestration host
+        echo "Fetching the  kubeconfig from the orchestration host"
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:$HOME/.kube/config ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=${WORKSPACE}/kubeconfig
+
+        # run the indexing script
+        ./elasticsearch-indexing/index.sh
+    concurrent: true
+    description: Indexes Jenkins job info and status into Elasticsearch<!-- Managed by Jenkins
+      Job Builder --><!-- Managed by Jenkins Job Builder -->
+    disabled: false
+    name: INDEXER
+    node: scale-ci
+    parameters:
+    - string:
+        default: ''
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+        trim: 'false'
+    - string:
+        default: ''
+        description: The machine intended to run the oc commands and launch the workload.
+        name: ORCHESTRATION_HOST
+        trim: 'false'
+    - string:
+        default: root
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+        trim: 'false'
+    - string:
+        default: github.com/redhat-performance/perf-dept.git
+        description: Repository containing ssh keys for Ansible and pbench server
+        name: SSHKEY_REPO
+        trim: 'false'
+    - string:
+        default: perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        description: path to public key file in ssh key repository
+        name: SSHKEY_REPOPATH_PUB
+        trim: 'false'
+    - string:
+        default: perf-dept/ssh_keys/id_rsa_pbench_ec2
+        description: path to private key file in ssh key repository
+        name: SSHKEY_REPOPATH_PRIV
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_BUILD_TAG
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_NODE_NAME
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_BUILD_URL
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_USER
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_API_TOKEN
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: ES_SERVER
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: ES_USER
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: ES_INDEX
+        trim: 'false'
+    - string:
+        default: ''
+        description: "path to the benchmark status file with key=value pairs"
+        name: BENCHMARK_STATUS_FILE
+        trim: 'false'
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.1.1" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.12">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.12.1">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.31">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        name: origin
+        refspec: +refs/heads/*:refs/remotes/origin/*
+        url: https://github.com/openshift-scale/scale-ci-pipeline.git
+        wipe-workspace: true
+    triggers: []
+    wrappers:
+    - raw:
+        xml: |
+          <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.37">
+          <deleteDirs>false</deleteDirs>
+          <cleanupParameter />
+          <externalDelete />
+          <disableDeferredWipeout>false</disableDeferredWipeout>
+          </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    - ansicolor:
+        colormap: xterm

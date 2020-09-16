@@ -2,7 +2,7 @@
     block-downstream: false
     block-upstream: false
     builders:
-    - shell: |+
+    - shell: |-
         set -o pipefail
         set -eux
 
@@ -18,6 +18,11 @@
         scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:$HOME/.kube/config ${WORKSPACE}/kubeconfig
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
+        # delete benchmark status file if exists and set the path
+        rm /tmp/uperf_$BUILD_NUMBER.status || true
+        export BENCHMARK_STATUS_PATH=/tmp/uperf_$BUILD_NUMBER.status
+        echo "BENCHMARK_STATUS_FILE=$BENCHMARK_STATUS_PATH" > uperf.properties
+
         # run tests
         pushd workloads/network-perf/
         if [[ ${SMOKE_TEST} == "true" ]] ; then
@@ -25,33 +30,38 @@
         fi
         if [[ ${HOSTNETWORK_TEST} == "true" ]] ; then
           ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
+          hostnetwork_test_status=$(oc get benchmarks/uperf-benchmark-hostnetwork  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "hostnetwork_test=$hostnetwork_test_status" >> /tmp/uperf_$BUILD_NUMBER.status
         fi
         if [[ ${POD_TEST} == "true" ]] ; then
-        ./run_pod_network_test_fromgit.sh test_cloud $KUBECONFIG
+          ./run_pod_network_test_fromgit.sh test_cloud $KUBECONFIG
+          podnetwork_test_status=$(oc get benchmarks/uperf-benchmark-pod-network  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "podnetwork_test=$hostnetwork_test_status" >> /tmp/uperf_$BUILD_NUMBER.status
         fi
         if [[ ${SERVICE_TEST} == "true" ]] ; then
-        ./run_serviceip_network_test_fromgit.sh test_cloud $KUBECONFIG
+          ./run_serviceip_network_test_fromgit.sh test_cloud $KUBECONFIG
+          servicenetwork_test_status=$(oc get benchmarks/uperf-benchmark-service-network  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "servicenetwork_test=$servicenetwork_test_status" >> /tmp/uperf_$BUILD_NUMBER.status
         fi
     concurrent: true
-    description: |
+    description: |-
       Uperf is a network performance tool
       This job is managed by https://github.com/cloud-bulldozer/plow.git
+      <!-- Managed by Jenkins Job Builder -->
     disabled: false
     name: RIPSAW-UPERF
     node: scale-ci
     parameters:
     - string:
-        default: "root"
+        default: root
         description: User name to access cluster.
         name: ORCHESTRATION_USER
+        trim: 'false'
     - string:
-        default: ""
+        default: ''
         description: Host with the kubeconfig and oc client.
         name: ORCHESTRATION_HOST
-    - password:
-        default: ""
-        description: Token to access private repo containing ssh keys.
-        name: SSHKEY_TOKEN
+        trim: 'false'
     - string:
         default: ""
         description: Username for elasticsearch instance
@@ -62,12 +72,31 @@
         name: ES_PASSWORD
     - string:
         default: ""
+        description: Jenkins user
+        name: JENKINS_USER
+        trim: 'false'
+    - string:
+        default: ''
+        description: Jenkins API token
+        name: JENKINS_API_TOKEN
+        trim: 'false'
+    - raw:
+        xml: |
+          <hudson.model.PasswordParameterDefinition>
+          <name>SSHKEY_TOKEN</name>
+          <description>Token to access private repo containing ssh keys.</description>
+          <defaultValue></defaultValue>
+          </hudson.model.PasswordParameterDefinition>
+    - string:
+        default: ''
         description: The elasticsearch server where the data will be indexed.
         name: ES_SERVER
+        trim: 'false'
     - string:
-        default: ""
+        default: ''
         description: The port for the elasticsearch server.
         name: ES_PORT
+        trim: 'false'
     - bool:
         default: true
         description: Enable/Disable the ability to compare two uperf runs. If set to true, the next set of environment variables pertaining to the type of test are
@@ -160,6 +189,11 @@
         default: true
         description: If COMPARE is set to true and COMPARE_WITH_GOLD is set to true then the current run will be compared against our gold-index
         name: COMPARE_WITH_GOLD
+    - string:
+        default: ''
+        description: The UUID used as a reference/baseline to determine pass/fail criteria
+        name: BASELINE_UPERF_UUID
+        trim: 'false'
     - bool:
         default: true
         description: Enables/Disables hostnetwork_test
@@ -176,25 +210,39 @@
         default: true
         description: Enables/Disables a smoke test which uses pod via sdn test
         name: SMOKE_TEST
-
+    - string:
+        default: ''
+        description: URL to check the status of the cluster using cerberus
+        name: CERBERUS_URL
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_USER
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_API_TOKEN
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_ES_SERVER
+        trim: 'false'
     project-type: freestyle
     properties:
     - raw:
         xml: |
-          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+          <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.1.1" />
     - raw:
         xml: |
-          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.12">
           <gitLabConnection />
           </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
     - raw:
         xml: |
-          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
-          <enabled>false</enabled>
-          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
-    - raw:
-        xml: |
-          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.12.1">
           <ownership>
           <ownershipEnabled>true</ownershipEnabled>
           <primaryOwnerId>nelluri</primaryOwnerId>
@@ -203,7 +251,7 @@
           </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
     - raw:
         xml: |
-          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.31">
           <autoRebuild>false</autoRebuild>
           <rebuildDisabled>false</rebuildDisabled>
           </com.sonyericsson.rebuild.RebuildSettings>
@@ -218,15 +266,59 @@
           <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
           <paramsToUseForLimit />
           </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-    publishers: []
+    publishers:
+    - raw:
+        xml: |
+          <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.35.2">
+          <configs>
+          <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+          <hudson.plugins.parameterizedtrigger.NodeParameters />
+          <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          <properties>SSHKEY_TOKEN=${SSHKEY_TOKEN}
+          ORCHESTRATION_HOST=${ORCHESTRATION_HOST}
+          ORCHESTRATION_USER=${ORCHESTRATION_USER}
+          JENKINS_BUILD_TAG=${BUILD_TAG}
+          JENKINS_NODE_NAME=${NODE_NAME}
+          JENKINS_BUILD_URL=${BUILD_URL}
+          ES_SERVER=${JENKINS_ES_SERVER}
+          JENKINS_USER=${JENKINS_USER}
+          JENKINS_API_TOKEN=${JENKINS_API_TOKEN}
+          <textParamValueOnNewLine>false</textParamValueOnNewLine>
+          </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          <hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          <propertiesFile>uperf.properties</propertiesFile>
+          <failTriggerOnMissing>false</failTriggerOnMissing>
+          <textParamValueOnNewLine>false</textParamValueOnNewLine>
+          <useMatrixChild>false</useMatrixChild>
+          <onlyExactRuns>false</onlyExactRuns>
+          </hudson.plugins.parameterizedtrigger.FileBuildParameters>
+          </configs>
+          <projects>INDEXER, </projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <triggerFromChildProjects>false</triggerFromChildProjects>
+          </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          </configs>
+          </hudson.plugins.parameterizedtrigger.BuildTrigger>
+
     scm:
     - git:
         branches:
         - '*/master'
+        name: origin
+        refspec: +refs/heads/*:refs/remotes/origin/*
         url: https://github.com/cloud-bulldozer/plow.git
+        wipe-workspace: true
     triggers: []
     wrappers:
-    - workspace-cleanup:
-        dirmatch: false
+    - raw:
+        xml: |
+          <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.37">
+          <deleteDirs>false</deleteDirs>
+          <cleanupParameter />
+          <externalDelete />
+          <disableDeferredWipeout>false</disableDeferredWipeout>
+          </hudson.plugins.ws__cleanup.PreBuildCleanup>
     - ansicolor:
         colormap: xterm

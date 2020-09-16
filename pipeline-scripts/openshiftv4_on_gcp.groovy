@@ -108,6 +108,9 @@ stage ('OCP 4.X INSTALL') {
 			def elastic_user = openshiftv4_properties['ELASTIC_CURL_USER']
 			def elastic_server = openshiftv4_properties['ELASTIC_SERVER']
 			def job_iterations = openshiftv4_properties['JOB_ITERATIONS']
+			def jenkins_user = openshiftv4_properties['JENKINS_USER']
+			def jenkins_api_token = openshiftv4_properties['JENKINS_API_TOKEN']
+			def jenkins_es_server = openshiftv4_properties['JENKINS_ES_SERVER']
 
 			// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigget is set
 			if ( scale_ci_build_trigger.toBoolean() ) {
@@ -130,6 +133,9 @@ stage ('OCP 4.X INSTALL') {
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'JENKINS_USER', value: jenkins_user ],
+						[$class: 'StringParameterValue', name: 'JENKINS_API_TOKEN', value: jenkins_api_token ],
+						[$class: 'StringParameterValue', name: 'JENKINS_ES_SERVER', value: jenkins_es_server ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_CLEANUP', value: Boolean.valueOf(openshift_cleanup) ],
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_INSTALL', value: Boolean.valueOf(openshift_install) ],

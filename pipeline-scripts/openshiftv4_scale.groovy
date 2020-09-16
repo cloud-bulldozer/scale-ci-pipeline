@@ -49,6 +49,11 @@ stage ('4.x scale cluster') {
 		def es_server_baseline = scale_properties['ES_SERVER_BASELINE']
 		def es_port_baseline = scale_properties['ES_PORT_BASELINE']
 		def cerberus_url = scale_properties['CERBERUS_URL']
+		def scale_poll_attempts = scale_properties['SCALE_POLL_ATTEMPTS']
+		def expected_scale_duration = scale_properties['EXPECTED_SCALE_DURATION']
+		def jenkins_user = scale_properties['JENKINS_USER']
+		def jenkins_api_token = scale_properties['JENKINS_API_TOKEN']
+		def jenkins_es_server = scale_properties['JENKINS_ES_SERVER']
 
 		try {
 			scale_build = build job: 'ATS-SCALE-CI-SCALE',
@@ -56,6 +61,13 @@ stage ('4.x scale cluster') {
 					[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 					[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 					[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
+					[$class: 'StringParameterValue', name: 'JENKINS_USER', value: jenkins_user ],
+					[$class: 'StringParameterValue', name: 'JENKINS_API_TOKEN', value: jenkins_api_token ],
+					[$class: 'StringParameterValue', name: 'JENKINS_ES_SERVER', value: jenkins_es_server ],
+					[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
+					[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_NODE_SELECTOR', value: Boolean.valueOf(workload_job_node_selector) ],
+					[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
+					[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
 					[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
 					[$class: 'StringParameterValue', name: 'SCALE', value: scale ],
 					[$class: 'StringParameterValue', name: 'POLL_INTERVAL', value: poll_interval ],
