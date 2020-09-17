@@ -66,6 +66,18 @@
         default: ''
         description: OC client url.
         name: OPENSHIFT_CLIENT_LOCATION
+    - string:
+        default: ''
+        description: Elasticserach CURL user.
+        name: ELASTIC_CURL_USER
+    - string:
+        default: ''
+        description: Elasticserach CURL url.
+        name: ELASTIC_CURL_URL
+    - string:
+        default: ''
+        description: Elasticserach server.
+        name: ELASTIC_SERVER
     - bool:
         default: false
         description: ''

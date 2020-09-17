@@ -103,6 +103,10 @@ stage ('OCP 4.X INSTALL') {
 			def openshift_alertmanager_storage_size = openshiftv4_properties['OPENSHIFT_ALERTMANAGER_STORAGE_SIZE']
 			def kubeconfig_auth_dir_path = openshiftv4_properties['KUBECONFIG_AUTH_DIR_PATH']
 			def fips = openshiftv4_properties['FIPS']
+			def elastic_url = openshiftv4_properties['ELASTIC_CURL_URL']
+			def elastic_user = openshiftv4_properties['ELASTIC_CURL_USER']
+			def elastic_server = openshiftv4_properties['ELASTIC_SERVER']
+
 
 			// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigget is set
 			if ( scale_ci_build_trigger.toBoolean() ) {
@@ -203,7 +207,10 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_PROMETHEUS_STORAGE_SIZE', value: openshift_prometheus_storage_size ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_ALERTMANAGER_STORAGE_CLASS', value: openshift_alertmanager_storage_class ],
 						[$class: 'StringParameterValue', name: 'OPENSHIFT_ALERTMANAGER_STORAGE_SIZE', value: openshift_alertmanager_storage_size ],
-						[$class: 'StringParameterValue', name: 'KUBECONFIG_AUTH_DIR_PATH', value: kubeconfig_auth_dir_path ]]
+						[$class: 'StringParameterValue', name: 'KUBECONFIG_AUTH_DIR_PATH', value: kubeconfig_auth_dir_path ],
+						[$class: 'StringParameterValue', name: 'ELASTIC_CURL_URL', value: elastic_url ],
+						[$class: 'StringParameterValue', name: 'ELASTIC_CURL_USER', value: elastic_user ],
+						[$class: 'StringParameterValue', name: 'ELASTIC_SERVER', value: elastic_server ]]
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-OCP-AWS-DEPLOY Job failed with the following error: "
 				echo "${e.getMessage()}"
