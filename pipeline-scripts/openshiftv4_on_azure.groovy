@@ -102,6 +102,7 @@ stage ('OCP 4.X INSTALL') {
 			def elastic_url = openshiftv4_properties['ELASTIC_CURL_URL']
 			def elastic_user = openshiftv4_properties['ELASTIC_CURL_USER']
 			def elastic_server = openshiftv4_properties['ELASTIC_SERVER']
+			def job_iterations = openshiftv4_properties['JOB_ITERATIONS']
 
 			// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigget is set
 			if ( scale_ci_build_trigger.toBoolean() ) {
@@ -201,7 +202,8 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'KUBECONFIG_AUTH_DIR_PATH', value: kubeconfig_auth_dir_path ],
 						[$class: 'StringParameterValue', name: 'ELASTIC_CURL_URL', value: elastic_url ],
 						[$class: 'StringParameterValue', name: 'ELASTIC_CURL_USER', value: elastic_user ],
-						[$class: 'StringParameterValue', name: 'ELASTIC_SERVER', value: elastic_server ]]
+						[$class: 'StringParameterValue', name: 'ELASTIC_SERVER', value: elastic_server ],
+						[$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: job_iterations ]]
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-OCP-AZURE-DEPLOY Job failed with the following error: "
 				echo "${e.getMessage()}"

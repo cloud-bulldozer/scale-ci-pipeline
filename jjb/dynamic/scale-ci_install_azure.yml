@@ -17,7 +17,10 @@
 
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
+        for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
+        do
         time ansible-playbook -vv -i inventory OCP-4.X/install-on-azure.yml | tee $(date +"%Y%m%d-%H%M%S")-install.timing
+        done
     concurrent: true
     description: |
       Installs and configures OCP 4.x cluster on Azure.
@@ -354,6 +357,10 @@
         default: ""
         description: Path to the auth dir where the kubeconfig exists, this var is used with flexy install jobs.
         name: KUBECONFIG_AUTH_DIR_PATH
+    - string:
+        default: "1"
+        description: Number of iterations to run the job
+        name: JOB_ITERATIONS
     project-type: freestyle
     properties:
     - raw:

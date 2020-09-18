@@ -19,6 +19,8 @@
         ansible --version
         cp ci/ocp_jetpack_vars.yml group_vars/all.yml
         cp ci/ocp_install_vars.yml vars/shift_stack_vars.yaml
+        for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
+        do
         time ansible-playbook -vvv main.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-install.timing
         ssh-copy-id -i ${PUBLIC_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}
         git clone https://github.com/openshift-scale/scale-ci-deploy.git
@@ -26,6 +28,7 @@
         # disable openshift install as we already installed via jetpack
         export OPENSHIFT_INSTALL=false
         time ansible-playbook -i ../inventory -vvv OCP-4.X/install-on-osp.yml | tee $(date +"%Y%m%d-%H%M%S")-post-install.timing
+        done
     concurrent: false
     description: |
       Installs and configures OCP 4.x cluster on OSP.
@@ -338,6 +341,10 @@
         default: ""
         description: Path to the auth dir where the kubeconfig exists, this var is used with flexy install jobs.
         name: KUBECONFIG_AUTH_DIR_PATH
+    - string:
+        default: "1"
+        description: Number of iterations to run the job
+        name: JOB_ITERATIONS
     project-type: freestyle
     properties:
     - raw:
