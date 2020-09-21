@@ -62,7 +62,7 @@
         description: ''
         name: OPENSHIFTv4_SCALE
     - bool:
-        default: false
+        default: true
         description: ''
         name: NODEVERTICAL_SCALE_TEST
     - bool:
@@ -70,7 +70,7 @@
         description: ''
         name: HTTP_TEST
     - bool:
-        default: false
+        default: true
         description: ''
         name: SERVICES_PER_NAMESPACE
     - bool:
@@ -78,11 +78,11 @@
         description: ''
         name: DEPLOYMENTS_PER_NS
     - bool:
-        default: false
+        default: true
         description: ''
         name: PODVERTICAL
     - bool:
-        default: false
+        default: true
         description: ''
         name: NETWORKING
     - bool:
@@ -94,7 +94,7 @@
         description: ''
         name: MONGODB_YCSB_TEST
     - bool:
-        default: false
+        default: true
         description: ''
         name: MASTERVERTICAL_SCALE_TEST
     - bool:
