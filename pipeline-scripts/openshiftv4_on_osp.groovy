@@ -112,7 +112,7 @@ stage ('OCP 4.X INSTALL') {
 			}
 
 			try {
-				openshiftv4_build = build job: 'ATS-SCALE-CI-TEST',
+				openshiftv4_build = build job: 'ATS-SCALE-CI-OCP-OSP-DEPLOY',
 				parameters: [  	[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
