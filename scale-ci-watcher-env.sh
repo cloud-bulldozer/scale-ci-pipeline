@@ -3,7 +3,7 @@
 # Path to the jenkins job builder config to connect to jenkins
 export JJB_CONFIG_PATH="/root/scale-ci-pipeline/config/jjb.ini"
 # Repo hosting scale-ci watcher
-export SCALE_CI_WATCHER_REPO="https://github.com/openshift-scale/scale-ci-pipeline.git"
+export SCALE_CI_WATCHER_REPO="https://github.com/innovation-sre/scale-ci-pipeline.git"
 # branch to clone
 export SCALE_CI_WATCHER_REPO_BRANCH="master"
 # Location of the scale-ci-watcher repo

@@ -6,7 +6,7 @@
     name: SCALE-CI-PIPELINE
     parameters:
     - bool:
-        default: true
+        default: false
         description: ''
         name: SCALE_CI_WATCHER
     - bool:
@@ -50,7 +50,7 @@
         description: ''
         name: TOOLING
     - bool:
-        default: false
+        default: true
         description: ''
         name: CONFORMANCE
     - bool:
@@ -66,11 +66,11 @@
         description: ''
         name: NODEVERTICAL_SCALE_TEST
     - bool:
-        default: false
+        default: true
         description: ''
         name: HTTP_TEST
     - bool:
-        default: true
+        default: false
         description: ''
         name: SERVICES_PER_NAMESPACE
     - bool:
@@ -78,7 +78,7 @@
         description: ''
         name: DEPLOYMENTS_PER_NS
     - bool:
-        default: true
+        default: false
         description: ''
         name: PODVERTICAL
     - bool:
@@ -166,7 +166,7 @@
         name: TOOLING_PROPERTY_FILE
     - string:
         default: ''
-        description: ''
+        description: 'https://github.com/innovation-sre/scale-ci-pipeline/blob/master/properties-files/conformance.properties?raw=true'
         name: CONFORMANCE_PROPERTY_FILE
     - string:
         default: ''
@@ -177,8 +177,8 @@
         description: ''
         name: OPENSHIFTv4_SCALE_PROPERTY_FILE
     - string:
-        default: ''
-        description: ''
+        default: 'https://github.com/innovation-sre/scale-ci-pipeline/blob/master/properties-files/nodevertical.properties?raw=true'
+        description: 'Properties file for NodeVertical workloads'
         name: NODEVERTICAL_PROPERTY_FILE
     - string:
         default: ''
@@ -218,7 +218,7 @@
         name: MONGOYCSB_PROPERTY_FILE_GLUSTER_BLOCK
     - string:
         default: ''
-        description: ''
+        description: 'https://github.com/innovation-sre/scale-ci-pipeline/blob/master/properties-files/mastervertical.properties?raw=true'
         name: MASTERVERTICAL_PROPERTY_FILE
     - string:
         default: ''
@@ -257,7 +257,7 @@
       - git:
           branches:
           - '*master'
-          url: https://github.com/openshift-scale/scale-ci-pipeline.git
+          url: https://github.com/innovation-sre/scale-ci-pipeline.git
           wipe-workspace: true
       script-path: Jenkinsfile
     project-type: pipeline

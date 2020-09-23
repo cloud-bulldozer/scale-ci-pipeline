@@ -7,9 +7,9 @@
         set -eux
 
         # get perf keys to access orchestration host and set ssh session options
-        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
-        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        git clone https://${SSHKEY_TOKEN}@github.com/innovation-sre/orchestration-host.git
+        export PUBLIC_KEY=${WORKSPACE}/orchestration-host/ssh_keys/id_rsa.pub
+        export PRIVATE_KEY=${WORKSPACE}/orchestration-host/ssh_keys/id_rsa
         export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
         chmod 600 ${PRIVATE_KEY}
 
