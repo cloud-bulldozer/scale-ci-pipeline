@@ -1,0 +1,282 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -o pipefail
+        set -eux
+
+        # get perf keys to access orchestration host and set ssh session options
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
+        chmod 600 ${PRIVATE_KEY}
+
+        # fetch the kubeconfig from the orchestration host
+        echo "Fetching the  kubeconfig from the orchestration host"
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=${WORKSPACE}/kubeconfig
+
+        # Create inventory File:
+        echo "[orchestration]" > inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory
+
+        export ANSIBLE_FORCE_COLOR=true
+        ansible --version
+        time ansible-playbook -vv -i inventory workloads/fio.yml
+
+        # logging
+        logs_counter=0
+        logs_counter_limit=100
+        oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-fio
+        while true; do
+          logs_counter=$((logs_counter+1))
+          if [[ $(oc get job -n scale-ci-tooling scale-ci-fio -o json | jq -e '.status.active==1') == "true" ]]; then
+            if [[ $logs_counter -le $logs_counter_limit ]]; then
+              echo "=================================================================================================================================================================="
+              echo "Attempt $logs_counter to reconnect and fetch the controller pod logs"
+              echo "=================================================================================================================================================================="
+              oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-fio
+            else
+              echo "Exceeded the retry limit trying to get the controller logs: $logs_counter_limit, exiting."
+              exit 1
+            fi
+          else
+            echo "Job completed"
+            break
+          fi
+        done
+
+        # status
+        oc get job -n scale-ci-tooling scale-ci-fio -o json | jq -e '.status.succeeded==1'
+    concurrent: true
+    description: |
+      FIO workload is used to measure disk thresholds remote storage volumes within OpenShift. This means FIO loads several storage volumesusing cluster loader.
+      This job is managed by https://github.com/innovation-sre/scale-ci-pipeline
+    disabled: false
+    name: ATS-SCALE-CI-FIO
+    node: scale-ci
+    parameters:
+    - string:
+        default: ''
+        description: this is a var to help idenfity cluster loaders results.
+        name: SNAFU_USER
+    - string:
+        default: ''
+        description: cluster name is a var to help idenfity cluster loaders results.(defaults to clustername found in machinset label)
+        name: SNAFU_CLUSTER_NAME
+    - string:
+        default: ''
+        description: Elasticsearch server host address (currently used by snafu), set to index results from cluster loader
+        name: ES_HOST
+    - string:
+        default: ''
+        description: Elasticsearch server port (currently used by snafu), set to index results from cluster loader
+        name: ES_PORT
+    - string:
+        default: ''
+        description: Elasticsearch server index prefix (currently used by snafu). (defaults to snafu through the workloads repo)
+        name: ES_INDEX_PREFIX
+    - string:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - string:
+        default: ""
+        description: The machine intended to run the oc commands and launch the workload.
+        name: ORCHESTRATION_HOST
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: "quay.io/openshift-scale/scale-ci-workload"
+        description: Container image that runs the workload script.
+        name: WORKLOAD_IMAGE
+    - bool:
+        default: false
+        description: Enables/disables the node selector that places the workload job on the `pbench` node.
+        name: WORKLOAD_JOB_NODE_SELECTOR
+    - bool:
+        default: false
+        description: Enables/disables the toleration on the workload job to permit the `controller` taint.
+        name: WORKLOAD_JOB_TAINT
+    - bool:
+        default: false
+        description: Enables/disables running the workload pod as privileged.
+        name: WORKLOAD_JOB_PRIVILEGED
+    - string:
+        default: "/root/.kube/config"
+        description: Location(absolute path) of kubeconfig on orchestration host.
+        name: KUBECONFIG_FILE
+    - bool:
+        default: false
+        description: Enables/disables the collection of pbench data on the pbench agent pods. These pods are deployed by the tooling playbook.
+        name: ENABLE_PBENCH_AGENTS
+    - bool:
+        default: false
+        description: Enables/disables the copying of pbench data to a remote results server for further analysis.
+        name: ENABLE_PBENCH_COPY
+    - string:
+        default: ""
+        description: DNS address of the pbench results server.
+        name: PBENCH_SERVER
+    - string:
+          default: "~/.ssh/id_rsa"
+          description: Location of ssh private key to authenticate to the pbench results server.
+          name: PBENCH_SSH_PRIVATE_KEY_FILE
+    - string:
+          default: "~/.ssh/id_rsa.pub"
+          description: Location of the ssh public key to authenticate to the pbench results server.
+          name: PBENCH_SSH_PUBLIC_KEY_FILE
+    - string:
+        default: ""
+        description: Future use for pbench and prometheus scraper to place results into git repo that holds results data.
+        name: SCALE_CI_RESULTS_TOKEN
+    - string:
+        default: 10000
+        description: |
+            Number of retries for Ansible to poll if the workload job has completed.
+            Poll attempts delay 10s between polls with some additional time taken for each polling action depending on the orchestration host setup.
+            FIO I/O test for many pods and big file sizes can run for hours and either we rise `JOB_COMPLETION_POLL_ATTEMPTS` to
+            higt value, or remove fully checking for `JOB_COMPLETION_POLL_ATTEMPTS` for FIO I/O test.
+        name: JOB_COMPLETION_POLL_ATTEMPTS
+    - bool:
+        default: false
+        description: Set it to true when running OCP on Azure.
+        name: AZURE_AUTH
+    - string:
+        default: ""
+        description: Path to the Azure auth file - terraform.azure.auto.tfvars.json found in the openshift install dir on the orchestration host i.e scale-ci-deploy/scale-ci-azure/terraform.azure.auto.tfvars.json.
+        name: AZURE_AUTH_FILE
+    - string:
+        default: "fiotest"
+        description: Prefix to use for FIO I/O test
+        name: FIOTEST_PREFIX
+    - bool:
+        default: true
+        description: If set to `true` test project will be removed at end of test.
+        name: FIOTEST_CLEANUP
+    - string:
+        default: "fiotest"
+        description: "Basename used by cluster loader for the project(s) it creates."
+        name: FIOTEST_BASENAME
+    - string:
+        default: 1
+        description: Maximum number of Pods that FIO I/O test will create for test
+        name: FIOTEST_MAXPODS
+    - string:
+        default: "quay.io/openshift-scale/scale-ci-fio:latest"
+        description: Container image to use for FIO Pods
+        name: FIOTEST_POD_IMAGE
+    - string:
+        default: 60
+        description: Period of time (in seconds) for cluster loader to pause after creating pods and waiting for them to be running.
+        name: FIOTEST_PAUSE
+    - string:
+        default: 1
+        description: Number of Pods for cluster loader will create before waiting for Pods to become running.
+        name: FIOTEST_STEPSIZE
+    - string:
+        default: 2Gi
+        description: `FIOTEST_STORAGE_SIZE` defines size of PVC which will be created and mounted to Pod. It is important to notice that this cannot be smaller than `FIOTEST_FILESIZE`
+        name: FIOTEST_STORAGE_SIZE
+    - string:
+        default: ""
+        description: This parameter defines what storageclass to use to dynamically allocate PVC. It is expected that storage class is present and functional in order for test to work. Storage class name will be different and depends on environment, common storage class names are
+        name: FIOTEST_STORAGECLASS
+    - string:
+        default: "ReadWriteOnce"
+        description: `FIOTEST_ACCESS_MODES` is responsible for PVC access mode. This parameter will accept one of `ReadWriteOnce` , `ReadWriteMany` or `ReadOnlyMany`. It is important to understand that particular access mode must be supported by storage used for test.
+        name: FIOTEST_ACCESS_MODES
+    - string:
+        default: 4
+        description: Fio block size.
+        name: FIOTEST_BS
+    - string:
+        default: "/mnt/pvcmount"
+        description: FIO file to write. PVC is mounted inside FIO pod to `/mnt/pvcmount` and thus inside this mount point fio file is created. This ensures that I/O operations are executed against PVC.
+        name: FIOTEST_FILENAME
+    - string:
+        default: "1GB"
+        description: FIO file size and its size cannot exceed `FIOTEST_STORAGE_SIZE`.
+        name: FIOTEST_FILESIZE
+    - bool:
+        default: true
+        description: From `man fio` - If  value  is  true,  use  non-buffered  I/O. This is usually O_DIRECT.
+        name: FIOTEST_DIRECT
+    - string:
+        default: 60
+        description: FIO test runtime
+        name: FIOTEST_RUNTIME
+    - string:
+        default: 4
+        description: Number of I/O units to keep in flight  against  the  file
+        name: FIOTEST_IODEPTH
+    - string:
+        default: "read"
+        description: "FIO test type to execute. Default is `read`, supported are : read,write,randread,randwrite,randrw,rw"
+        name: FIOTEST_TESTTYPE
+    - string:
+        default: 1
+        description: Running one iteration of test can give misleading results, and it is recommended to run multiple iterations to catch up deviations and anomalies. Test result will show best iteration.
+        name: FIOTEST_SAMPLES
+    - string:
+        default: ""
+        description: For cases when it is necessary to have FIO pods to be assigned to already labeled nodes with specific label `FIOTEST_NODESELECTOR` allows to specify desired label. FIO I/O test does not label nodes, it expect that labels are already assigned to nodes.
+        name: FIOTEST_NODESELECTOR
+
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/innovation-sre/workloads.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm
