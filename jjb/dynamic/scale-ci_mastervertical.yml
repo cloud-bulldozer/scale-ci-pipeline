@@ -147,7 +147,7 @@
         description: Basename used by cluster loader for the project(s) it creates.
         name: MASTERVERTICAL_BASENAME
     - string:
-        default: 1000
+        default: 10
         description: "Number of projects to be created across the cluster to stress control plane."
         name: MASTERVERTICAL_PROJECTS
     - string:
@@ -200,7 +200,7 @@
     - git:
         branches:
         - '*/master'
-        url: https://github.com/openshift-scale/workloads.git
+        url: https://github.com/innovation-sre/workloads.git
     triggers: []
     wrappers:
     - workspace-cleanup:
