@@ -96,11 +96,11 @@
         name: WORKLOAD_IMAGE
     - bool:
         default: false
-        description: Enables/disables the node selector that places the workload job on the `pbench` node.
+        description: Enables/disables the node selector that places the workload job on the 'pbench' node.
         name: WORKLOAD_JOB_NODE_SELECTOR
     - bool:
         default: false
-        description: Enables/disables the toleration on the workload job to permit the `controller` taint.
+        description: Enables/disables the toleration on the workload job to permit the 'controller' taint.
         name: WORKLOAD_JOB_TAINT
     - bool:
         default: false
@@ -123,24 +123,20 @@
         description: DNS address of the pbench results server.
         name: PBENCH_SERVER
     - string:
-          default: "~/.ssh/id_rsa"
-          description: Location of ssh private key to authenticate to the pbench results server.
-          name: PBENCH_SSH_PRIVATE_KEY_FILE
+        default: "~/.ssh/id_rsa"
+        description: Location of ssh private key to authenticate to the pbench results server.
+        name: PBENCH_SSH_PRIVATE_KEY_FILE
     - string:
-          default: "~/.ssh/id_rsa.pub"
-          description: Location of the ssh public key to authenticate to the pbench results server.
-          name: PBENCH_SSH_PUBLIC_KEY_FILE
+        default: "~/.ssh/id_rsa.pub"
+        description: Location of the ssh public key to authenticate to the pbench results server.
+        name: PBENCH_SSH_PUBLIC_KEY_FILE
     - string:
         default: ""
         description: Future use for pbench and prometheus scraper to place results into git repo that holds results data.
         name: SCALE_CI_RESULTS_TOKEN
     - string:
         default: 10000
-        description: |
-            Number of retries for Ansible to poll if the workload job has completed.
-            Poll attempts delay 10s between polls with some additional time taken for each polling action depending on the orchestration host setup.
-            FIO I/O test for many pods and big file sizes can run for hours and either we rise `JOB_COMPLETION_POLL_ATTEMPTS` to
-            higt value, or remove fully checking for `JOB_COMPLETION_POLL_ATTEMPTS` for FIO I/O test.
+        description: Number of retries for Ansible to poll if the workload job has completed.Poll attempts delay 10s between polls with some additional time taken for each polling action depending on the orchestration host setup. FIO I/O test for many pods and big file sizes can run for hours and either we rise 'JOB_COMPLETION_POLL_ATTEMPTS' to high value, or remove fully checking for 'JOB_COMPLETION_POLL_ATTEMPTS' for FIO I/O test.
         name: JOB_COMPLETION_POLL_ATTEMPTS
     - bool:
         default: false
@@ -156,7 +152,7 @@
         name: FIOTEST_PREFIX
     - bool:
         default: true
-        description: If set to `true` test project will be removed at end of test.
+        description: If set to 'true' test project will be removed at end of test.
         name: FIOTEST_CLEANUP
     - string:
         default: "fiotest"
@@ -179,8 +175,8 @@
         description: Number of Pods for cluster loader will create before waiting for Pods to become running.
         name: FIOTEST_STEPSIZE
     - string:
-        default: 2Gi
-        description: `FIOTEST_STORAGE_SIZE` defines size of PVC which will be created and mounted to Pod. It is important to notice that this cannot be smaller than `FIOTEST_FILESIZE`
+        default: "2Gi"
+        description: FIOTEST_STORAGE_SIZE defines size of PVC which will be created and mounted to Pod. It is important to notice that this cannot be smaller than 'FIOTEST_FILESIZE'
         name: FIOTEST_STORAGE_SIZE
     - string:
         default: ""
@@ -188,7 +184,7 @@
         name: FIOTEST_STORAGECLASS
     - string:
         default: "ReadWriteOnce"
-        description: `FIOTEST_ACCESS_MODES` is responsible for PVC access mode. This parameter will accept one of `ReadWriteOnce` , `ReadWriteMany` or `ReadOnlyMany`. It is important to understand that particular access mode must be supported by storage used for test.
+        description: FIOTEST_ACCESS_MODES is responsible for PVC access mode. This parameter will accept one of 'ReadWriteOnce' , 'ReadWriteMany' or 'ReadOnlyMany'. It is important to understand that particular access mode must be supported by storage used for test.
         name: FIOTEST_ACCESS_MODES
     - string:
         default: 4
@@ -196,15 +192,15 @@
         name: FIOTEST_BS
     - string:
         default: "/mnt/pvcmount"
-        description: FIO file to write. PVC is mounted inside FIO pod to `/mnt/pvcmount` and thus inside this mount point fio file is created. This ensures that I/O operations are executed against PVC.
+        description: FIO file to write. PVC is mounted inside FIO pod to '/mnt/pvcmount' and thus inside this mount point fio file is created. This ensures that I/O operations are executed against PVC.
         name: FIOTEST_FILENAME
     - string:
         default: "1GB"
-        description: FIO file size and its size cannot exceed `FIOTEST_STORAGE_SIZE`.
+        description: FIO file size and its size cannot exceed 'FIOTEST_STORAGE_SIZE'.
         name: FIOTEST_FILESIZE
     - bool:
         default: true
-        description: From `man fio` - If  value  is  true,  use  non-buffered  I/O. This is usually O_DIRECT.
+        description: From 'man fio' - If  value  is  true,  use  non-buffered  I/O. This is usually O_DIRECT.
         name: FIOTEST_DIRECT
     - string:
         default: 60
@@ -216,7 +212,7 @@
         name: FIOTEST_IODEPTH
     - string:
         default: "read"
-        description: "FIO test type to execute. Default is `read`, supported are : read,write,randread,randwrite,randrw,rw"
+        description: "FIO test type to execute. Default is 'read', supported are : read,write,randread,randwrite,randrw,rw"
         name: FIOTEST_TESTTYPE
     - string:
         default: 1
@@ -224,7 +220,7 @@
         name: FIOTEST_SAMPLES
     - string:
         default: ""
-        description: For cases when it is necessary to have FIO pods to be assigned to already labeled nodes with specific label `FIOTEST_NODESELECTOR` allows to specify desired label. FIO I/O test does not label nodes, it expect that labels are already assigned to nodes.
+        description: For cases when it is necessary to have FIO pods to be assigned to already labeled nodes with specific label 'FIOTEST_NODESELECTOR' allows to specify desired label. FIO I/O test does not label nodes, it expect that labels are already assigned to nodes.
         name: FIOTEST_NODESELECTOR
 
     project-type: freestyle
