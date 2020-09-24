@@ -24,6 +24,8 @@ stage ('uperf') {
 			def orchestration_user = uperf_properties['ORCHESTRATION_USER']
 			def orchestration_host = uperf_properties['ORCHESTRATION_HOST']
 			def sshkey_token = uperf_properties['SSHKEY_TOKEN']
+			def es_user = uperf_properties['ES_USER']
+			def es_password = uperf_properties['ES_PASSWORD']
 			def es_server = uperf_properties['ES_SERVER']
 			def es_port = uperf_properties['ES_PORT']
 			def metadata_collection = uperf_properties['METADATA_COLLECTION']
@@ -31,23 +33,60 @@ stage ('uperf') {
 			def hostnetwork_test = uperf_properties['HOSTNETWORK_TEST']
 			def pod_test = uperf_properties['POD_TEST']
 			def service_test = uperf_properties['SERVICE_TEST']
-			def cerberus_url = uperf_properties['CERBERUS_URL']			
-			
+			def smoke_test = uperf_properties['SMOKE_TEST']
+			def compare = uperf_properties['COMPARE']
+			def baseline_cloud_name = uperf_properties['BASELINE_CLOUD_NAME']
+			def es_user_baseline = uperf_properties['ES_USER_BASELINE']
+			def es_password_baseline = uperf_properties['ES_PASSWORD_BASELINE']
+			def es_server_baseline = uperf_properties['ES_SERVER_BASELINE']
+			def es_port_baseline = uperf_properties['ES_PORT_BASELINE']
+			def baseline_hostnet_uuid = uperf_properties['BASELINE_HOSTNET_UUID']
+			def baseline_pod_1p_uuid = uperf_properties['BASELINE_POD_1P_UUID']
+			def baseline_pod_2p_uuid = uperf_properties['BASELINE_POD_2P_UUID']
+			def baseline_pod_4p_uuid = uperf_properties['BASELINE_POD_4P_UUID']
+			def baseline_svc_1p_uuid = uperf_properties['BASELINE_SVC_1P_UUID']
+			def baseline_svc_2p_uuid = uperf_properties['BASELINE_SVC_2P_UUID']
+			def baseline_svc_4p_uuid = uperf_properties['BASELINE_SVC_4P_UUID']
+			def baseline_multus_uuid = uperf_properties['BASELINE_MULTUS_UUID']
+			def throughput_tolerance = uperf_properties['THROUGHPUT_TOLERANCE']
+			def latency_tolerance = uperf_properties['LATENCY_TOLERANCE']
+			def cerberus_url = uperf_properties['CERBERUS_URL']	
+			def email_id_for_results_sheet = uperf_properties['EMAIL_ID_FOR_RESULTS_SHEET']
+
 			try {
 				uperf_build = build job: 'RIPSAW-UPERF',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
+						[$class: 'StringParameterValue', name: 'ES_USER', value: es_user ],
+						[$class: 'StringParameterValue', name: 'ES_PASSWORD', value: es_password ],
 						[$class: 'StringParameterValue', name: 'ES_SERVER', value: es_server ],
 						[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
 						[$class: 'BooleanParameterValue', name: 'METADATA_COLLECTION', value: Boolean.valueOf(metadata_collection) ],
-						[$class: 'StringParameterValue', name: 'BASELINE_UPERF_UUID', value: baseline_uperf_uuid ],
 						[$class: 'BooleanParameterValue', name: 'HOSTNETWORK_TEST', value: Boolean.valueOf(hostnetwork_test) ],
 						[$class: 'BooleanParameterValue', name: 'POD_TEST', value: Boolean.valueOf(pod_test) ],
 						[$class: 'BooleanParameterValue', name: 'SERVICE_TEST', value: Boolean.valueOf(service_test) ],
-						[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ]]
-						
+						[$class: 'BooleanParameterValue', name: 'SMOKE_TEST', value: Boolean.valueOf(smoke_test) ],
+						[$class: 'BooleanParameterValue', name: 'COMPARE', value: Boolean.valueOf(compare) ],
+						[$class: 'StringParameterValue', name: 'BASELINE_CLOUD_NAME', value: baseline_cloud_name ],
+						[$class: 'StringParameterValue', name: 'ES_USER_BASELINE', value: es_user_baseline ],
+						[$class: 'StringParameterValue', name: 'ES_PASSWORD_BASELINE', value: es_password_baseline ],
+						[$class: 'StringParameterValue', name: 'ES_SERVER_BASELINE', value: es_server_baseline ],
+						[$class: 'StringParameterValue', name: 'ES_PORT_BASELINE', value: es_port_baseline ],
+						[$class: 'StringParameterValue', name: 'BASELINE_HOSTNET_UUID', value: baseline_hostnet_uuid ],
+						[$class: 'StringParameterValue', name: 'BASELINE_POD_1P_UUID', value: baseline_pod_1p_uuid ],
+						[$class: 'StringParameterValue', name: 'BASELINE_POD_2P_UUID', value: baseline_pod_2p_uuid ],
+						[$class: 'StringParameterValue', name: 'BASELINE_POD_4P_UUID', value: baseline_pod_4p_uuid ],
+						[$class: 'StringParameterValue', name: 'BASELINE_SVC_1P_UUID', value: baseline_svc_1p_uuid ],
+						[$class: 'StringParameterValue', name: 'BASELINE_SVC_2P_UUID', value: baseline_svc_2p_uuid ],
+						[$class: 'StringParameterValue', name: 'BASELINE_SVC_4P_UUID', value: baseline_svc_4p_uuid ],
+						[$class: 'StringParameterValue', name: 'BASELINE_MULTUS_UUID', value: baseline_multus_uuid ],
+						[$class: 'StringParameterValue', name: 'THROUGHPUT_TOLERANCE', value: throughput_tolerance ],
+						[$class: 'StringParameterValue', name: 'LATENCY_TOLERANCE', value: latency_tolerance ],
+						[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ],
+						[$class: 'StringParameterValue', name: 'EMAIL_ID_FOR_RESULTS_SHEET', value: email_id_for_results_sheet ]]
+	
 			} catch ( Exception e) {
 				echo "UPERF Job failed with the following error: "
 				echo "${e.getMessage()}"
