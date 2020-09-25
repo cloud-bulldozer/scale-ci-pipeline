@@ -46,7 +46,7 @@
         description: ''
         name: OPENSHIFTV4_INSTALL_ON_OSP
     - bool:
-        default: false
+        default: true
         description: ''
         name: TOOLING
     - bool:
