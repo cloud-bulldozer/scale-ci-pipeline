@@ -5,11 +5,11 @@
     - shell: |+
         set -o pipefail
         set -eux
-
+        env
         # get perf keys to access orchestration host and set ssh session options
-        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
-        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        git clone https://${SSHKEY_TOKEN}@github.com/innovation-sre/orchestration-host.git
+        export PUBLIC_KEY=${WORKSPACE}/orchestration-host/ssh_keys/id_rsa.pub
+        export PRIVATE_KEY=${WORKSPACE}/orchestration-host/ssh_keys/id_rsa
         export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
         chmod 600 ${PRIVATE_KEY}
 
@@ -29,15 +29,15 @@
         # logging
         logs_counter=0
         logs_counter_limit=100
-        oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-fio
+        oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-storage-fio
         while true; do
           logs_counter=$((logs_counter+1))
-          if [[ $(oc get job -n scale-ci-tooling scale-ci-fio -o json | jq -e '.status.active==1') == "true" ]]; then
+          if [[ $(oc get job -n scale-ci-tooling scale-ci-storage-fio -o json | jq -e '.status.active==1') == "true" ]]; then
             if [[ $logs_counter -le $logs_counter_limit ]]; then
               echo "=================================================================================================================================================================="
               echo "Attempt $logs_counter to reconnect and fetch the controller pod logs"
               echo "=================================================================================================================================================================="
-              oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-fio
+              oc logs --timestamps -n scale-ci-tooling -f job/scale-ci-storage-fio
             else
               echo "Exceeded the retry limit trying to get the controller logs: $logs_counter_limit, exiting."
               exit 1
@@ -78,10 +78,6 @@
         default: ''
         description: Elasticsearch server index prefix (currently used by snafu). (defaults to snafu through the workloads repo)
         name: ES_INDEX_PREFIX
-    - string:
-        default: ""
-        description: Token to access private repo containing ssh keys.
-        name: SSHKEY_TOKEN
     - string:
         default: ""
         description: The machine intended to run the oc commands and launch the workload.
@@ -138,14 +134,6 @@
         default: 10000
         description: Number of retries for Ansible to poll if the workload job has completed.Poll attempts delay 10s between polls with some additional time taken for each polling action depending on the orchestration host setup. FIO I/O test for many pods and big file sizes can run for hours and either we rise 'JOB_COMPLETION_POLL_ATTEMPTS' to high value, or remove fully checking for 'JOB_COMPLETION_POLL_ATTEMPTS' for FIO I/O test.
         name: JOB_COMPLETION_POLL_ATTEMPTS
-    - bool:
-        default: false
-        description: Set it to true when running OCP on Azure.
-        name: AZURE_AUTH
-    - string:
-        default: ""
-        description: Path to the Azure auth file - terraform.azure.auto.tfvars.json found in the openshift install dir on the orchestration host i.e scale-ci-deploy/scale-ci-azure/terraform.azure.auto.tfvars.json.
-        name: AZURE_AUTH_FILE
     - string:
         default: "fiotest"
         description: Prefix to use for FIO I/O test
@@ -211,6 +199,10 @@
         description: Number of I/O units to keep in flight  against  the  file
         name: FIOTEST_IODEPTH
     - string:
+        default: 2
+        description: Number of nodes to test FIO on
+        name: FIOTEST_MAX_NODES
+    - string:
         default: "read"
         description: "FIO test type to execute. Default is 'read', supported are : read,write,randread,randwrite,randrw,rw"
         name: FIOTEST_TESTTYPE
@@ -268,7 +260,7 @@
     scm:
     - git:
         branches:
-        - '*/master'
+        - '*/fio'
         url: https://github.com/innovation-sre/workloads.git
     triggers: []
     wrappers:
@@ -276,3 +268,7 @@
         dirmatch: false
     - ansicolor:
         colormap: xterm
+    - credentials-binding:
+          - text:
+                credential-id: SSHKEY_TOKEN
+                variable: SSHKEY_TOKEN

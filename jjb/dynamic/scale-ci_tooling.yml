@@ -6,11 +6,11 @@
         set -o pipefail
         set -eux
 
-
+        env
         # get perf keys to access orchestration host and set ssh session options
-        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
-        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
-        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        git clone https://${SSHKEY_TOKEN}@github.com/innovation-sre/orchestration-host.git
+        export PUBLIC_KEY=${WORKSPACE}/orchestration-host/ssh_keys/id_rsa.pub
+        export PRIVATE_KEY=${WORKSPACE}/orchestration-host/ssh_keys/id_rsa
         export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
         chmod 600 ${PRIVATE_KEY}
 
@@ -34,10 +34,6 @@
     name: ATS-SCALE-CI-TOOLING
     node: scale-ci
     parameters:
-    - string:
-        default: ""
-        description: Token to access private repo containing ssh keys.
-        name: SSHKEY_TOKEN
     - string:
         default: ""
         description: The machine intended to run the oc commands and launch the workload.
@@ -103,11 +99,15 @@
     scm:
     - git:
         branches:
-        - '*/master'
-        url: https://github.com/openshift-scale/workloads.git
+        - '*/fio'
+        url: https://github.com/innovation-sre/workloads.git
     triggers: []
     wrappers:
     - workspace-cleanup:
         dirmatch: false
     - ansicolor:
         colormap: xterm
+    - credentials-binding:
+        - text:
+            credential-id: SSHKEY_TOKEN
+            variable: SSHKEY_TOKEN

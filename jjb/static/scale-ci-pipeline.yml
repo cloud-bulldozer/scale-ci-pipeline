@@ -46,7 +46,7 @@
         description: ''
         name: OPENSHIFTV4_INSTALL_ON_OSP
     - bool:
-        default: true
+        default: false
         description: ''
         name: TOOLING
     - bool:
@@ -54,7 +54,7 @@
         description: ''
         name: FIO
     - bool:
-        default: true
+        default: false
         description: ''
         name: CONFORMANCE
     - bool:
@@ -66,11 +66,11 @@
         description: ''
         name: OPENSHIFTv4_SCALE
     - bool:
-        default: true
+        default: false
         description: ''
         name: NODEVERTICAL_SCALE_TEST
     - bool:
-        default: true
+        default: false
         description: ''
         name: HTTP_TEST
     - bool:
@@ -86,7 +86,7 @@
         description: ''
         name: PODVERTICAL
     - bool:
-        default: true
+        default: false
         description: ''
         name: NETWORKING
     - bool:
@@ -98,7 +98,7 @@
         description: ''
         name: MONGODB_YCSB_TEST
     - bool:
-        default: true
+        default: false
         description: ''
         name: MASTERVERTICAL_SCALE_TEST
     - bool:
@@ -264,7 +264,7 @@
       scm:
       - git:
           branches:
-          - '*master'
+          - '*fio'
           url: https://github.com/innovation-sre/scale-ci-pipeline.git
           wipe-workspace: true
       script-path: Jenkinsfile

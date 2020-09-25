@@ -19,9 +19,11 @@ stage ('fio_scale_test') {
 			}
 			// get properties file
 //			sh "wget ${FIO_PROPERTY_FILE} -O ${property_file_name}"
-			sh "cat ${FIO_PROPERTY_FILE}"
-			def fio_properties = readProperties file: FIO_PROPERTY_FILE
-			def sshkey_token = fio_properties['SSHKEY_TOKEN']
+			echo "Root Workspace: ${env.ROOT_WORKSPACE}"
+			echo "Properties Prefix: ${env.PROPERTIES_PREFIX}"
+			println "Current pipeline job build id is '${pipeline_id}'"
+			sh "cat ${env.PROPERTIES_PREFIX}/${property_file_name}"
+			def fio_properties = readProperties file: "${env.PROPERTIES_PREFIX}/${property_file_name}"
 			def orchestration_host = fio_properties['ORCHESTRATION_HOST']
 			def orchestration_user = fio_properties['ORCHESTRATION_USER']
 			def workload_image = fio_properties['WORKLOAD_IMAGE']
@@ -42,8 +44,6 @@ stage ('fio_scale_test') {
 			def es_index_prefix = fio_properties['ES_INDEX_PREFIX']
 			def pbench_ssh_private_key_file = fio_properties['PBENCH_SSH_PRIVATE_KEY_FILE']
 			def pbench_ssh_public_key_file = fio_properties['PBENCH_SSH_PUBLIC_KEY_FILE']
-			def azure_auth = fio_properties['AZURE_AUTH']
-			def azure_auth_file = fio_properties['AZURE_AUTH_FILE']
 			def fiotest_prefix = fio_properties['FIOTEST_PREFIX']
 			def fiotest_cleanup = fio_properties['FIOTEST_CLEANUP']
 			def fiotest_basename = fio_properties['FIOTEST_BASENAME']
@@ -63,7 +63,6 @@ stage ('fio_scale_test') {
 			def fiotest_testtype = fio_properties['FIOTEST_TESTTYPE']
 			def fiotest_samples = fio_properties['FIOTEST_SAMPLES']
 			def fiotest_nodeselector = fio_properties['FIOTEST_NODESELECTOR']
-
 			try {
 				fio_build = build job: 'ATS-SCALE-CI-FIO',
 				parameters: [   [$class: 'StringParameterValue', name: 'SNAFU_USER', value: snafu_user],
@@ -71,7 +70,6 @@ stage ('fio_scale_test') {
 				[$class: 'StringParameterValue', name: 'ES_HOST', value: es_host],
 				[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port],
 				[$class: 'StringParameterValue', name: 'ES_INDEX_PREFIX', value: es_index_prefix],
-				[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token],
 				[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host],
 				[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user],
 				[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
@@ -87,10 +85,8 @@ stage ('fio_scale_test') {
 				[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
 				[$class: 'StringParameterValue', name: 'PBENCH_SSH_PRIVATE_KEY_FILE', value: pbench_ssh_private_key_file ],
 				[$class: 'StringParameterValue', name: 'PBENCH_SSH_PUBLIC_KEY_FILE', value: pbench_ssh_public_key_file ],
-				[$class: 'StringParameterValue', name: 'AZURE_AUTH', value: Boolean.valueOf(azure_auth) ],
-				[$class: 'StringParameterValue', name: 'AZURE_AUTH_FILE', value: azure_auth_file ],
 				[$class: 'StringParameterValue', name: 'FIOTEST_PREFIX', value: fiotest_prefix ],
-				[$class: 'StringParameterValue', name: 'FIOTEST_CLEANUP', value: Boolean.valueOf(fiotest_cleanup)],
+				[$class: 'BooleanParameterValue', name: 'FIOTEST_CLEANUP', value: Boolean.valueOf(fiotest_cleanup)],
 				[$class: 'StringParameterValue', name: 'FIOTEST_BASENAME', value: fiotest_basename],
 				[$class: 'StringParameterValue', name: 'FIOTEST_MAXPODS', value: fiotest_maxpods],
 				[$class: 'StringParameterValue', name: 'FIOTEST_POD_IMAGE', value: fiotest_pod_image],
@@ -102,7 +98,7 @@ stage ('fio_scale_test') {
 				[$class: 'StringParameterValue', name: 'FIOTEST_BS', value: fiotest_bs],
 				[$class: 'StringParameterValue', name: 'FIOTEST_FILENAME', value: fiotest_filename],
 				[$class: 'StringParameterValue', name: 'FIOTEST_FILESIZE', value: fiotest_filesize],
-				[$class: 'StringParameterValue', name: 'FIOTEST_DIRECT', value: Boolean.valueOf(fiotest_direct)],
+				[$class: 'BooleanParameterValue', name: 'FIOTEST_DIRECT', value: Boolean.valueOf(fiotest_direct)],
 				[$class: 'StringParameterValue', name: 'FIOTEST_RUNTIME', value: fiotest_runtime],
 				[$class: 'StringParameterValue', name: 'FIOTEST_IODEPTH', value: fiotest_iodepth],
 				[$class: 'StringParameterValue', name: 'FIOTEST_TESTTYPE', value: fiotest_testtype],

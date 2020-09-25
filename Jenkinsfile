@@ -32,11 +32,14 @@ def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
 def run_uperf = UPERF.toString().toUpperCase()
 def kraken = KRAKEN.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
-
 node (node_label) {
 	// setup the repo containing the pipeline scripts
 	stage('cloning pipeline repo') {
 		checkout scm
+		env.ROOT_WORKSPACE = "${env.WORKSPACE}"
+		env.PROPERTIES_PREFIX = "${env.WORKSPACE}/properties-files/"
+		echo "Root Workspace: ${env.ROOT_WORKSPACE}"
+		echo "Properties Prefix: ${env.PROPERTIES_PREFIX}"
 	}
 
 	// creates/updates jenkins jobs using the jjb templates
