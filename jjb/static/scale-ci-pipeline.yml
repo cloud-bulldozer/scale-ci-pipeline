@@ -52,6 +52,10 @@
     - bool:
         default: true
         description: ''
+        name: FIO
+    - bool:
+        default: true
+        description: ''
         name: CONFORMANCE
     - bool:
         default: false
@@ -161,9 +165,13 @@
         description: ''
         name: OPENSHIFTv4_ON_OSP_PROPERTY_FILE
     - string:
-        default: ''
+        default: '${WORKSPACE}/properties-files/tooling.properties'
         description: ''
         name: TOOLING_PROPERTY_FILE
+    - string:
+        default: '${WORKSPACE}/properties-files/fio.properties'
+        description: ''
+        name: FIO_PROPERTY_FILE
     - string:
         default: ''
         description: 'https://github.com/innovation-sre/scale-ci-pipeline/blob/master/properties-files/conformance.properties?raw=true'

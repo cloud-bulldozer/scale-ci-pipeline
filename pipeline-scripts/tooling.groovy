@@ -17,9 +17,8 @@ stage ('tooling') {
 				sh "rm ${property_file_name}"
 			}
 			// get properties file
-			sh "wget ${TOOLING_PROPERTY_FILE} -O ${property_file_name}"
-			sh "cat ${property_file_name}"
-			def tooling_properties = readProperties file: property_file_name
+			sh "cat ${TOOLING_PROPERTY_FILE}"
+			def tooling_properties = readProperties file: TOOLING_PROPERTY_FILE
 			def sshkey_token = tooling_properties['SSHKEY_TOKEN']
 			def orchestration_host = tooling_properties['ORCHESTRATION_HOST']
 			def orchestration_user = tooling_properties['ORCHESTRATION_USER']

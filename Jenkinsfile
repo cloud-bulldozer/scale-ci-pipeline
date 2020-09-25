@@ -5,6 +5,7 @@ def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def pipeline = PIPELINE.toString().toUpperCase()
 def build_tracker = SCALE_CI_BUILD_TRACKER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
+def fio = FIO.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
 def openshiftv4_install_on_aws = OPENSHIFTv4_INSTALL_ON_AWS.toString().toUpperCase()
 def openshiftv4_install_on_azure = OPENSHIFTv4_INSTALL_ON_AZURE.toString().toUpperCase()
@@ -129,6 +130,10 @@ node (node_label) {
 		// stage to setup pbench
 		if (tooling == "TRUE") {
 			load "pipeline-scripts/tooling.groovy"
+		}
+
+		if (fio == "TRUE") {
+			load "pipeline-scripts/fio.groovy"
 		}
 
 		// stage to run conformance
