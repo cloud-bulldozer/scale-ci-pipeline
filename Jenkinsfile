@@ -171,11 +171,6 @@ node (node_label) {
 			load "pipeline-scripts/podvertical.groovy"
 		}
 
-		// stage to run networking test
-		if ( networking == "TRUE") {
-			load "pipeline-scripts/networking.groovy"
-		}
-
 		// stage to run pgbench scale test
 		if ( pgbench_test == "TRUE") {
 			load "pipeline-scripts/pgbench.groovy"
