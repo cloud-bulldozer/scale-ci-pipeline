@@ -18,6 +18,10 @@ function help() {
 	printf "\t KEYS_PATH=str,                    str=path to the keys\n"
 }
 
+# Defaults
+watcher_retries=10
+sleep_time=10
+
 if [[ "$#" -ne 0 ]]; then
 	help
 	exit 1
@@ -117,8 +121,19 @@ function update_scale_ci_jobs() {
 			echo "--------------------------------------------------"
 			echo "INFO: Found $template"
 			echo -e "--------------------------------------------------\n"
-                	jenkins-jobs --conf "$JJB_CONFIG_PATH" update "$template"
-                	if [[ $? != 0 ]]; then
+			retries=0
+         		for (( iter=1; iter<=$watcher_retries; iter++ ))
+			do
+                		jenkins-jobs --conf "$JJB_CONFIG_PATH" update "$template"
+				exit_code=$?
+				if [[ $exit_code == 0 ]]; then
+					break
+				else
+					echo "Iteration $iter: Failed to create/update the jenkins job, retrying after $sleep_time seconds"
+					sleep $sleep_time
+				fi
+			done
+                	if [[ $exit_code != 0 ]]; then
                         	echo "Failed to create/update the jenkins job, please check"
                         	exit 1
                 	fi
