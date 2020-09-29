@@ -17,6 +17,8 @@
         # Create inventory File:
         echo "[orchestration]" > inventory
         echo "${ORCHESTRATION_HOST}" >> inventory
+        echo "[cluster_host]" >> inventory
+        echo "${CLUSTER_HOST}" >> inventory
 
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
@@ -37,6 +39,10 @@
         default: root
         description: The user for the Orchestration host.
         name: ORCHESTRATION_USER
+    - string:
+        default: ''
+        description: Machine containing the oc and kubeconfig of the cluster if running
+        name: CLUSTER_HOST
     - string:
         default: ''
         description: ''
