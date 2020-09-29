@@ -106,12 +106,14 @@ stage ('OCP 4.X INSTALL') {
 
 			// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigget is set
 			if ( scale_ci_build_trigger.toBoolean() ) {
-				sh "curl ${scale_ci_build_trigger_url}/payload -o /tmp/payload"
-				sh "curl ${scale_ci_build_trigger_url}/build.status -o /tmp/status"
-				status = readFile "/tmp/status"
-				if ( status.toString().trim().equals("PROCEED") ) {
+				sh "curl ${scale_ci_build_trigger_url}/payload -o /tmp/payload.azure"
+				sh "curl ${scale_ci_build_trigger_url}/build.status -o /tmp/status.azure"
+				sh "curl ${scale_ci_build_trigger_url}/cluster.status -o /tmp/cluster_status.azure"
+				status = readFile "/tmp/status.azure"
+				cluster_status = readFile "/tmp/cluster_status.azure"
+				if ( status.toString().trim().equals("PROCEED") || cluster_status.toString().trim().equals("False") ){
 					println "Build status is set to ${status}, proceeding with the cluster build"
-					openshift_install_release_image_override = readFile "/tmp/payload"
+					openshift_install_release_image_override = readFile "/tmp/payload.azure"
 				} else {
 					println "Build status is set to ${status}, exiting without building the cluster"
 					return 0

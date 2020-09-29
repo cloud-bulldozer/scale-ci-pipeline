@@ -22,6 +22,7 @@ stage ('build_tracker') {
 			sh "cat ${property_file_name}"
 			def build_tracker_properties = readProperties file: property_file_name
 			def orchestration_host = build_tracker_properties['ORCHESTRATION_HOST']
+			def cluster_host = build_tracker_properties['CLUSTER_HOST']
 			def orchestration_user = build_tracker_properties['ORCHESTRATION_USER']
 			def sshkey_token = build_tracker_properties['SSHKEY_TOKEN']
 			def build_info_url = build_tracker_properties['BUILD_INFO_URL']
@@ -33,6 +34,7 @@ stage ('build_tracker') {
 				build_tracker_build = build job: 'SCALE-CI-BUILD-TRACKER',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_HOST', value: cluster_host ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'StringParameterValue', name: 'BUILD_INFO_URL', value: build_info_url ],
