@@ -62,6 +62,10 @@
         description: ''
         name: KRAKEN
     - string:
+        default: 'scale-ci'
+        description: ''
+        name: NODE_LABEL
+    - string:
         default: '${WORKSPACE}/properties-files/tooling.properties'
         description: ''
         name: TOOLING_PROPERTY_FILE
@@ -70,11 +74,11 @@
         description: ''
         name: FIO_PROPERTY_FILE
     - string:
-        default: '${WORKSPACE}/properties-files/conformance.properties'
+        default: ''
         description: ''
         name: CONFORMANCE_PROPERTY_FILE
     - string:
-        default: 'https://github.com/innovation-sre/scale-ci-pipeline/blob/master/properties-files/nodevertical.properties?raw=true'
+        default: ''
         description: ''
         name: NODEVERTICAL_PROPERTY_FILE
     - string:
@@ -100,14 +104,6 @@
     - string:
         default: ''
         description: ''
-        name: MONGOYCSB_PROPERTY_FILE
-    - string:
-        default: ''
-        description: ''
-        name: MONGOYCSB_PROPERTY_FILE_GLUSTER_BLOCK
-    - string:
-        default: ''
-        description: 'https://github.com/innovation-sre/scale-ci-pipeline/blob/master/properties-files/mastervertical.properties?raw=true'
         name: MASTERVERTICAL_PROPERTY_FILE
     - string:
         default: ''
@@ -120,10 +116,6 @@
     - string:
         default: ''
         name: KRAKEN_PROPERTY_FILE
-    - string:
-        default: 'scale-ci'
-        description: ''
-        name: NODE_LABEL
     pipeline-scm:
       lightweight-checkout: false
       scm:

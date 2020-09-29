@@ -108,18 +108,10 @@ stage ('fio_scale_test') {
 			} catch ( Exception e) {
 				echo "ATS-SCALE-CI-FIO Job failed with the following error: "
 				echo "${e.getMessage()}"
-				echo "Sending an email"
-				mail(
-					to: 'nelluri@redhat.com, msheth@redhat.com',
-					subject: 'ats-scale-ci-fio job failed',
-					body: """\
-						Encoutered an error while running the ats-scale-ci-fio job: ${e.getMessage()}\n\n
-						Jenkins job: ${env.BUILD_URL}
-				""")
 				currentBuild.result = "FAILURE"
  				sh "exit 1"
 			}
-			println "ATS-SCALE-CI-FIO build ${nodevertical_build.getNumber()} completed successfully"
+			println "ATS-SCALE-CI-FIO build ${fio_build.getNumber()} completed successfully"
 		}
 	}
 }

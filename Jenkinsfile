@@ -15,7 +15,6 @@ def networking = NETWORKING.toString().toUpperCase()
 def kraken = KRAKEN.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 def run_uperf = UPERF.toString().toUpperCase()
-def mongodb_ycsb_test = MONGODB_YCSB_TEST.toString().toUpperCase()
 node (node_label) {
 	// setup the repo containing the pipeline scripts
 	stage('cloning pipeline repo') {
@@ -90,22 +89,9 @@ node (node_label) {
 		load "pipeline-scripts/uperf.groovy"
 	}
 
-	// stage to run mongodb ycsb scale test
-	if ( mongodb_ycsb_test == "TRUE") {
-		load "pipeline-scripts/mongodbycsb.groovy"
-	}
 
 	// cleanup the workspace
 	stage('cleaning workspace') {
 		deleteDir()
 	}
-
-	mail(
-		to: contact,
-		subject: "${env.JOB_NAME} ${env.BUILD_NUMBER} completed successfully",
-		body: """\
-			Jenkins job: ${env.BUILD_URL}\n\n
-			See the console output for more details:  ${env.BUILD_URL}consoleFull\n\n
-		"""
-	)
 }
