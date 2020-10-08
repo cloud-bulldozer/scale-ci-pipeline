@@ -105,7 +105,7 @@ stage ('OCP 4.X INSTALL') {
 				sh "curl ${scale_ci_build_trigger_url}/cluster.status -o /tmp/cluster_status.osp"
 				status = readFile "/tmp/status.osp"
 				cluster_status = readFile "/tmp/cluster_status"
-				if ( status.toString().trim().equals("PROCEED") ) || ( cluster_status.toString().trim().equals("False") ) {
+				if ( status.toString().trim().equals("PROCEED") || cluster_status.toString().trim().equals("False") ) {
 					println "Build status is set to ${status}, proceeding with the cluster build"
 					openshift_install_release_image_override = readFile "/tmp/payload.osp"
 				} else {
