@@ -90,7 +90,7 @@ stage ('OCP 4.X INSTALL') {
 			def slack_integration = openshiftv4_properties['SLACK_INTEGRATION']
 			def slack_api_token = openshiftv4_properties['SLACK_API_TOKEN']
 			def slack_channel = openshiftv4_properties['SLACK_CHANNEL']
-			def cop_slack_id = openshiftv4_properties['COP_SLACK_ID']
+			def watcher_slack_id = openshiftv4_properties['WATCHER_SLACK_ID']
 			def slack_team_alias = openshiftv4_properties['SLACK_TEAM_ALIAS']
 			def iterations = openshiftv4_properties['ITERATIONS']
 			def sleep_time = openshiftv4_properties['SLEEP_TIME']
@@ -186,7 +186,7 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'BooleanParameterValue', name: 'SLACK_INTEGRATION', value: slack_integration ],
 						[$class: 'StringParameterValue', name: 'SLACK_API_TOKEN', value: slack_api_token ],
 						[$class: 'StringParameterValue', name: 'SLACK_CHANNEL', value: slack_channel ],
-						[$class: 'StringParameterValue', name: 'COP_SLACK_ID', value: cop_slack_id ],
+						[$class: 'StringParameterValue', name: 'WATCHER_SLACK_ID', value: watcher_slack_id ],
 						[$class: 'StringParameterValue', name: 'SLACK_TEAM_ALIAS', value: slack_team_alias ],
 						[$class: 'StringParameterValue', name: 'ITERATIONS', value: iterations ],
 						[$class: 'StringParameterValue', name: 'SLEEP_TIME', value: sleep_time ],
