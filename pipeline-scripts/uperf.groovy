@@ -4,6 +4,7 @@ def pipeline_id = env.BUILD_ID
 def node_label = NODE_LABEL.toString()
 def run_uperf = UPERF.toString().toUpperCase()
 def property_file_name = "uperf.properties"
+def pipeline = PIPELINE.toString().toUpperCase()
 
 println "Current pipeline job build id is '${pipeline_id}'"
 
@@ -97,10 +98,13 @@ stage ('uperf') {
 						Encoutered an error while running the uperf job: ${e.getMessage()}\n\n
 						Jenkins job: ${env.BUILD_URL}
 				""")
-				currentBuild.result = "FAILURE"
-				sh "exit 1"
+                                if(pipeline){
+                                unstable('RIPSAW-UPERF job FAILED, moving on to next job in the pipeline')
+                                } else{
+                                currentBuild.result = "FAILURE"
+                                }
 			}
-			println "UPERF build ${uperf_build.getNumber()} completed successfully"
+			println "UPERF build completed with status ${currentBuild.result}"
 		}
 	}
 }

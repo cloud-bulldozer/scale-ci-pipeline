@@ -136,9 +136,12 @@ stage ('http_scale_test') {
 					Encoutered an error while running the ats-scale-ci-http job: ${e.getMessage()}\n\n
 					Jenkins job: ${env.BUILD_URL}
 			""")
-			currentBuild.result = "FAILURE"
-			sh "exit 1"
+                        if(pipeline){
+                           unstable('ATS-SCALE-CI-HTTP job FAILED, moving on to next job in the pipeline')
+                        } else{
+                           currentBuild.result = "FAILURE"
+                        }
 		}
-		println "ATS-SCALE-CI-HTTP build ${http_build.getNumber()} completed successfully"
+		println "ATS-SCALE-CI-HTTP build completed with status ${currentBuild.result}"
 	}
 }
