@@ -29,7 +29,6 @@ stage ('uperf') {
 			def es_server = uperf_properties['ES_SERVER']
 			def es_port = uperf_properties['ES_PORT']
 			def metadata_collection = uperf_properties['METADATA_COLLECTION']
-			def baseline_uperf_uuid = uperf_properties['BASELINE_UPERF_UUID']
 			def hostnetwork_test = uperf_properties['HOSTNETWORK_TEST']
 			def pod_test = uperf_properties['POD_TEST']
 			def service_test = uperf_properties['SERVICE_TEST']
