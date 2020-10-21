@@ -23,29 +23,32 @@ stage ('4.x scale cluster') {
 		sh "cat ${property_file_name}"
 		def scale_properties = readProperties file: property_file_name
 		def sshkey_token = scale_properties['SSHKEY_TOKEN']
+		def kubeconfig_file = scale_properties['KUBECONFIG_FILE']
 		def orchestration_host = scale_properties['ORCHESTRATION_HOST']
 		def orchestration_user = scale_properties['ORCHESTRATION_USER']
-		def workload_image = scale_properties['WORKLOAD_IMAGE']
-		def workload_job_node_selector = scale_properties['WORKLOAD_JOB_NODE_SELECTOR']
-		def workload_job_taint = scale_properties['WORKLOAD_JOB_TAINT']
-		def workload_job_privileged = scale_properties['WORKLOAD_JOB_PRIVILEGED']
-		def kubeconfig_file = scale_properties['KUBECONFIG_FILE']
-		def pbench_instrumentation = scale_properties['PBENCH_INSTRUMENTATION']
-		def enable_pbench_agents = scale_properties['ENABLE_PBENCH_AGENTS']
-		def enable_pbench_copy = scale_properties['ENABLE_PBENCH_COPY']
-		def pbench_server = scale_properties['PBENCH_SERVER']
-		def scale_ci_results_token = scale_properties['SCALE_CI_RESULTS_TOKEN']
-		def job_completion_poll_attempts = scale_properties['JOB_COMPLETION_POLL_ATTEMPTS']
-		def scale_test_prefix = scale_properties['SCALE_TEST_PREFIX']
-		def scale_metadata_prefix = scale_properties['SCALE_METADATA_PREFIX']
-		def scale_worker_count = scale_properties['SCALE_WORKER_COUNT']
+		def poll_interval = scale_properties['POLL_INTERVAL']
+		def post_sleep = scale_properties['POST_SLEEP']
+		def timeout = scale_properties['TIMEOUT']
+		def runs = scale_properties['RUNS']
+		def scale = scale_properties['SCALE']
 		if (pipeline == "TRUE" && pipeline_stage == "2") {
-			scale_worker_count = scale_properties['SCALE_WORKER_COUNT_V2']
+			scale = scale_properties['SCALE_V2']
 		} else if (pipeline == "TRUE" && pipeline_stage == "3") {
-			scale_worker_count = scale_properties['SCALE_WORKER_COUNT_V3']
+			scale = scale_properties['SCALE_V3']
 		}
-		def scale_poll_attempts = scale_properties['SCALE_POLL_ATTEMPTS']
-		def expected_scale_duration = scale_properties['EXPECTED_SCALE_DURATION']
+		def es_user = scale_properties['ES_USER']
+		def es_password = scale_properties['ES_PASSWORD']
+		def es_server = scale_properties['ES_SERVER']
+		def es_port = scale_properties['ES_PORT']
+		def metadata_collection = scale_properties['METADATA_COLLECTION']
+		def baseline_uuid = scale_properties['BASELINE_UUID']
+		def compare = scale_properties['COMPARE']
+		def baseline_cloud_name = scale_properties['BASELINE_CLOUD_NAME']
+		def es_user_baseline = scale_properties['ES_USER_BASELINE']
+		def es_password_baseline = scale_properties['ES_PASSWORD_BASELINE']
+		def es_server_baseline = scale_properties['ES_SERVER_BASELINE']
+		def es_port_baseline = scale_properties['ES_PORT_BASELINE']
+		def cerberus_url = scale_properties['CERBERUS_URL']
 
 		try {
 			scale_build = build job: 'ATS-SCALE-CI-SCALE',
@@ -53,22 +56,25 @@ stage ('4.x scale cluster') {
 					[$class: 'StringParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 					[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
 					[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
-					[$class: 'StringParameterValue', name: 'WORKLOAD_IMAGE', value: workload_image ],
-					[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_NODE_SELECTOR', value: Boolean.valueOf(workload_job_node_selector) ],
-					[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_TAINT', value: Boolean.valueOf(workload_job_taint)  ],
-					[$class: 'BooleanParameterValue', name: 'WORKLOAD_JOB_PRIVILEGED', value: Boolean.valueOf(workload_job_privileged)  ],
 					[$class: 'StringParameterValue', name: 'KUBECONFIG_FILE', value: kubeconfig_file ],
-					[$class: 'BooleanParameterValue', name: 'PBENCH_INSTRUMENTATION', value: Boolean.valueOf(pbench_instrumentation)  ],
-					[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_AGENTS', value: Boolean.valueOf(enable_pbench_agents)  ],
-					[$class: 'BooleanParameterValue', name: 'ENABLE_PBENCH_COPY', value: Boolean.valueOf(enable_pbench_copy)  ],
-					[$class: 'StringParameterValue', name: 'PBENCH_SERVER', value: pbench_server ],
-					[$class: 'StringParameterValue', name: 'SCALE_CI_RESULTS_TOKEN', value: scale_ci_results_token ],
-					[$class: 'StringParameterValue', name: 'JOB_COMPLETION_POLL_ATTEMPTS', value: job_completion_poll_attempts ],
-					[$class: 'StringParameterValue', name: 'SCALE_TEST_PREFIX', value: scale_test_prefix ],
-					[$class: 'StringParameterValue', name: 'SCALE_METADATA_PREFIX', value: scale_metadata_prefix  ],
-					[$class: 'StringParameterValue', name: 'SCALE_WORKER_COUNT', value: scale_worker_count ],
-					[$class: 'StringParameterValue', name: 'SCALE_POLL_ATTEMPTS', value: scale_poll_attempts ],
-					[$class: 'StringParameterValue', name: 'EXPECTED_SCALE_DURATION', value: expected_scale_duration ]]
+					[$class: 'StringParameterValue', name: 'SCALE', value: scale ],
+					[$class: 'StringParameterValue', name: 'POLL_INTERVAL', value: poll_interval ],
+					[$class: 'StringParameterValue', name: 'POST_SLEEP', value: post_sleep ],
+					[$class: 'StringParameterValue', name: 'TIMEOUT', value: timeout ],
+					[$class: 'StringParameterValue', name: 'RUNS', value: runs ],
+					[$class: 'StringParameterValue', name: 'ES_USER', value: es_user ],
+					[$class: 'StringParameterValue', name: 'ES_PASSWORD', value: es_password ],
+					[$class: 'StringParameterValue', name: 'ES_SERVER', value: es_server ],
+					[$class: 'StringParameterValue', name: 'ES_PORT', value: es_port ],
+					[$class: 'BooleanParameterValue', name: 'METADATA_COLLECTION', value: Boolean.valueOf(metadata_collection) ],
+					[$class: 'BooleanParameterValue', name: 'COMPARE', value: Boolean.valueOf(compare) ],
+					[$class: 'StringParameterValue', name: 'BASELINE_CLOUD_NAME', value: baseline_cloud_name ],
+					[$class: 'StringParameterValue', name: 'ES_USER_BASELINE', value: es_user_baseline ],
+					[$class: 'StringParameterValue', name: 'ES_PASSWORD_BASELINE', value: es_password_baseline ],
+					[$class: 'StringParameterValue', name: 'ES_SERVER_BASELINE', value: es_server_baseline ],
+					[$class: 'StringParameterValue', name: 'ES_PORT_BASELINE', value: es_port_baseline ],
+					[$class: 'StringParameterValue', name: 'BASELINE_UUID', value: baseline_uuid ],
+					[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ]]
 		} catch ( Exception e) {
 			echo "ATS-SCALE-CI-SCALE Job failed with the following error: "
 			echo "${e.getMessage()}"
