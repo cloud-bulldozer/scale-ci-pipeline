@@ -100,6 +100,14 @@
     - bool:
         default: false
         description: ''
+        name: CLUSTER_DENSITY
+    - bool:
+        default: false
+        description: ''
+        name: KUBELET_DENSITY
+    - bool:
+        default: false
+        description: ''
         name: NS_PER_CLUSTER
     - bool:
         default: false
@@ -244,6 +252,10 @@
         default: ''
         description: ''
         name: UPERF_PROPERTIES_FILE
+    - string:
+        default: ''
+        description: ''
+        name: CLUSTER_DENSITY_PROPERTIES_FILE
     - string:
         default: ''
         name: KRAKEN_PROPERTY_FILE
