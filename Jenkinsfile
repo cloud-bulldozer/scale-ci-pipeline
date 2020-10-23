@@ -14,6 +14,7 @@ def ocpv3_scale = OPENSHIFTv3_SCALE.toString().toUpperCase()
 def ocpv4_scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
 def nodevertical = NODEVERTICAL_SCALE_TEST.toString().toUpperCase()
 def mastervertical = MASTERVERTICAL_SCALE_TEST.toString().toUpperCase()
+def cluster_density = CLUSTER_DENSITY.toString().toUpperCase()
 def install_openstack = OPENSTACK_INSTALL.toString().toUpperCase()
 def browbeat = BROWBEAT_INSTALL.toString().toUpperCase()
 def http = HTTP_TEST.toString().toUpperCase()
@@ -79,6 +80,9 @@ node (node_label) {
 		}
 		if (mastervertical == "TRUE") {
 			load "pipeline-scripts/mastervertical.groovy"
+		}
+		if (cluster_density == "TRUE") {
+			load "pipeline-scripts/cluster-density.groovy"
 		}
 		if (ocpv4_scale == "TRUE") {
 			load "pipeline-scripts/openshiftv4_scale.groovy"
@@ -184,6 +188,11 @@ node (node_label) {
 		// stage to run mastervertical scale test
 		if (mastervertical == "TRUE") {
 			load "pipeline-scripts/mastervertical.groovy"
+		}
+
+		// stage to run cluster-density scale test
+		if (cluster_density == "TRUE") {
+			load "pipeline-scripts/cluster-density.groovy"
 		}
 
 		// stage to run ns_per_cluster test
