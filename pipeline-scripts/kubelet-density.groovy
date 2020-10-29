@@ -45,7 +45,7 @@ stage ('kubelet-density') {
 			def cerberus_url = kubelet_density_properties['CERBERUS_URL']
 
 			try {
-				kubelet_density = build job: 'RIPSAW-KUBELET-DENSITY'
+				kubelet_density = build job: 'RIPSAW-KUBELET-DENSITY',
 				parameters: [
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],

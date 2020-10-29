@@ -44,7 +44,7 @@ stage ('cluster-density') {
 			def cerberus_url = cluster_density_properties['CERBERUS_URL']
 
 			try {
-				cluster_density = build job: 'RIPSAW-CLUSTER-DENSITY'
+				cluster_density = build job: 'RIPSAW-CLUSTER-DENSITY',
 				parameters: [
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_USER', value: orchestration_user ],
 						[$class: 'StringParameterValue', name: 'ORCHESTRATION_HOST', value: orchestration_host ],
