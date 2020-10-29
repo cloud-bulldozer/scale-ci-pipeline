@@ -27,7 +27,7 @@
       Cluster-density workload is used to measure control plane density for OpenShift. This test loads several objects across the cluster using cluster loader.
       This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
     disabled: false
-    name: RIPSAW-KUBELET-DENSITY 
+    name: RIPSAW-KUBELET-DENSITY
     node: scale-ci
     parameters:
     - string:
