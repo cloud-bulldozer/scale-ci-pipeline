@@ -258,6 +258,10 @@
         name: CLUSTER_DENSITY_PROPERTIES_FILE
     - string:
         default: ''
+        description: ''
+        name: KUBELET_DENSITY_PROPERTIES_FILE
+    - string:
+        default: ''
         name: KRAKEN_PROPERTY_FILE
     - string:
         default: 'scale-ci'
