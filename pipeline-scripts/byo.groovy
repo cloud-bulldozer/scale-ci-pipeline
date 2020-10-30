@@ -7,7 +7,7 @@ def property_file_name = "byo.properties"
 
 println "Current pipeline job build id is '${pipeline_id}'"
 
-// run nodevertical scale test
+// run byo_scale_test scale test
 stage ('byo_scale_test') {
 	if (byo == "TRUE") {
 		currentBuild.result = "SUCCESS"
@@ -51,7 +51,7 @@ stage ('byo_scale_test') {
 			sh "git clone https://${token}@${repo} ${WORKSPACE}/perf-dept && chmod 600 ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf"
 			sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${WORKSPACE}/perf-dept/ssh_keys/id_rsa_perf ${property_file_name} root@${jump_host}:/root/properties"
 
-			// Run nodevertical job
+			// Run byo job
 			try {
 				byo_build = build job: 'BYO-SCALE-TEST',
 				parameters: [   [$class: 'LabelParameterValue', name: 'node', label: node_label ],
