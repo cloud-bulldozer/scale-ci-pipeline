@@ -12,8 +12,6 @@ def openshiftv4_install_on_gcp = OPENSHIFTv4_INSTALL_ON_GCP.toString().toUpperCa
 def openshiftv4_install_on_osp = OPENSHIFTv4_INSTALL_ON_OSP.toString().toUpperCase()
 def ocpv3_scale = OPENSHIFTv3_SCALE.toString().toUpperCase()
 def ocpv4_scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
-def nodevertical = NODEVERTICAL_SCALE_TEST.toString().toUpperCase()
-def mastervertical = MASTERVERTICAL_SCALE_TEST.toString().toUpperCase()
 def cluster_density = CLUSTER_DENSITY.toString().toUpperCase()
 def kubelet_density = KUBELET_DENSITY.toString().toUpperCase()
 def install_openstack = OPENSTACK_INSTALL.toString().toUpperCase()
@@ -24,7 +22,6 @@ def pgbench_test = PGBENCH_TEST.toString().toUpperCase()
 def prometheus_test = PROMETHEUS_TEST.toString().toUpperCase()
 def mongodb_ycsb_test = MONGODB_YCSB_TEST.toString().toUpperCase()
 def services_per_namespace = SERVICES_PER_NAMESPACE.toString().toUpperCase()
-def podvertical = PODVERTICAL.toString().toUpperCase()
 def deployments_per_ns = DEPLOYMENTS_PER_NS.toString().toUpperCase()
 def ns_per_cluster = NS_PER_CLUSTER.toString().toUpperCase()
 def networking = NETWORKING.toString().toUpperCase()
@@ -75,12 +72,6 @@ node (node_label) {
 		env.PIPELINE_STAGE=2
 		if (http == "TRUE") {
 			load "pipeline-scripts/http.groovy"
-		}
-		if (nodevertical == "TRUE") {
-			load "pipeline-scripts/nodevertical.groovy"
-		}
-		if (mastervertical == "TRUE") {
-			load "pipeline-scripts/mastervertical.groovy"
 		}
 		if (cluster_density == "TRUE") {
 			load "pipeline-scripts/cluster-density.groovy"
@@ -154,11 +145,6 @@ node (node_label) {
 			load "pipeline-scripts/openshiftv4_scale.groovy"
 		}
 
-		// stage to run nodevertical scale test
-		if (nodevertical == "TRUE") {
-			load "pipeline-scripts/nodevertical.groovy"
-		}
-
 		// stage to run http scale test
 		if (http == "TRUE") {
 			load "pipeline-scripts/http.groovy"
@@ -174,11 +160,6 @@ node (node_label) {
 			load "pipeline-scripts/deployments_per_ns.groovy"
 		}
 
-		// stage to run podvertical test
-		if ( podvertical == "TRUE") {
-			load "pipeline-scripts/podvertical.groovy"
-		}
-
 		// stage to run pgbench scale test
 		if ( pgbench_test == "TRUE") {
 			load "pipeline-scripts/pgbench.groovy"
@@ -187,11 +168,6 @@ node (node_label) {
 		// stage to run mongodb ycsb scale test
 		if ( mongodb_ycsb_test == "TRUE") {
 			load "pipeline-scripts/mongodbycsb.groovy"
-		}
-
-		// stage to run mastervertical scale test
-		if (mastervertical == "TRUE") {
-			load "pipeline-scripts/mastervertical.groovy"
 		}
 
 		// stage to run cluster-density scale test

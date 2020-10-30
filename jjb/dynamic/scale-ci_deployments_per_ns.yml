@@ -144,7 +144,7 @@
         name: DEPLOYMENTS_PER_NS_COUNT
     - string:
         default: "gcr.io/google_containers/pause-amd64:3.0"
-        description: Pod image to use for pods that are nodevertical pods.
+        description: Pod image to use for deployments.
         name: DEPLOYMENTS_PER_NS_POD_IMAGE
     project-type: freestyle
     properties:

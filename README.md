@@ -61,7 +61,6 @@ Prometheus | Monitoring | prometheus density focused test that creates pods, and
 HTTP | Router | Data-plane workload generator that runs http requests through HAProxy into deployed pods | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
 Pgbench | Storage | Checks how well Postgresql performs with RHOCS for glusterfs and gluster-block storage backend | In progress | :heavy_check_mark: | :heavy_check_mark: |  
 MongoDB | Storage | Checks how MongoDB performs with RHOCS for glusterfs and gluster-block storage backend | In progess | :heavy_check_mark: | :heavy_check_mark: |  
-Pod Vertical | Cluster Limits | Tests pods per namespace limit | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
 Deployments per namespaces | Cluster Limits | Tests deployments per namespace limit | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
 Services per namespace | Cluster Limits | Tests maximum number of services possible per namespace | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 Namespaces per cluster | Cluster Limits | Tests namespaces per cluster limit | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |  
@@ -74,14 +73,14 @@ Adding new workloads is managed by scale-ci-watcher and it expects the following
 - JJB template: It is the job definition in yaml ( xml is also supported, watcher takes care of converting it to yaml )
 - Pipeline-build script for the Job and a properties file: The script is responsible for building the job as a stage looking with the configutation/parameters specified in the properties file.
 
-There are many existing jobs in scale-ci-pipeline which can serve as an example/template job. One example is the NodeVertical scale test. To create a new workload using NodeVertical as a template, follow these steps:
+There are many existing jobs in scale-ci-pipeline which can serve as an example/template job. One example is the kubelet-density scale test. To create a new workload using kubelet-density as a template, follow these steps:
 ```
 $ # step 1: copy one of the existing job template and edit it with the workload specific stuff
-$ cp scale-ci-pipeline/jjb/dynamic/scale-ci_nodevertical.yml scale-ci-pipeline/jjb/dynamic/scale-ci_$workload.yaml
+$ cp scale-ci-pipeline/jjb/dynamic/kubelet-density.yml scale-ci-pipeline/jjb/dynamic/scale-ci_$workload.yaml
 $ # step 2: copy one of the existing pipeline-build script and edit it with the workload specific stuff
-$ cp scale-ci-pipeline/pipeline-scripts/nodevertical.groovy scale-ci-pipeline/pipeline-scripts/$workload.groovy
+$ cp scale-ci-pipeline/pipeline-scripts/kubelet-density.groovy scale-ci-pipeline/pipeline-scripts/$workload.groovy
 $ # step 3: copy the properties file and edit it with the workload specific stuff
-$ cp scale-ci-pipeline/properties-files/nodevertical.properties scale-ci-pipeline/properties-files/$workload.properties
+$ cp scale-ci-pipeline/properties-files/kubelet-density.properties scale-ci-pipeline/properties-files/$workload.properties
 $ # step 4: add the new workload to the Jenkinsfile to load the pipeline-build script ( Applicable only in the case of a new workload, this is not needed for a existing workload )
 $ vi scale-ci-pipeline/Jenkinsfile
 $ # step 5: add the workoad to the scale-ci-pipeline ( workload option and properties file path vars, applicable only in the case of a new workload )

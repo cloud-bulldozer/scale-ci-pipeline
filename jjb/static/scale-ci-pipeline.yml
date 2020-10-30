@@ -64,10 +64,6 @@
     - bool:
         default: false
         description: ''
-        name: NODEVERTICAL_SCALE_TEST
-    - bool:
-        default: false
-        description: ''
         name: HTTP_TEST
     - bool:
         default: false
@@ -80,10 +76,6 @@
     - bool:
         default: false
         description: ''
-        name: PODVERTICAL
-    - bool:
-        default: false
-        description: ''
         name: NETWORKING
     - bool:
         default: false
@@ -93,10 +85,6 @@
         default: false
         description: ''
         name: MONGODB_YCSB_TEST
-    - bool:
-        default: false
-        description: ''
-        name: MASTERVERTICAL_SCALE_TEST
     - bool:
         default: false
         description: ''
@@ -187,10 +175,6 @@
     - string:
         default: ''
         description: ''
-        name: NODEVERTICAL_PROPERTY_FILE
-    - string:
-        default: ''
-        description: ''
         name: HTTP_TEST_PROPERTY_FILE
     - string:
         default: ''
@@ -200,10 +184,6 @@
         default: ''
         description: ''
         name: DEPLOYMENTS_PER_NS_PROPERTY_FILE
-    - string:
-        default: ''
-        description: ''
-        name: PODVERTICAL_PROPERTY_FILE
     - string:
         default: ''
         description: ''
@@ -224,10 +204,6 @@
         default: ''
         description: ''
         name: MONGOYCSB_PROPERTY_FILE_GLUSTER_BLOCK
-    - string:
-        default: ''
-        description: ''
-        name: MASTERVERTICAL_PROPERTY_FILE
     - string:
         default: ''
         description: ''
