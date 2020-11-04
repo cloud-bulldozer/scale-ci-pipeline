@@ -52,6 +52,10 @@ stage ('uperf') {
 			def latency_tolerance = uperf_properties['LATENCY_TOLERANCE']
 			def cerberus_url = uperf_properties['CERBERUS_URL']	
 			def email_id_for_results_sheet = uperf_properties['EMAIL_ID_FOR_RESULTS_SHEET']
+			def gold_sdn  = uperf_properties['GOLD_SDN']
+			def gold_ocp_version  = uperf_properties['GOLD_OCP_VERSION']
+			def es_gold = uperf_properties['ES_GOLD']
+			def compare_with_gold = uperf_properties['COMPARE_WITH_GOLD']
 
 			try {
 				uperf_build = build job: 'RIPSAW-UPERF',
@@ -85,7 +89,11 @@ stage ('uperf') {
 						[$class: 'StringParameterValue', name: 'THROUGHPUT_TOLERANCE', value: throughput_tolerance ],
 						[$class: 'StringParameterValue', name: 'LATENCY_TOLERANCE', value: latency_tolerance ],
 						[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ],
-						[$class: 'StringParameterValue', name: 'EMAIL_ID_FOR_RESULTS_SHEET', value: email_id_for_results_sheet ]]
+						[$class: 'StringParameterValue', name: 'EMAIL_ID_FOR_RESULTS_SHEET', value: email_id_for_results_sheet ],
+						[$class: 'StringParameterValue', name: 'GOLD_SDN', value: gold_sdn ],
+						[$class: 'StringParameterValue', name: 'GOLD_OCP_VERSION', value: gold_ocp_version ],
+						[$class: 'StringParameterValue', name: 'ES_GOLD', value: es_gold ],
+						[$class: 'BooleanParameterValue', name: 'COMPARE_WITH_GOLD', value: Boolean.valueOf(compare_with_gold) ]]
 	
 			} catch ( Exception e) {
 				echo "UPERF Job failed with the following error: "
