@@ -144,6 +144,22 @@
         default: ""
         description: For this you will have to place Google Service Account Key in the $GSHEET_KEY_LOCATION. It will push your local results CSV to Google Spreadsheets and send an email with the attachment
         name: EMAIL_ID_FOR_RESULTS_SHEET
+    - string:
+        default: ""
+        description: The ES server that houses gold-index. Format `user:pass@<es_server>:<es_port>
+        name: ES_GOLD
+    - string:
+        default: ""
+        description: The openshift version you want to compare the current run to
+        name: GOLD_OCP_VERSION
+    - string:
+        default: "openshiftsdn"
+        description: Compares the current run with gold-index with the sdn type of GOLD_SDN. Options are openshiftsdn and ovnkubernetes
+        name: GOLD_SDN
+    - bool:
+        default: true
+        description: If COMPARE is set to true and COMPARE_WITH_GOLD is set to true then the current run will be compared against our gold-index
+        name: COMPARE_WITH_GOLD
     - bool:
         default: true
         description: Enables/Disables hostnetwork_test

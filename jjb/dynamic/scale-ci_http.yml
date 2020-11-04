@@ -221,6 +221,22 @@
         default: ""
         description: Location to service account key for communicating with Google API.
         name: GSHEET_KEY_LOCATION
+    - string:
+        default: ""
+        description: The ES server that houses gold-index. Format `user:pass@<es_server>:<es_port>
+        name: ES_GOLD
+    - string:
+        default: ""
+        description: The openshift version you want to compare the current run to
+        name: GOLD_OCP_VERSION
+    - string:
+        default: "openshiftsdn"
+        description: Compares the current run with gold-index with the sdn type of GOLD_SDN. Options are openshiftsdn and ovnkubernetes
+        name: GOLD_SDN
+    - bool:
+        default: true
+        description: If COMPARE is set to true and COMPARE_WITH_GOLD is set to true then the current run will be compared against our gold-index
+        name: COMPARE_WITH_GOLD
     project-type: freestyle
     properties:
     - raw:

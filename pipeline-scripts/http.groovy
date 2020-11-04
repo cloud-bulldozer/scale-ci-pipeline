@@ -72,6 +72,10 @@ stage ('http_scale_test') {
 		def email_id_for_results_sheet = http_properties['EMAIL_ID_FOR_RESULTS_SHEET']
 		def gsheet_key = http_properties['GSHEET_KEY']
 		def gsheet_key_location = http_properties['GSHEET_KEY_LOCATION']
+		def gold_sdn  = http_properties['GOLD_SDN']
+		def gold_ocp_version  = http_properties['GOLD_OCP_VERSION']
+		def es_gold = http_properties['ES_GOLD']
+		def compare_with_gold = http_properties['COMPARE_WITH_GOLD']
 
 		try {
 			http_build = build job: 'ATS-SCALE-CI-HTTP',
@@ -123,7 +127,12 @@ stage ('http_scale_test') {
 					[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ],
 					[$class: 'StringParameterValue', name: 'EMAIL_ID_FOR_RESULTS_SHEET', value: email_id_for_results_sheet ],
  					[$class: 'StringParameterValue', name: 'GSHEET_KEY', value: gsheet_key ],
-					[$class: 'StringParameterValue', name: 'GSHEET_KEY_LOCATION', value: gsheet_key_location ]]
+					[$class: 'StringParameterValue', name: 'GSHEET_KEY_LOCATION', value: gsheet_key_location ],
+					[$class: 'StringParameterValue', name: 'EMAIL_ID_FOR_RESULTS_SHEET', value: email_id_for_results_sheet ],
+					[$class: 'StringParameterValue', name: 'GOLD_SDN', value: gold_sdn ],
+					[$class: 'StringParameterValue', name: 'GOLD_OCP_VERSION', value: gold_ocp_version ],
+					[$class: 'StringParameterValue', name: 'ES_GOLD', value: es_gold ],
+					[$class: 'BooleanParameterValue', name: 'COMPARE_WITH_GOLD', value: Boolean.valueOf(compare_with_gold) ]]
 
 		} catch ( Exception e) {
 			echo "ATS-SCALE-CI-HTTP Job failed with the following error: "
