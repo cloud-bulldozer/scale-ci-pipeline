@@ -33,6 +33,7 @@ def kraken = KRAKEN.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 
 node (node_label) {
+	env.RUN_ID = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
 	// setup the repo containing the pipeline scripts
 	stage('cloning pipeline repo') {
 		checkout scm
