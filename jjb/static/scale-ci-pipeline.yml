@@ -1,7 +1,6 @@
 - job:
     concurrent: true
-    description: 'Collection of Jenkins jobs to install, configure, scaleup ocp and run various performance and scale
-      tests on OpenShift across various public and private clouds. '
+    description: 'Collection of Jenkins jobs to install, configure, scaleup ocp and run various performance and scale tests on OpenShift across various public and private clouds. '
     disabled: false
     name: SCALE-CI-PIPELINE
     parameters:
@@ -13,6 +12,26 @@
         default: false
         description: ''
         name: PIPELINE
+    - bool:
+        default: true
+        description: 'runs router, object-density, cluster-density workloads typically at 25 node scale'
+        name: STAGE_TWO
+    - bool:
+        default: false
+        description: 'runs cluster-density workload typically at 100 node scale'
+        name: STAGE_THREE
+    - bool:
+        default: false
+        description: 'runs cluster-density workload typically at 250 node scale'
+        name: STAGE_FOUR
+    - bool:
+        default: false
+        description: 'runs cluster-density workload typically at 500 node scale'
+        name: STAGE_FIVE
+    - bool:
+        default: false
+        description: 'runs cluster-density workload typically at 1000 node scale'
+        name: STAGE_SIX
     - bool:
         default: false
         description: ''
@@ -301,4 +320,4 @@
           <paramsToUseForLimit />
           </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
     triggers:
-    - timed: '0 10 * * 1,3,5'
+    - timed: '0 01 * * 1,3,5'

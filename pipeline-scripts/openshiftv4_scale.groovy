@@ -35,6 +35,12 @@ stage ('4.x scale cluster') {
 			scale = scale_properties['SCALE_V2']
 		} else if (pipeline == "TRUE" && pipeline_stage == "3") {
 			scale = scale_properties['SCALE_V3']
+		} else if (pipeline == "TRUE" && pipeline_stage == "4") {
+			scale = scale_properties['SCALE_V4']
+		} else if (pipeline == "TRUE" && pipeline_stage == "5") {
+			scale = scale_properties['SCALE_V5']
+		} else if (pipeline == "TRUE" && pipeline_stage == "6") {
+			scale = scale_properties['SCALE_V6']
 		}
 		def es_user = scale_properties['ES_USER']
 		def es_password = scale_properties['ES_PASSWORD']
