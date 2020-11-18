@@ -21,8 +21,16 @@
         cp ci/ocp_install_vars.yml vars/shift_stack_vars.yaml
         for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
         do
+        if [ $INSTALL_OSP == true ]
+        then
         time ansible-playbook -vvv main.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-install.timing
         ssh-copy-id -i ${PUBLIC_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}
+        else
+        echo "[undercloud]" >> inventory
+        echo "${ORCHESTRATION_HOST} ansible_user=${ORCHESTRATION_USER}" >> inventory
+        time ansible-playbook -i inventory -vvv delete_single_ocp.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-delete-ocp.timing
+        time ansible-playbook -i inventory -vvv ocp_on_osp.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-install-ocp.timing
+        fi
         git clone https://github.com/openshift-scale/scale-ci-deploy.git
         cd scale-ci-deploy
         # disable openshift install as we already installed via jetpack
@@ -53,6 +61,10 @@
         default: true
         description: Installs OCP cluster on OSP.
         name: OPENSHIFT_INSTALL
+    - bool:
+        default: false
+        description: Deploy fresh OSP.
+        name: INSTALL_OSP
     - bool:
         default: false
         description: ''

@@ -24,6 +24,7 @@ stage ('OCP 4.X INSTALL') {
 			def orchestration_user = openshiftv4_properties['ORCHESTRATION_USER']
 			def sshkey_token = openshiftv4_properties['SSHKEY_TOKEN']
 			def openshift_install = openshiftv4_properties['OPENSHIFT_INSTALL']
+			def install_osp = openshiftv4_properties['INSTALL_OSP']
 			def scale_ci_build_trigger = openshiftv4_properties['SCALE_CI_BUILD_TRIGGER']
 			def scale_ci_build_trigger_url = openshiftv4_properties['SCALE_CI_BUILD_TRIGGER_URL']
 			def enable_dittybopper = openshiftv4_properties['ENABLE_DITTYBOPPER']
@@ -126,6 +127,7 @@ stage ('OCP 4.X INSTALL') {
 						[$class: 'StringParameterValue', name: 'JENKINS_ES_SERVER', value: jenkins_es_server ],
 						[$class: 'hudson.model.PasswordParameterValue', name: 'SSHKEY_TOKEN', value: sshkey_token ],
 						[$class: 'BooleanParameterValue', name: 'OPENSHIFT_INSTALL', value: Boolean.valueOf(openshift_install) ],
+						[$class: 'BooleanParameterValue', name: 'INSTALL_OSP', value: Boolean.valueOf(install_osp) ],
 						[$class: 'BooleanParameterValue', name: 'SCALE_CI_BUILD_TRIGGER', value: Boolean.valueOf(scale_ci_build_trigger) ],
 						[$class: 'StringParameterValue', name: 'SCALE_CI_BUILD_TRIGGER_URL', value: scale_ci_build_trigger_url ],
 						[$class: 'BooleanParameterValue', name: 'ENABLE_DITTYBOPPER', value: Boolean.valueOf(enable_dittybopper) ],
