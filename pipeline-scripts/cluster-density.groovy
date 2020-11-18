@@ -27,6 +27,15 @@ stage ('cluster-density') {
 			def qps = cluster_density_properties['QPS']
 			def burst = cluster_density_properties['BURST']
 			def job_iterations = cluster_density_properties['JOB_ITERATIONS']
+			if (pipeline == "TRUE" && pipeline_stage == "3") {
+￼				job_iterations = cluster_density_properties['JOB_ITERATIONS_V2']
+￼			} else if (pipeline == "TRUE" && pipeline_stage == "4") {
+￼				job_iterations = cluster_density_properties['JOB_ITERATIONS_V3']
+￼			} else if (pipeline == "TRUE" && pipeline_stage == "5") {
+￼				job_iterations = cluster_density_properties['JOB_ITERATIONS_V4']
+￼			} else if (pipeline == "TRUE" && pipeline_stage == "6") {
+￼				job_iterations = cluster_density_properties['JOB_ITERATIONS_V5']
+￼			}
 			def es_server = cluster_density_properties['ES_SERVER']
 			def es_port = cluster_density_properties['ES_PORT']
 			def es_index = cluster_density_properties['ES_INDEX']
