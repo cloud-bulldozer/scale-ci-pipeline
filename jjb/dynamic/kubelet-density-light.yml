@@ -1,0 +1,173 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -x
+
+        # get perf keys to access orchestration host and set ssh session options
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
+        chmod 600 ${PRIVATE_KEY}
+
+        # fetch the kubeconfig from the orchestration host
+        echo "Fetching the kubeconfig from the orchestration host"
+        KUBECONFIG_FILE=${KUBECONFIG_FILE:-~/.kube/config}
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=${WORKSPACE}/kubeconfig
+
+        # run tests
+        export TERM=screen-256color
+        pushd workloads/kube-burner
+        ./run_kubeletdensity_test_fromgit.sh
+    concurrent: true
+    description: |
+      Cluster-density-light tworkload is used to measure control plane density for OpenShift. This test loads several objects across the cluster using cluster loader.
+      This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
+    disabled: false
+    name: RIPSAW-KUBELET-DENSITY-LIGHT
+    node: scale-ci
+    parameters:
+    - string:
+        default: '4'
+        description: Number of worker nodes to deploy the pods on. During the workload nodes will be labeled with kubelet-density=true. Defaults to 4.
+        name: NODE_COUNT
+    - string:
+        default: '250'
+        description: Maximum number of pods to deploy across labeled nodes.
+        name: PODS_PER_NODE
+    - string:
+        default: '20'
+        description: Queries/sec
+        name: QPS
+    - string:
+        default: '20'
+        description: Burst queries
+        name: BURST
+    - string:
+        default: 'https://search-cloud-perf-lqrf3jjtaqo7727m7ynd2xyt4y.us-west-2.es.amazonaws.com'
+        description: Elasticsearch server host address set to index results from kube-burner. You can use basic authentication using the notation http(s)://[username]:[password]@[address]
+        name: ES_SERVER
+    - string:
+        default: '443'
+        description: Elasticsearch server port, set to index results from kube-burner.
+        name: ES_PORT
+    - string:
+        default: 'ripsaw-kube-burner'
+        description: Elasticsearch server index .
+        name: ES_INDEX
+    - string:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - string:
+        default: ""
+        description: The machine intended to run the oc commands and launch the workload.
+        name: ORCHESTRATION_HOST
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: "~/.kube/config"
+        description: Location(absolute path) of kubeconfig on orchestration host.
+        name: KUBECONFIG_FILE
+    - string:
+        default: ""
+        description: Future use for pbench and prometheus scraper to place results into git repo that holds results data.
+        name: SCALE_CI_RESULTS_TOKEN
+    - string:
+        default: "https://prometheus-k8s.openshift-monitoring.svc.cluster.local:9091"
+        description: Prometheus endpoint. Defaults to the internal prometheus service.
+        name: PROM_URL
+    - string:
+        default: "14400"
+        description: kube-burner's job timeout, in seconds.
+        name: JOB_TIMEOUT
+    - string:
+        default: 30s
+        description: "Prometheus step size, useful for long benchmarks"
+        name: STEP_SIZE
+    - string:
+        default: metrics-aggregated.yaml
+        description: "Metric profile that indicates what prometheus metrics kube-burner will collect, accepts metrics.yaml or metrics-aggregated.yaml"
+        name: METRICS_PROFILE
+    - string:
+        default: "true"
+        description: Enable metadata collection.
+        name: METADATA_COLLECTION
+    - string:
+        default: "true"
+        description: "Enable log streaming of kube-burner pod"
+        name: LOG_STREAMING
+    - string:
+        default: "false"
+        description: "Delete old namespaces of the selected workload before starting benchmark"
+        name: CLEANUP
+    - string:
+        default: "false"
+        description: "Delete workload's namespaces after running it"
+        name: CLEANUP_WHEN_FINISH
+    - string:
+        default: info
+        description: kube-burner log level. (info or debug)
+        name: LOG_LEVEL
+    - string:
+        default: ""
+        description: URL to check the status of the cluster using cerberus
+        name: CERBERUS_URL
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/cloud-bulldozer/e2e-benchmarking.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm

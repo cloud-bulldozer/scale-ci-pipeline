@@ -14,6 +14,7 @@ def ocpv3_scale = OPENSHIFTv3_SCALE.toString().toUpperCase()
 def ocpv4_scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
 def cluster_density = CLUSTER_DENSITY.toString().toUpperCase()
 def kubelet_density = KUBELET_DENSITY.toString().toUpperCase()
+def kubelet_density_light = KUBELET_DENSITY_LIGHT.toString().toUpperCase()
 def install_openstack = OPENSTACK_INSTALL.toString().toUpperCase()
 def browbeat = BROWBEAT_INSTALL.toString().toUpperCase()
 def http = HTTP_TEST.toString().toUpperCase()
@@ -78,6 +79,9 @@ node (node_label) {
 		}
 		if (kubelet_density == "TRUE") {
 			load "pipeline-scripts/kubelet-density.groovy"
+		}
+		if (kubelet_density_light == "TRUE") {
+			load "pipeline-scripts/kubelet-density-light.groovy"
 		}
 		if (ocpv4_scale == "TRUE") {
 			load "pipeline-scripts/openshiftv4_scale.groovy"
@@ -178,6 +182,11 @@ node (node_label) {
 		// stage to run kubelet-density scale test
 		if (kubelet_density == "TRUE") {
 			load "pipeline-scripts/kubelet-density.groovy"
+		}
+
+		// stage to run kubelet-density-light scale test
+		if (kubelet_density_light == "TRUE") {
+			load "pipeline-scripts/kubelet-density-light.groovy"
 		}
 
 		// stage to run ns_per_cluster test
