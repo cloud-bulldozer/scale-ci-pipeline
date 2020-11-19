@@ -96,6 +96,10 @@
     - bool:
         default: false
         description: ''
+        name: KUBELET_DENSITY_LIGHT
+    - bool:
+        default: false
+        description: ''
         name: NS_PER_CLUSTER
     - bool:
         default: false
@@ -236,6 +240,10 @@
         default: ''
         description: ''
         name: KUBELET_DENSITY_PROPERTIES_FILE
+    - string:
+        default: ''
+        description: ''
+        name: KUBELET_DENSITY_LIGHT_PROPERTIES_FILE
     - string:
         default: ''
         name: KRAKEN_PROPERTY_FILE
