@@ -17,7 +17,7 @@
 
         # fetch the kubeconfig from the orchestration host
         echo "Fetching the  kubeconfig from the orchestration host"
-        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:$HOME/.kube/config ${WORKSPACE}/kubeconfig
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
         # Create inventory File:
@@ -75,6 +75,10 @@
         default: "root"
         description: The user for the Orchestration host.
         name: ORCHESTRATION_USER
+    - string:
+        default: "~/.kube/config"
+        description: Location(absolute path) of kubeconfig on orchestration host.
+        name: KUBECONFIG_FILE
     - string:
         default: quay.io/openshift-scale/scale-ci-workload
         description: ''
