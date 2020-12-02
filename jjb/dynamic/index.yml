@@ -17,7 +17,7 @@
 
         # fetch the kubeconfig from the orchestration host
         echo "Fetching the  kubeconfig from the orchestration host"
-        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:$HOME/.kube/config ${WORKSPACE}/kubeconfig
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
         # run the indexing script
@@ -44,6 +44,10 @@
         description: The user for the Orchestration host.
         name: ORCHESTRATION_USER
         trim: 'false'
+    - string:
+        default: "~/.kube/config"
+        description: Location(absolute path) of kubeconfig on orchestration host.
+        name: KUBECONFIG_FILE
     - string:
         default: github.com/redhat-performance/perf-dept.git
         description: Repository containing ssh keys for Ansible and pbench server
