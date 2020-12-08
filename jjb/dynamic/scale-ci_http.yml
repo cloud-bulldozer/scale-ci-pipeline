@@ -18,6 +18,15 @@
         scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
+        # push the pbench keys to jumphost if path given
+        if [[ ! -z "$PBENCH_SSH_KEYS_PATH" ]]
+        then
+          scp ${OPTIONS} -i ${PRIVATE_KEY} ${PUBLIC_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${PBENCH_SSH_KEYS_PATH}/pbench_public.pub
+          scp ${OPTIONS} -i ${PRIVATE_KEY} ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${PBENCH_SSH_KEYS_PATH}/pbench_private
+          export PBENCH_SSH_PUBLIC_KEY_FILE=${PBENCH_SSH_KEYS_PATH}/pbench_public.pub
+          export PBENCH_SSH_PRIVATE_KEY_FILE=${PBENCH_SSH_KEYS_PATH}/pbench_private
+        fi
+
         # run tests
         pushd workloads/router-perf/
         ./run_router_test.sh
@@ -61,6 +70,10 @@
         default: "/root/.kube/config"
         description: Location(absolute path) of kubeconfig on orchestration host.
         name: KUBECONFIG_FILE
+    - string:
+        default: ""
+        description: PBench keys will be copied to this path and used to push the results
+        name: PBENCH_SSH_KEYS_PATH
     - bool:
         default: false
         description: Enables/disables running the workload wrapped by pbench-user-benchmark. When enabled, pbench agents can then be enabled (ENABLE_PBENCH_AGENTS) for further instrumentation data and pbench-copy-results can be enabled (ENABLE_PBENCH_COPY) to export captured data for further analysis.
