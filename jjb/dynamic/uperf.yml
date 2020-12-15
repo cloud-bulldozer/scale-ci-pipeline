@@ -74,16 +74,6 @@
         default: ""
         description: Password for elasticsearch instance
         name: ES_PASSWORD
-    - string:
-        default: ""
-        description: Jenkins user
-        name: JENKINS_USER
-        trim: 'false'
-    - string:
-        default: ''
-        description: Jenkins API token
-        name: JENKINS_API_TOKEN
-        trim: 'false'
     - raw:
         xml: |
           <hudson.model.PasswordParameterDefinition>
