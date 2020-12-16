@@ -6,7 +6,11 @@ def run_uperf = UPERF.toString().toUpperCase()
 def property_file_name = "uperf.properties"
 def pipeline = PIPELINE.toString().toUpperCase()
 
+// refers to the most upstream job and is used to unify all downstream job results in ES
+def run_id = env.RUN_ID
+
 println "Current pipeline job build id is '${pipeline_id}'"
+println "Current pipeline run id is ${env.RUN_ID}"
 
 // run uperf
 stage ('uperf') {
@@ -18,6 +22,7 @@ stage ('uperf') {
 				println "Looks like the property file already exists, erasing it"
 				sh "rm ${property_file_name}"
 			}
+			println "Node run id is ${env.RUN_ID}"
 			// get properties file
 			sh "wget ${UPERF_PROPERTIES_FILE} -O ${property_file_name}"
 			sh "cat ${property_file_name}"
@@ -99,7 +104,9 @@ stage ('uperf') {
 						[$class: 'StringParameterValue', name: 'GOLD_SDN', value: gold_sdn ],
 						[$class: 'StringParameterValue', name: 'GOLD_OCP_VERSION', value: gold_ocp_version ],
 						[$class: 'StringParameterValue', name: 'ES_GOLD', value: es_gold ],
+						[$class: 'StringParameterValue', name: 'RUN_ID', value: run_id ],
 						[$class: 'BooleanParameterValue', name: 'COMPARE_WITH_GOLD', value: Boolean.valueOf(compare_with_gold) ]]
+						
 	
 			} catch ( Exception e) {
 				echo "UPERF Job failed with the following error: "

@@ -5,6 +5,7 @@
     - shell: |-
         set -o pipefail
         set -eux
+        echo "Run ID is $RUN_ID"
 
         # get perf keys to access orchestration host and set ssh session options
         git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
@@ -223,6 +224,11 @@
         default: ''
         description: ''
         name: JENKINS_ES_SERVER
+        trim: 'false'
+    - string:
+        default: 'no_run_id'
+        description: 'run id'
+        name: RUN_ID
         trim: 'false'
     project-type: freestyle
     properties:

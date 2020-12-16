@@ -36,9 +36,11 @@ def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
 def run_uperf = UPERF.toString().toUpperCase()
 def kraken = KRAKEN.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
+def run_id = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
 
 node (node_label) {
 	env.RUN_ID = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
+	println "Run ID is ${env.RUN_ID}"
 	// setup the repo containing the pipeline scripts
 	stage('cloning pipeline repo') {
 		checkout scm
