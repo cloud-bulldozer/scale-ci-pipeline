@@ -5,6 +5,8 @@ def node_label = NODE_LABEL.toString()
 def run_uperf = UPERF.toString().toUpperCase()
 def property_file_name = "uperf.properties"
 def pipeline = PIPELINE.toString().toUpperCase()
+
+// refers to the most upstream job and is used to unify all downstream job results in ES
 def run_id = env.RUN_ID
 
 println "Current pipeline job build id is '${pipeline_id}'"
