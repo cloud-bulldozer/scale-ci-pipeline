@@ -50,6 +50,8 @@ export JENKINS_USER=$JENKINS_USER
 export JENKINS_API_TOKEN=$JENKINS_API_TOKEN
 
 # Jenkins job info
+export JOB_NAME=$JOB_NAME
+export BUILD_NUMBER=$BUILD_NUMBER
 export BUILD_TAG=$JENKINS_BUILD_TAG
 export NODE_NAME=$JENKINS_NODE_NAME
 export BUILD_URL=$JENKINS_BUILD_URL
@@ -64,12 +66,14 @@ masters=$(oc get nodes -l node-role.kubernetes.io/master --no-headers=true | wc 
 workers=$(oc get nodes -l node-role.kubernetes.io/worker --no-headers=true | wc -l)
 workload=$(oc get nodes -l node-role.kubernetes.io/workload --no-headers=true | wc -l)
 infra=$(oc get nodes -l node-role.kubernetes.io/infra --no-headers=true | wc -l)
+cluster_version=$(oc get clusterversion -o jsonpath='{.items[0].status.desired.version}')
+network_type=$(oc get network cluster  -o jsonpath='{.status.networkType}')
 all=$(oc get nodes  --no-headers=true | wc -l)
 
 # Get the status and duration of the run
 JOB_STATUS=$(curl -k --user "$JENKINS_USER:$JENKINS_API_TOKEN" $BUILD_URL/api/json | jq '.result')
 JOB_DURATION=$(curl -k --user "$JENKINS_USER:$JENKINS_API_TOKEN" $BUILD_URL/api/json | jq '.duration')
-UPSTREAM_JOB=$(curl -k --user "$JENKINS_USER:$JENKINS_API_TOKEN" $BUILD_URL/api/json | jq '.actions[0].causes[].upstreamUrl')
+UPSTREAM_JOB=$(curl -k --user "$JENKINS_USER:$JENKINS_API_TOKEN" $BUILD_URL/api/json | jq '.actions[0].causes[].upstreamProject')
 UPSTREAM_JOB_BUILD=$(curl -k --user "$JENKINS_USER:$JENKINS_API_TOKEN" $BUILD_URL/api/json | jq '.actions[0].causes[].upstreamBuild')
 
 if [[ -f "$BENCHMARK_STATUS_FILE" ]]; then
@@ -79,6 +83,7 @@ if [[ -f "$BENCHMARK_STATUS_FILE" ]]; then
   # Index data into elasticsearch
   curl $ES_USER -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
     "uuid" : "'$UUID'",
+    "run_id" : "'${UPSTREAM_JOB}-${UPSTREAM_JOB_BUILD}'",
     "platform": "'$platform'",
     "master_count": '$masters',
     "worker_count": '$workers',
@@ -86,6 +91,11 @@ if [[ -f "$BENCHMARK_STATUS_FILE" ]]; then
     "workload_count": '$workload',
     "total_count": '$all',
     "cluster_name": "'$cluster_name'",
+    "network_type": "'$network_type'",
+    "cluster_version": "'$cluster_version'",
+    "total_count": '$all',
+    "build_number": '$BUILD_NUMBER',
+    "job_name": '$JOB_NAME',
     "build_tag": "'$BUILD_TAG'",
     "node_name": "'$NODE_NAME'",
     "job_status": '$JOB_STATUS',
@@ -101,12 +111,18 @@ if [[ -f "$BENCHMARK_STATUS_FILE" ]]; then
 else
   curl $ES_USER -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
     "uuid" : "'$UUID'",
+    "run_id" : "'${UPSTREAM_JOB}-${UPSTREAM_JOB_BUILD}'",
     "platform": "'$platform'",
     "master_count": '$masters',
     "worker_count": '$workers',
     "infra_count": '$infra',
     "workload_count": '$workload',
     "total_count": '$all',
+    "network_type": "'$network_type'",
+    "cluster_version": "'$cluster_version'",
+    "total_count": '$all',
+    "build_number": '$BUILD_NUMBER',
+    "job_name": '$JOB_NAME',
     "cluster_name": "'$cluster_name'",
     "build_tag": "'$BUILD_TAG'",
     "node_name": "'$NODE_NAME'",
