@@ -104,8 +104,9 @@ stage ('uperf') {
 						[$class: 'StringParameterValue', name: 'GOLD_SDN', value: gold_sdn ],
 						[$class: 'StringParameterValue', name: 'GOLD_OCP_VERSION', value: gold_ocp_version ],
 						[$class: 'StringParameterValue', name: 'ES_GOLD', value: es_gold ],
-						[$class: 'BooleanParameterValue', name: 'COMPARE_WITH_GOLD', value: Boolean.valueOf(compare_with_gold) ]],
-						[$class: 'StringParameterValue', name: 'RUN_ID', value: run_id ]
+						[$class: 'StringParameterValue', name: 'RUN_ID', value: run_id ],
+						[$class: 'BooleanParameterValue', name: 'COMPARE_WITH_GOLD', value: Boolean.valueOf(compare_with_gold) ]]
+						
 	
 			} catch ( Exception e) {
 				echo "UPERF Job failed with the following error: "
