@@ -5,6 +5,7 @@ def node_label = NODE_LABEL.toString()
 def run_uperf = UPERF.toString().toUpperCase()
 def property_file_name = "uperf.properties"
 def pipeline = PIPELINE.toString().toUpperCase()
+def run_id = env.RUN_ID
 
 println "Current pipeline job build id is '${pipeline_id}'"
 println "Current pipeline run id is ${env.RUN_ID}"
@@ -101,7 +102,8 @@ stage ('uperf') {
 						[$class: 'StringParameterValue', name: 'GOLD_SDN', value: gold_sdn ],
 						[$class: 'StringParameterValue', name: 'GOLD_OCP_VERSION', value: gold_ocp_version ],
 						[$class: 'StringParameterValue', name: 'ES_GOLD', value: es_gold ],
-						[$class: 'BooleanParameterValue', name: 'COMPARE_WITH_GOLD', value: Boolean.valueOf(compare_with_gold) ]]
+						[$class: 'BooleanParameterValue', name: 'COMPARE_WITH_GOLD', value: Boolean.valueOf(compare_with_gold) ]],
+						[$class: 'StringParameterValue', name: 'RUN_ID', value: run_id ]
 	
 			} catch ( Exception e) {
 				echo "UPERF Job failed with the following error: "
