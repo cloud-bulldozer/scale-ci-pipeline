@@ -31,7 +31,7 @@ else
   export ES_USER="--user ${ES_USER}"
 fi
 if [[ -z $ES_INDEX ]]; then
-  export ES_INDEX=perf_scale_ci
+  export ES_INDEX=perf-scale-ci
 fi
 if [[ -z $JENKINS_USER ]] || [[ -z $JENKINS_API_TOKEN ]]; then
   echo "Jenkins credentials are not defined, please check"
