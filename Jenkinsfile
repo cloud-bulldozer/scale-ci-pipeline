@@ -84,10 +84,10 @@ node (node_label) {
 				load "pipeline-scripts/http.groovy"
 			}
 			if (kubelet_density == "TRUE") {
-				load "pipeline-scripts/kubelet_density.groovy"
+				load "pipeline-scripts/kubelet-density.groovy"
 			}
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster_density.groovy"
+				load "pipeline-scripts/cluster-density.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
 				load "pipeline-scripts/openshiftv4_scale.groovy"
@@ -97,7 +97,7 @@ node (node_label) {
 		if (stage_three == "TRUE") {
 			env.PIPELINE_STAGE=3
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster_density.groovy"
+				load "pipeline-scripts/cluster-density.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
  				load "pipeline-scripts/openshiftv4_scale.groovy"
@@ -107,7 +107,7 @@ node (node_label) {
 		if (stage_four == "TRUE") {
 			env.PIPELINE_STAGE=4
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster_density.groovy"
+				load "pipeline-scripts/cluster-density.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
 				load "pipeline-scripts/openshiftv4_scale.groovy"
@@ -117,7 +117,7 @@ node (node_label) {
 		if (stage_five == "TRUE") {
 			env.PIPELINE_STAGE=5
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster_density.groovy"
+				load "pipeline-scripts/cluster-density.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
 				load "pipeline-scripts/openshiftv4_scale.groovy"
@@ -127,7 +127,7 @@ node (node_label) {
 		if (stage_six == "TRUE") {
 			env.PIPELINE_STAGE=6
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster_density.groovy"
+				load "pipeline-scripts/cluster-density.groovy"
 			}
  			if (ocpv4_scale == "TRUE") {
 				load "pipeline-scripts/openshiftv4_scale.groovy"
