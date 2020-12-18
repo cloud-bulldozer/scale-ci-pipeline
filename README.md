@@ -84,7 +84,7 @@ $ cp scale-ci-pipeline/properties-files/kubelet-density.properties scale-ci-pipe
 $ # step 4: add the new workload to the Jenkinsfile to load the pipeline-build script ( Applicable only in the case of a new workload, this is not needed for a existing workload )
 $ vi scale-ci-pipeline/Jenkinsfile
 $ # step 5: add the workoad to the scale-ci-pipeline ( workload option and properties file path vars, applicable only in the case of a new workload )
-$ vi scale-ci-pipeline/jjb/dynamic/scale-ci-pipeline
+$ vi scale-ci-pipeline/jjb/static/scale-ci-pipeline
 $ # step 6: update the Scale-CI jobs section in the readme.
 ```
 #### NOTE: Modifying the existing workload just needs changes to the existing template, build script and properties file.

@@ -30,6 +30,8 @@ stage ('kraken') {
 			def kraken_repository = kraken_properties['KRAKEN_REPOSITORY']
 			def scenarios_folder_path = kraken_properties['SCENARIOS_FOLDER_PATH']
 			def scenarios = kraken_properties['SCENARIOS']
+			def node_scenarios = kraken_properties['NODE_SCENARIOS']
+			def cluster_shut_down_scenario = kraken_properties['CLUSTER_SHUT_DOWN_SCENARIO']
 			def exit_on_failure = kraken_properties['EXIT_ON_FAILURE']
 			def cerberus_enabled = kraken_properties['CERBERUS_ENABLED']
 			def cerberus_url = kraken_properties['CERBERUS_URL']
@@ -50,6 +52,8 @@ stage ('kraken') {
 						[$class: 'StringParameterValue', name: 'KRAKEN_REPOSITORY', value: kraken_repository ],
 						[$class: 'StringParameterValue', name: 'SCENARIOS_FOLDER_PATH', value: scenarios_folder_path ],
 						[$class: 'StringParameterValue', name: 'SCENARIOS', value: scenarios ],
+						[$class: 'StringParameterValue', name: 'NODE_SCENARIOS', value: node_scenarios ],
+						[$class: 'StringParameterValue', name: 'CLUSTER_SHUT_DOWN_SCENARIO', value: cluster_shut_down_scenario ],
 						[$class: 'BooleanParameterValue', name: 'EXIT_ON_FAILURE', value: Boolean.valueOf(exit_on_failure) ],
 						[$class: 'BooleanParameterValue', name: 'CERBERUS_ENABLED', value: Boolean.valueOf(cerberus_enabled) ],
 						[$class: 'StringParameterValue', name: 'CERBERUS_URL', value: cerberus_url ],
