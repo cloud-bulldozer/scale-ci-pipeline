@@ -3,6 +3,8 @@
 def pipeline_id = env.BUILD_ID
 def node_label = NODE_LABEL.toString()
 def run_cluster_density = CLUSTER_DENSITY.toString().toUpperCase()
+def pipeline = PIPELINE.toString().toUpperCase()
+def pipeline_stage = env.PIPELINE_STAGE
 def property_file_name = "cluster-density.properties"
 
 println "Current pipeline job build id is '${pipeline_id}'"
