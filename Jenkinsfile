@@ -15,7 +15,6 @@ def openshiftv4_install_on_aws = OPENSHIFTv4_INSTALL_ON_AWS.toString().toUpperCa
 def openshiftv4_install_on_azure = OPENSHIFTv4_INSTALL_ON_AZURE.toString().toUpperCase()
 def openshiftv4_install_on_gcp = OPENSHIFTv4_INSTALL_ON_GCP.toString().toUpperCase()
 def openshiftv4_install_on_osp = OPENSHIFTv4_INSTALL_ON_OSP.toString().toUpperCase()
-def ocpv3_scale = OPENSHIFTv3_SCALE.toString().toUpperCase()
 def ocpv4_scale = OPENSHIFTv4_SCALE.toString().toUpperCase()
 def cluster_density = CLUSTER_DENSITY.toString().toUpperCase()
 def kubelet_density = KUBELET_DENSITY.toString().toUpperCase()
@@ -48,89 +47,131 @@ node (node_label) {
 
 	// creates/updates jenkins jobs using the jjb templates
 	if (watcher == "TRUE") {
-		load "pipeline-scripts/scale_ci_watcher.groovy"
+		env.WORKLOAD="ATS-SCALE-CI-WATCHER"
+		env.WORKLOAD_PROPERTIES_FILE=SCALE_CI_WATCHER_PROPERTY_FILE
+		load "pipeline-scripts/workload.groovy"
 	}
 
 	if (pipeline == "TRUE") {
 		env.PIPELINE_STAGE=1
 		if ( build_tracker == "TRUE") {
-			load "pipeline-scripts/scale_ci_build_tracker.groovy"
+			env.WORKLOAD="SCALE-CI-BUILD-TRACKER"
+			env.WORKLOAD_PROPERTIES_FILE=SCALE_CI_BUILD_TRACKER_PROPERTY_FILE
+			load "pipeline-scripts/workload.groovy"
 		}
 		if (openshiftv4_install_on_aws == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_aws.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_AWS_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-AWS-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 		if (openshiftv4_install_on_azure == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_azure.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_AZURE_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-AZURE-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 		if (openshiftv4_install_on_gcp == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_gcp.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_GCP_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-GCP-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 		if (openshiftv4_install_on_osp == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_osp.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_OSP_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-OSP-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 		if (http == "TRUE") {
-			load "pipeline-scripts/http.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-HTTP"
+			load "pipeline-scripts/workload.groovy"
 		}
 		if (run_uperf == "TRUE") {
-			load "pipeline-scripts/uperf.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=UPERF_PROPERTIES_FILE
+			env.WORKLOAD="RIPSAW-UPERF"
+			load "pipeline-scripts/workload.groovy"
 		}
 		if (ocpv4_scale == "TRUE") {
-			load "pipeline-scripts/openshiftv4_scale.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-SCALE"
+			load "pipeline-scripts/workload.groovy"
 		}
 		
 		if (stage_two == "TRUE") {
 			env.PIPELINE_STAGE=2
 			if (http == "TRUE") {
-				load "pipeline-scripts/http.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-HTTP"
+				load "pipeline-scripts/workload.groovy"
 			}
 			if (kubelet_density == "TRUE") {
-				load "pipeline-scripts/kubelet-density.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_PROPERTIES_FILE
+				env.WORKLOAD="RIPSAW-KUBELET-DENSITY"
+				load "pipeline-scripts/workload.groovy"
 			}
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster-density.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=CLUSTER_DENSITY_PROPERTIES_FILE
+				env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
+				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				load "pipeline-scripts/openshiftv4_scale.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-SCALE"
+				load "pipeline-scripts/workload.groovy"
 			}
 		}
 
 		if (stage_three == "TRUE") {
 			env.PIPELINE_STAGE=3
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster-density.groovy"
+                                env.WORKLOAD_PROPERTIES_FILE=CLUSTER_DENSITY_PROPERTIES_FILE
+				env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
+				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
- 				load "pipeline-scripts/openshiftv4_scale.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-SCALE"
+ 				load "pipeline-scripts/workload.groovy"
 			}
  		}
 
 		if (stage_four == "TRUE") {
 			env.PIPELINE_STAGE=4
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster-density.groovy"
+                                env.WORKLOAD_PROPERTIES_FILE=CLUSTER_DENSITY_PROPERTIES_FILE
+				env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
+				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				load "pipeline-scripts/openshiftv4_scale.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-SCALE"
+				load "pipeline-scripts/workload.groovy"
 			}
 		}
 
 		if (stage_five == "TRUE") {
 			env.PIPELINE_STAGE=5
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster-density.groovy"
+                                env.WORKLOAD_PROPERTIES_FILE=CLUSTER_DENSITY_PROPERTIES_FILE
+				env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
+				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				load "pipeline-scripts/openshiftv4_scale.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-SCALE"
+				load "pipeline-scripts/workload.groovy"
 			}
 		}
 
 		if (stage_six == "TRUE") {
 			env.PIPELINE_STAGE=6
 			if (cluster_density == "TRUE") {
-				load "pipeline-scripts/cluster-density.groovy"
+                                env.WORKLOAD_PROPERTIES_FILE=CLUSTER_DENSITY_PROPERTIES_FILE
+				env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
+				load "pipeline-scripts/workload.groovy"
 			}
  			if (ocpv4_scale == "TRUE") {
-				load "pipeline-scripts/openshiftv4_scale.groovy"
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-SCALE"
+				load "pipeline-scripts/workload.groovy"
 			}
 		}
 
@@ -138,137 +179,177 @@ node (node_label) {
 
 		// Queries UMB message to capture the OCP 4.x payloads
 		if ( build_tracker == "TRUE") {
-			load "pipeline-scripts/scale_ci_build_tracker.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=SCALE_CI_BUILD_TRACKER_PROPERTY_FILE
+			env.WORKLOAD="SCALE-CI-BUILD-TRACKER"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to install openstack
 		if (install_openstack == "TRUE") {
-			load "pipeline-scripts/openstack.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_OSP_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-OSP-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to set up browbeat
 		if (browbeat == "TRUE") {
-			load "pipeline-scripts/browbeat.groovy"
-		}
-
-		// stage to install openshift 3.x
-		if (openshiftv3_install == "TRUE") {
-			load "pipeline-scripts/openshiftv3.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=BROWBEAT_PROPERTY_FILE
+			env.WORKLOAD="scale-ci_install_Browbeat"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to install openshift 4.x on AWS
 		if (openshiftv4_install_on_aws == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_aws.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_AWS_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-AWS-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to install openshift 4.x on Azure
 		if (openshiftv4_install_on_azure == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_azure.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_AZURE_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-AZURE-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to install openshift 4.x on GCP
 		if (openshiftv4_install_on_gcp == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_gcp.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_GCP_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-GCP-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to install OSP and OCP using jetpack
 		if (openshiftv4_install_on_osp == "TRUE") {
-			load "pipeline-scripts/openshiftv4_on_osp.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_OSP_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-OCP-OSP-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to setup pbench
 		if (tooling == "TRUE") {
-			load "pipeline-scripts/tooling.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=TOOLING_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-TOOLING"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run conformance
 		if (run_conformance == "TRUE") {
-			load "pipeline-scripts/conformance.groovy"
-		}
-
-		// stage to scaleup the cluster
-		if (ocpv3_scale == "TRUE") {
-			load "pipeline-scripts/openshiftv3_scale.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=CONFORMANCE_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-CONFORMANCE"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run OCP 4.X scaleup
 		if (ocpv4_scale == "TRUE") {
-			load "pipeline-scripts/openshiftv4_scale.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-SCALE"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run http scale test
 		if (http == "TRUE") {
-			load "pipeline-scripts/http.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-HTTP"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run services per namespace test
 		if (services_per_namespace == "TRUE") {
-			load "pipeline-scripts/services_per_namespace.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=SERVICES_PER_NAMESPACE_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-SERVICES-PER-NAMESPACE"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run deployments per ns test
 		if ( deployments_per_ns == "TRUE") {
-			load "pipeline-scripts/deployments_per_ns.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=DEPLOYMENTS_PER_NS_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-DEPLOYMENTS-PER-NAMESPACE"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run pgbench scale test
 		if ( pgbench_test == "TRUE") {
-			load "pipeline-scripts/pgbench.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=PGBENCH_PROPERTY_FILE
+			env.WORKLOAD="PGBENCH_SCALE_TEST"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run mongodb ycsb scale test
 		if ( mongodb_ycsb_test == "TRUE") {
-			load "pipeline-scripts/mongodbycsb.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=MONGOYCSB_PROPERTY_FILE
+			env.WORKLOAD="MONGODB_YCSB_TEST"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run cluster-density scale test
 		if (cluster_density == "TRUE") {
-			load "pipeline-scripts/cluster-density.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=CLUSTER_DENSITY_PROPERTIES_FILE
+			env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run kubelet-density scale test
 		if (kubelet_density == "TRUE") {
-			load "pipeline-scripts/kubelet-density.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_PROPERTIES_FILE
+			env.WORKLOAD="RIPSAW-KUBELET-DENSITY"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run kubelet-density-light scale test
 		if (kubelet_density_light == "TRUE") {
-			load "pipeline-scripts/kubelet-density-light.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_LIGHT_PROPERTIES_FILE
+			env.WORKLOAD="RIPSAW-KUBELET-DENSITY-LITE"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run ns_per_cluster test
 		if ( ns_per_cluster == "TRUE") {
-			load "pipeline-scripts/ns_per_cluster.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=NS_PER_CLUSTER_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-NAMESPACES-PER-CLUSTER"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run logging scale test
 		if (logging == "TRUE") {
-			load "pipeline-scripts/logging.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=LOGGING_PROPERTY_FILE
+			env.WORKLOAD="LOGGING-SCALE-TEST"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run prometheus scale test
 		if ( prometheus_test == "TRUE") {
-			load "pipeline-scripts/prometheus.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=PROMETHEUS_PROPERTY_FILE
+			env.WORKLOAD=PROMETHEUS_TEST
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run BYO scale test
 		if (byo == "TRUE") {
-			load "pipeline-scripts/byo.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=BYO_PROPERTY_FILE
+			env.WORKLOAD=BYO-SCALE-TEST
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run baseline test
 		if (baseline == "TRUE") {
-			load "pipeline-scripts/baseline.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=BASELINE_PROPERTY_FILE
+                        env.WORKLOAD=BASELINE-SCALE-TEST
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run uperf test
 		if (run_uperf == "TRUE") {
-			load "pipeline-scripts/uperf.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=UPERF_PROPERTIES_FILE
+			env.WORKLOAD="RIPSAW-UPERF"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 		// stage to run kraken test
 		if (kraken == "TRUE") {
-			load "pipeline-scripts/kraken.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=KRAKEN_PROPERTY_FILE
+			env.WORKLOAD="KRAKEN"
+			load "pipeline-scripts/workload.groovy"
 		}
 
 	}

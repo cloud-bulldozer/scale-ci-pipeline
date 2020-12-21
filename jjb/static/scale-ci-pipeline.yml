@@ -47,10 +47,6 @@
     - bool:
         default: false
         description: ''
-        name: OPENSHIFTv3_INSTALL
-    - bool:
-        default: false
-        description: ''
         name: OPENSHIFTv4_INSTALL_ON_AWS
     - bool:
         default: false
@@ -75,10 +71,6 @@
     - bool:
         default: false
         description: ''
-        name: OPENSHIFTv3_SCALE
-    - bool:
-        default: false
-        description: ''
         name: OPENSHIFTv4_SCALE
     - bool:
         default: false
@@ -92,10 +84,6 @@
         default: false
         description: ''
         name: DEPLOYMENTS_PER_NS
-    - bool:
-        default: false
-        description: ''
-        name: NETWORKING
     - bool:
         default: false
         description: ''
@@ -190,10 +178,6 @@
     - string:
         default: ''
         description: ''
-        name: OPENSHIFTv3_SCALE_PROPERTY_FILE
-    - string:
-        default: ''
-        description: ''
         name: OPENSHIFTv4_SCALE_PROPERTY_FILE
     - string:
         default: ''
@@ -207,10 +191,6 @@
         default: ''
         description: ''
         name: DEPLOYMENTS_PER_NS_PROPERTY_FILE
-    - string:
-        default: ''
-        description: ''
-        name: NETWORKING_PROPERTY_FILE
     - string:
         default: ''
         description: ''
