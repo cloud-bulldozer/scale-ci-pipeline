@@ -9,7 +9,7 @@
         description: ''
         name: SCALE_CI_WATCHER
     - bool:
-        default: false
+        default: true
         description: ''
         name: PIPELINE
     - bool:
@@ -45,7 +45,7 @@
         description: ''
         name: BROWBEAT_INSTALL
     - bool:
-        default: false
+        default: true
         description: ''
         name: OPENSHIFTv4_INSTALL_ON_AWS
     - bool:
@@ -69,11 +69,11 @@
         description: ''
         name: CONFORMANCE
     - bool:
-        default: false
+        default: true
         description: ''
         name: OPENSHIFTv4_SCALE
     - bool:
-        default: false
+        default: true
         description: ''
         name: HTTP_TEST
     - bool:
@@ -93,11 +93,11 @@
         description: ''
         name: MONGODB_YCSB_TEST
     - bool:
-        default: false
+        default: true
         description: ''
         name: CLUSTER_DENSITY
     - bool:
-        default: false
+        default: true
         description: ''
         name: KUBELET_DENSITY
     - bool:
@@ -125,7 +125,7 @@
         description: ''
         name: BASELINE_SCALE_TEST
     - bool:
-        default: false
+        default: true
         description: ''
         name: UPERF
     - bool:
