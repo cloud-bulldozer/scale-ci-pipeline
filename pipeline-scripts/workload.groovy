@@ -32,6 +32,28 @@ stage (workload) {
 		job_parameters.add([$class: 'StringParameterValue', name: property.key, value: property.value ])
 	}
 
+	// OpenShift install specific logic 
+	// Install cluster using the payload captured at the build trigger url when scale_ci_build_trigger is set
+	if ( workload.toString().trim().equals("ATS-SCALE-CI-OCP-AWS-DEPLOY") || workload.toString().trim().equals("ATS-SCALE-CI-OCP-GCP-DEPLOY") || workload.toString().trim().equals("ATS-SCALE-CI-OCP-AZURE-DEPLOY") || workload.toString().trim().equals("ATS-SCALE-CI-OCP-OSP-DEPLOY") ) {
+		def scale_ci_build_trigger = properties['SCALE_CI_BUILD_TRIGGER']
+		def scale_ci_build_trigger_url = properties['SCALE_CI_BUILD_TRIGGER_URL']
+		if ( scale_ci_build_trigger.toBoolean() ) {
+			sh "curl ${scale_ci_build_trigger_url}/payload -o /tmp/payload.${workload}"
+			sh "curl ${scale_ci_build_trigger_url}/build.status -o /tmp/status.${workload}"
+			sh "curl ${scale_ci_build_trigger_url}/cluster.status -o /tmp/cluster_status.${workload}"
+			status = readFile "/tmp/status.${workload}"
+			cluster_status = readFile "/tmp/cluster_status.${workload}"
+			if ( status.toString().trim().equals("PROCEED") || cluster_status.toString().trim().equals("False") ) {
+					println "Build status is set to ${status}, proceeding with the cluster build"
+					openshift_install_release_image_override = readFile "/tmp/payload.${workload}"
+					job_parameters.add([$class: 'StringParameterValue', name: 'OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE', value: openshift_install_release_image_override ])
+				} else {
+					println "Build status is set to ${status}, exiting without building the cluster"
+					return 0
+				}
+		}
+	}
+
 	// run the job with the properties
 	try {
 		run_workload = build job: workload, parameters: job_parameters
