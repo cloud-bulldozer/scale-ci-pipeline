@@ -10,7 +10,12 @@ for template in $(ls $templates_path); do
 		echo "--------------------------------"	
 		echo "Running the linter for $template"
 		echo "--------------------------------"
-		yamllint -d relaxed $templates_path/$template
+		yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}" $templates_path/$template
+		echo "--------------------------------"	
+		echo "Running jenkins-jobs test for $template"
+		echo "--------------------------------"
+		jenkins-jobs test $templates_path/$template
+
 	fi
 done
 popd
