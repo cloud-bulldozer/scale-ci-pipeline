@@ -1,0 +1,221 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+      - shell: |+
+          #!/bin/bash
+          set -e
+          export RUN_FOLDER=$(date +%Y%m%d-%H%M%S)
+          echo "INFO: Getting perf-dept keys"
+          [[ ! -d "${WORKSPACE}/perf-dept" ]] && git clone https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
+          export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+          chmod 600 ${PRIVATE_KEY}
+
+          export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
+          [[ "${USE_PROXY}" == "true" ]] && OPTIONS+=" -o ProxyCommand=\"ssh -i ${PRIVATE_KEY} -W %h:%p ${PROXY_USER}@${PROXY_HOST}\""
+
+          echo "INFO: Grant limits requirements on jump host ${JUMP_HOST}"
+          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+            sudo su -
+            set -e
+            if [[ ! -f /etc/security/limits.d/osde2e.conf ]] ; then
+              echo "${SSH_USER}	hard	nofile	99999" > /etc/security/limits.d/osde2e.conf
+              echo "${SSH_USER}	soft	nofile	99999" >> /etc/security/limits.d/osde2e.conf
+            fi
+            if [[ ! -f /etc/sysctl.d/99-osde2e.conf ]] ; then
+              echo "user.max_inotify_instances = 20000" > /etc/sysctl.d/99-osde2e.conf
+              echo "user.max_inotify_watches = 20000" >> /etc/sysctl.d/99-osde2e.conf
+              sysctl -p
+            fi
+          ENDSSH
+
+          echo "INFO: Install execution requirements on jump host ${JUMP_HOST}"
+          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+            set -e
+            eval REMOTE_WORKSPACE=${REMOTE_WORKSPACE}
+            echo "INFO: Installing rpm requirements..."
+            sudo /usr/bin/yum -y install python3 python3-pip golang-bin make
+            echo "INFO: Installing python requirements..."
+            mkdir -p ${REMOTE_WORKSPACE}
+            [[ ! -d "${REMOTE_WORKSPACE}/osde2e-scale-wrapper" ]] && git clone https://github.com/cloud-bulldozer/osde2e-scale-wrapper.git ${REMOTE_WORKSPACE}/osde2e-scale-wrapper
+            pip3 install -r ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/requirements.txt
+          ENDSSH
+
+          # Run installation script
+          echo "INFO: Run installation script"
+          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+            set -e
+
+            # adding ~/go/bin to path to be able to compile osd2e tool
+            PATH="\${HOME}/go/bin:\${PATH}"
+            export PATH
+
+            # Parameter checks
+            WRAPPER_OPTIONS="--path ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}"
+            if [ -z ${CONFIG_FILE_LOCATION} ] || [ ! -f ${CONFIG_FILE_LOCATION} ] ; then
+              echo "ERROR: Config file ${CONFIG_FILE_LOCATION} not found, exiting..."
+              exit 1
+            else
+              WRAPPER_OPTIONS+=" --account-config ${CONFIG_FILE_LOCATION}"
+            fi
+
+            [ ! -z ${AWS_CREDENTIALS_FILE_LOCATION} ] && [ -f ${AWS_CREDENTIALS_FILE_LOCATION} ] && WRAPPER_OPTIONS+=" --aws-account-file ${AWS_CREDENTIALS_FILE_LOCATION}"
+
+            [ ! -z ${USER_SET_OVERRIDE} ] && WRAPPER_OPTIONS+=" --user-override ${AWS_CREDENTIALS_FILE_LOCATION}"
+
+            [ ! -z ${DRY_RUN} ] && [ ${DRY_RUN} == "true" ] && WRAPPER_OPTIONS+=" --dry-run"
+
+            if [ ! -z ${ELASTICSEARCH_HOST} ] ; then
+              if [ -z ${ELASTICSEARCH_PORT} ] ; then
+                echo "ERROR: Missing port for elasticsearch"
+                exit 1
+              else
+                WRAPPER_OPTIONS+=" --server ${ELASTICSEARCH_HOST} --port ${ELASTICSEARCH_PORT}"
+                [ ! -z ${ELASTICSEARCH_INDEX} ] && WRAPPER_OPTIONS+=" --index ${ELASTICSEARCH_INDEX}"
+                [ ! -z ${ELASTICSEARCH_UUID} ]  && WRAPPER_OPTIONS+=" --uuid ${ELASTICSEARCH_UUID}"
+                if [ ! -z ${ELASTICSEARCH_SKIP_SSL_VERIFY} ] && [ ${ELASTICSEARCH_SKIP_SSL_VERIFY} == "true" ] ; then
+                  WRAPPER_OPTIONS+=" --sslskipverify True"
+                fi
+              fi
+            fi
+
+            [ ! -z ${NUMBER_OF_CLUSTERS} ] && WRAPPER_OPTIONS+=" --cluster-count ${NUMBER_OF_CLUSTERS}"
+            [ ! -z ${BATCH_SIZE} ] && WRAPPER_OPTIONS+=" --batch-size ${BATCH_SIZE}"
+            [ ! -z ${DELAY_BETWEEN_BATCH} ] && WRAPPER_OPTIONS+=" --delay-between-batch ${DELAY_BETWEEN_BATCH}"
+            [ ! -z ${WATCHER_DELAY} ] && WRAPPER_OPTIONS+=" --watcher-delay ${WATCHER_DELAY}"
+
+            [ ! -z ${OSDE2E_COMMAND} ] && WRAPPER_OPTIONS+=" --command ${OSDE2E_COMMAND}"
+
+            [ ! -z ${LOG_LEVEL} ] && WRAPPER_OPTIONS+=" --log-level ${LOG_LEVEL}"
+            [ ! -z ${LOG_FILE} ] && WRAPPER_OPTIONS+=" --log-file ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/${LOG_FILE}"
+
+            # Wrapper execution
+            echo "INFO: Running python3 ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/osde2e-wrapper.py \${WRAPPER_OPTIONS}"
+            python3 ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/osde2e-wrapper.py \${WRAPPER_OPTIONS}
+          ENDSSH
+
+          # Getting run directory to archive as artifacts
+          echo "INFO: Downloading ${REMOTE_WORKSPACE}/run-${RUN_FOLDER} folder from ${JUMP_HOST} to be archieved as artifacts"
+          scp -r ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST}:${REMOTE_WORKSPACE}/run-${RUN_FOLDER} ${WORKSPACE}/artifacts/
+    concurrent: false
+    description: OCM installation test on AWS.
+    disabled: false
+    name: 'SCALE-CI-MS-ROSA'
+    parameters:
+      - password:
+          default: ''
+          description: "Github token to access github.com/redhat-performance/perf-dept.git repo"
+          name: GITHUB_TOKEN
+      - string:
+          default: ''
+          description: "The jump host where executing the wrapper"
+          name: JUMP_HOST
+      - string:
+          default: '/var/jenkins'
+          description: "Folder on JUMP_HOST where to download scripts and dump results"
+          name: REMOTE_WORKSPACE
+      - string:
+          default: root
+          description: "The user to use when sshing to the JUMP_HOST"
+          name: SSH_USER
+      - bool:
+          default: false
+          description: "Use the ProxyCommand to access the JUMP_HOST"
+          name: USE_PROXY
+      - string:
+          default: ''
+          description: "The name to use in the ssh ProxyCommand"
+          name: PROXY_USER
+      - string:
+          default: ''
+          description: "The server to use in the ssh ProxyCommand"
+          name: PROXY_HOST
+      - string:
+          default: ''
+          description: "Mapped to <b>--server</b>, elasticsearch server host address or hostname where to upload results"
+          name: ELASTICSEARCH_HOST
+      - validating-string:
+          default: ''
+          description: "Mapped to <b>--port</b>, elasticsearch server port for ELASTICSEARCH_HOST"
+          name: ELASTICSEARCH_PORT
+          regex: '[0-9]*'
+          msg: "Port must be a number"
+      - string:
+          default: ''
+          description: "Mapped to <b>--index</b>, elasticsearch server index prefix"
+          name: ELASTICSEARCH_INDEX
+      - string:
+          default: ''
+          description: "Mapped to <b>--uuid</b>, elasticsearch UUID to use when uploading logs (autogenerated if not defined)"
+          name: ELASTICSEARCH_UUID
+      - bool:
+          default: false
+          description: "Mapped to <b>--sslskipverify</b>, disable TLS verification when connecting elasticsearch using SSL"
+          name: ELASTICSEARCH_SKIP_SSL_VERIFY
+      - string:
+          default: '/etc/ocm/deploy_config.yml'
+          description: "Mapped to <b>--account-config</b>, configuration file required to execute wrapper"
+          name: CONFIG_FILE_LOCATION
+      - string:
+          default: ''
+          description: "Mapped to <b>--aws-account-file</b>, file containing authentication parameters for AWS"
+          name: AWS_CREDENTIALS_FILE_LOCATION
+      - string:
+          default: ''
+          description: "Mapped to <b>--command</b>, full path to the osde2e and osde2ectl command directory. If not provided we will download and compile the latest"
+          name: OSDE2E_COMMAND
+      - bool:
+          default: false
+          description: "Mapped to <b>--dry-run</b>, perform a dry-run installation without creating any cluster"
+          name: DRY_RUN
+      - validating-string:
+          default: '1'
+          description: "Mapped to <b>--cluster-count</b>, Total number of clusters to create"
+          name: NUMBER_OF_CLUSTERS
+          regex: '[0-9]*'
+          msg: "Must be a number"
+      - validating-string:
+          default: ''
+          description: "Mapped to <b>--batch-size</b>, number of cluster to install on parallel"
+          name: BATCH_SIZE
+          regex: '[0-9]*'
+          msg: "Must be a number"
+      - validating-string:
+          default: ''
+          description: "Mapped to <b>--delay-between-batch</b>, seconds to wait between each batch request"
+          name: DELAY_BETWEEN_BATCH
+          regex: '[0-9]*'
+          msg: "Must be a number"
+      - validating-string:
+          default: ''
+          description: "Mapped to <b>--watcher-delay</b>, time between status checks"
+          name: WATCHER_DELAY
+          regex: '[0-9]*'
+          msg: "Must be a number"
+      - string:
+          default: ''
+          description: "File name inside $REMOTE_WORKSPACE/run. File will be saved as artifact after execution"
+          name: LOG_FILE
+      - choice:
+          name: LOG_LEVEL
+          description: "Mapped to <b>--log-level</b>, log level to show on the console and the logs"
+          choices:
+            - INFO
+            - CRITICAL
+            - ERROR
+            - WARNING
+            - DEBUG
+    project-type: freestyle
+    publishers:
+      - archive:
+          artifacts: 'artifacts/**/*'
+          excludes: 'artifacts/osde2e/**/*,artifacts/**/cluster_account.yaml'
+          allow-empty: 'true'
+      - workspace-cleanup
+    triggers: []
+    wrappers:
+      - timestamps
+      - workspace-cleanup
+      - mask-passwords
+      - ansicolor:
+          colormap: xterm
