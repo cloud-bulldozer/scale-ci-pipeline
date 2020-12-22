@@ -209,7 +209,7 @@
     publishers:
       - archive:
           artifacts: 'artifacts/**/*'
-          excludes: 'artifacts/osde2e/**/*,artifacts/**/cluster_account.yaml'
+          excludes: 'artifacts/osde2e/**/*,artifacts/account_config.yaml,artifacts/**/cluster_account.yaml'
           allow-empty: 'true'
       - workspace-cleanup
     triggers: []
