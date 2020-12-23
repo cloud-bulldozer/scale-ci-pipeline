@@ -24,7 +24,7 @@
         ./run_kubeletdensity_test_fromgit.sh
     concurrent: true
     description: |
-      Cluster-density-light tworkload is used to measure control plane density for OpenShift. This test loads several objects across the cluster using cluster loader.
+      Cluster-density-light workload is used to measure control plane density for OpenShift. This test loads several objects across the cluster using cluster loader.
       This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
     disabled: false
     name: RIPSAW-KUBELET-DENSITY-LIGHT
