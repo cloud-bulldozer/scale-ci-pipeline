@@ -299,7 +299,7 @@ node (node_label) {
 		// stage to run kubelet-density-light scale test
 		if (kubelet_density_light == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_LIGHT_PROPERTIES_FILE
-			env.WORKLOAD="RIPSAW-KUBELET-DENSITY-LITE"
+			env.WORKLOAD="RIPSAW-KUBELET-DENSITY-LIGHT"
 			load "pipeline-scripts/workload.groovy"
 		}
 
