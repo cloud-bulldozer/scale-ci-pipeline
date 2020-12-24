@@ -90,13 +90,9 @@ $ # step 5: update the Scale-CI jobs section in the readme ( applicable only for
 ### Test setup/Migrating scale-ci jobs to any Jenkins
 The following instructions will help you setup a jenkins test environment super quick so as to play around and test the changes locally before pushing them to production.
 ```
-$ docker run -d --name scale-ci-jenkins -p 8080:8080 jenkins/jenkins:lts
+$ podman run -d --name scale-ci-jenkins --net=host quay.io/openshift-scale/scale-ci-jenkins:latest
 ```
-Grab the admin password from the scale-ci-jenkins container logs:
-```
-$ docker logs scale-ci-jenkins
-```
-Access the jenkins at http://<host>:8080 and proceed with the initial setup. A new user instead of admin user and installing all the suggested plugins is highly recommended.
+Access the jenkins at http://<host>:8080, the plugins needed are pre-installed.
 Once we have the jenkins up and running, run the scale-ci-watcher to push your templates to the test jenkins instance:
 ```
 $ git clone https://github.com/openshift-scale/scale-ci-pipeline.git
@@ -110,6 +106,7 @@ $ ./scale-ci-watcher.sh
 $ # Running the scale-ci-watcher when we don't have the SSL certs needed to verify https when hitting Jenkins api ( check if needed )
 $ export PYTHONHTTPSVERIFY=0; ./scale-ci-watcher.sh
 ```
+This setup can be used to test a new/existing workload before creating a PR. The xml/yaml can be obtained from the jenkins and can be submitted as a JJB template to add/modify a new workload to the scale-ci-pipleine.
 
 ### Scale-CI Jenkins agents/slaves
 We use bunch of dedicated slaves part of OpenShift-QE Jenkins to run Scale-CI jobs. The slaves are always online instead of the on demand slaves which take time to get ready before scheduling the jobs. There are multiple slaves and executors, so we should be able to run jobs in parallel.
