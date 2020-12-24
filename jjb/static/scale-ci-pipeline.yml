@@ -150,10 +150,6 @@
     - string:
         default: ''
         description: ''
-        name: OPENSHIFTv3_PROPERTY_FILE
-    - string:
-        default: ''
-        description: ''
         name: OPENSHIFTv4_ON_AWS_PROPERTY_FILE
     - string:
         default: ''

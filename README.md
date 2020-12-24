@@ -16,7 +16,7 @@ Automates the installation of OCP on various cloud platforms and runs performanc
 - Scale-ci-watcher
 - Scale-ci-linter
 
-![Scale-CI workflow](images/scale-ci-architecture.png)
+![Scale-CI workflow](images/scale-ci-workflow.png)
 
 
 ### Properties files
