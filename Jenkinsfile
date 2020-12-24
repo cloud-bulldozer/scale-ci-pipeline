@@ -102,6 +102,11 @@ node (node_label) {
 				env.WORKLOAD="ATS-SCALE-CI-HTTP"
 				load "pipeline-scripts/workload.groovy"
 			}
+			if (kubelet_density_light == "TRUE") {
+				env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_LIGHT_PROPERTIES_FILE
+				env.WORKLOAD="RIPSAW-KUBELET-DENSITY-LIGHT"
+				load "pipeline-scripts/workload.groovy"
+			}
 			if (kubelet_density == "TRUE") {
 				env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_PROPERTIES_FILE
 				env.WORKLOAD="RIPSAW-KUBELET-DENSITY"
