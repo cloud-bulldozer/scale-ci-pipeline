@@ -65,6 +65,8 @@
 
             [ ! -z ${DRY_RUN} ] && [ ${DRY_RUN} == "true" ] && WRAPPER_OPTIONS+=" --dry-run"
 
+            [ ! -z ${CLEANUP_CLUSTERS} ] && [ ${CLEANUP_CLUSTERS} == "false" ] && WRAPPER_OPTIONS+=" --cleanup-clusters False"
+
             if [ ! -z ${ELASTICSEARCH_HOST} ] ; then
               if [ -z ${ELASTICSEARCH_PORT} ] ; then
                 echo "ERROR: Missing port for elasticsearch"
@@ -174,6 +176,10 @@
           name: NUMBER_OF_CLUSTERS
           regex: '[0-9]*'
           msg: "Must be a number"
+      - bool:
+          default: true
+          description: "Mapped to <b>--cleanup-clusters</b>, cleanup any non-error state clusters upon test completion"
+          name: CLEANUP_CLUSTERS
       - validating-string:
           default: ''
           description: "Mapped to <b>--batch-size</b>, number of cluster to install on parallel"
