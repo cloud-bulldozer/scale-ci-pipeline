@@ -86,6 +86,8 @@
             [ ! -z ${DELAY_BETWEEN_BATCH} ] && WRAPPER_OPTIONS+=" --delay-between-batch ${DELAY_BETWEEN_BATCH}"
             [ ! -z ${WATCHER_DELAY} ] && WRAPPER_OPTIONS+=" --watcher-delay ${WATCHER_DELAY}"
 
+            [ ! -z ${EXPIRATION_TIME} ] && WRAPPER_OPTIONS+=" --expire ${EXPIRATION_TIME}"
+
             [ ! -z ${OSDE2E_COMMAND} ] && WRAPPER_OPTIONS+=" --command ${OSDE2E_COMMAND}"
 
             [ ! -z ${LOG_LEVEL} ] && WRAPPER_OPTIONS+=" --log-level ${LOG_LEVEL}"
@@ -196,6 +198,12 @@
           default: ''
           description: "Mapped to <b>--watcher-delay</b>, time between status checks"
           name: WATCHER_DELAY
+          regex: '[0-9]*'
+          msg: "Must be a number"
+      - validating-string:
+          default: ''
+          description: "Mapped to <b>--expire</b>, minutes until cluster expires and it is deleted by OSD"
+          name: EXPIRATION_TIME
           regex: '[0-9]*'
           msg: "Must be a number"
       - string:
