@@ -20,9 +20,9 @@
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
         # delete benchmark status file if exists and set the path
-        #rm /tmp/uperf_$BUILD_NUMBER.status || true
-        #export BENCHMARK_STATUS_PATH=/tmp/uperf_$BUILD_NUMBER.status
-        #echo "BENCHMARK_STATUS_FILE=$BENCHMARK_STATUS_PATH" > uperf.properties
+        rm /tmp/uperf_$BUILD_NUMBER.status || true
+        export BENCHMARK_STATUS_PATH=/tmp/uperf_$BUILD_NUMBER.status
+        echo "BENCHMARK_STATUS_FILE=$BENCHMARK_STATUS_PATH" > uperf.properties
 
         # run tests
         pushd workloads/network-perf/
@@ -31,18 +31,26 @@
         fi
         if [[ ${HOSTNETWORK_TEST} == "true" ]] ; then
           ./run_hostnetwork_network_test_fromgit.sh test_cloud $KUBECONFIG
-         #hostnetwork_test_status=$(oc get benchmarks/uperf-benchmark-hostnetwork  -n my-ripsaw -o jsonpath='{.status.state}')
-         #echo "hostnetwork_test=$hostnetwork_test_status" >> /tmp/uperf_$BUILD_NUMBER.status
+         hostnetwork_test_status_1p=$(oc get benchmarks/uperf-benchmark-hostnet-network-1  -n my-ripsaw -o jsonpath='{.status.state}')
+         echo "hostnetwork_test_1p=$hostnetwork_test_status_1p" >> /tmp/uperf_$BUILD_NUMBER.status
         fi
         if [[ ${POD_TEST} == "true" ]] ; then
           ./run_pod_network_test_fromgit.sh test_cloud $KUBECONFIG
-          #podnetwork_test_status=$(oc get benchmarks/uperf-benchmark-pod-network  -n my-ripsaw -o jsonpath='{.status.state}')
-          #echo "podnetwork_test=$hostnetwork_test_status" >> /tmp/uperf_$BUILD_NUMBER.status
+          podnetwork_test_status_1p=$(oc get benchmarks/uperf-benchmark-pod-network-1  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "podnetwork_test_1p=$podnetwork_test_status_1p" >> /tmp/uperf_$BUILD_NUMBER.status
+          podnetwork_test_status_2p=$(oc get benchmarks/uperf-benchmark-pod-network-2  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "podnetwork_test_2p=$podnetwork_test_status_2p" >> /tmp/uperf_$BUILD_NUMBER.status
+          podnetwork_test_status_4p=$(oc get benchmarks/uperf-benchmark-pod-network-4  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "podnetwork_test_4p=$podnetwork_test_status_4p" >> /tmp/uperf_$BUILD_NUMBER.status
         fi
         if [[ ${SERVICE_TEST} == "true" ]] ; then
           ./run_serviceip_network_test_fromgit.sh test_cloud $KUBECONFIG
-          #servicenetwork_test_status=$(oc get benchmarks/uperf-benchmark-service-network  -n my-ripsaw -o jsonpath='{.status.state}')
-          #echo "servicenetwork_test=$servicenetwork_test_status" >> /tmp/uperf_$BUILD_NUMBER.status
+          servicenetwork_test_status_1p=$(oc get benchmarks/uperf-benchmark-service-network-1  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "servicenetwork_test_1p=$servicenetwork_test_status_1p" >> /tmp/uperf_$BUILD_NUMBER.status
+          servicenetwork_test_status_2p=$(oc get benchmarks/uperf-benchmark-service-network-2  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "servicenetwork_test_2p=$servicenetwork_test_status_2p" >> /tmp/uperf_$BUILD_NUMBER.status
+          servicenetwork_test_status_4p=$(oc get benchmarks/uperf-benchmark-service-network-4  -n my-ripsaw -o jsonpath='{.status.state}')
+          echo "servicenetwork_test_4p=$servicenetwork_test_status_4p" >> /tmp/uperf_$BUILD_NUMBER.status
         fi
     concurrent: true
     description: |-
