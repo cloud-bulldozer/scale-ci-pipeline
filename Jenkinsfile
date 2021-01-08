@@ -34,6 +34,7 @@ def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
 def run_uperf = UPERF.toString().toUpperCase()
 def kraken = KRAKEN.toString().toUpperCase()
+def rosa = SCALE_CI_MS_ROSA.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 def run_id = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
 
@@ -79,6 +80,11 @@ node (node_label) {
 			env.WORKLOAD="ATS-SCALE-CI-OCP-OSP-DEPLOY"
 			load "pipeline-scripts/workload.groovy"
 		}
+		if (rosa == "TRUE") {
+			env.WORKLOAD_PROPERTIES_FILE=SCALE_CI_MS_ROSA_PROPERTIES_FILE
+			env.WORKLOAD="SCALE-CI-MS-ROSA"
+			load "pipeline-scripts/workload.groovy"
+		}
 		if (http == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
 			env.WORKLOAD="ATS-SCALE-CI-HTTP"
@@ -94,7 +100,7 @@ node (node_label) {
 			env.WORKLOAD="ATS-SCALE-CI-SCALE"
 			load "pipeline-scripts/workload.groovy"
 		}
-		
+
 		if (stage_two == "TRUE") {
 			env.PIPELINE_STAGE=2
 			if (http == "TRUE") {
