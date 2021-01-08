@@ -93,7 +93,7 @@
         description: ''
         name: ES_SERVER
         trim: 'false'
-     string:
+    - string:
         default: ''
         description: ''
         name: ES_INDEX
