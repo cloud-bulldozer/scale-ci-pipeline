@@ -9,7 +9,6 @@ function help(){
   printf "\n"
   printf "Options supported, export them as environment variables:\n"
   printf "\t ES_SERVER=str,                    str=elasticsearch server url, default: ""\n"
-  printf "\t ES_USER=str,                      str=elasticsearch user, default: ""\n"
   printf "\t ES_INDEX=str,                     str=elasticsearch index, default: perf_scale_ci\n"
   printf "\t JENKINS_USER=str,                 str=Jenkins user, default: ""\n"
   printf "\t JENKINS_API_TOKEN=str,            str=Jenkins API token to authenticate, default: ""\n"
@@ -25,11 +24,6 @@ if [[ -z $ES_SERVER ]]; then
   help
   exit 1
 fi
-if [[ -z $ES_USER ]]; then
-  export ES_USER=""
-else
-  export ES_USER="--user ${ES_USER}"
-fi
 if [[ -z $ES_INDEX ]]; then
   export ES_INDEX=perf-scale-ci
 fi
@@ -44,7 +38,6 @@ export UUID=$(uuidgen)
 
 # Elasticsearch and jenkins credentials
 export ES_SERVER=$ES_SERVER
-export ES_USER=$ES_USER
 export ES_INDEX=$ES_INDEX
 export JENKINS_USER=$JENKINS_USER
 export JENKINS_API_TOKEN=$JENKINS_API_TOKEN
@@ -81,7 +74,7 @@ if [[ -f "$BENCHMARK_STATUS_FILE" ]]; then
   benchmark_name=$(echo $line | awk -F'=' '{print $1}')
   benchmark_status=$(echo $line | awk -F'=' '{print $2}')
   # Index data into elasticsearch
-  curl $ES_USER -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
+  curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
     "uuid" : "'$UUID'",
     "run_id" : "'${UPSTREAM_JOB}-${UPSTREAM_JOB_BUILD}'",
     "platform": "'$platform'",
@@ -109,7 +102,7 @@ if [[ -f "$BENCHMARK_STATUS_FILE" ]]; then
     }' $ES_SERVER/$ES_INDEX/_doc/
   done 11<$BENCHMARK_STATUS_FILE
 else
-  curl $ES_USER -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
+  curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
     "uuid" : "'$UUID'",
     "run_id" : "'${UPSTREAM_JOB}-${UPSTREAM_JOB_BUILD}'",
     "platform": "'$platform'",

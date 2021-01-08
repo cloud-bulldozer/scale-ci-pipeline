@@ -51,10 +51,6 @@
         description: Elasticsearch server host address set to index results from kube-burner. You can use basic authentication using the notation http(s)://[username]:[password]@[address]
         name: ES_SERVER
     - string:
-        default: '443'
-        description: Elasticsearch server port, set to index results from kube-burner.
-        name: ES_PORT
-    - string:
         default: 'ripsaw-kube-burner'
         description: Elasticsearch server index .
         name: ES_INDEX

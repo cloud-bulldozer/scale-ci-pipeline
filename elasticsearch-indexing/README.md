@@ -8,7 +8,6 @@ Usage: export <options> ./index.sh
 
 Options supported, export them as environment variables:
 	 ES_SERVER=str,                    str=elasticsearch server url, default: 
-	 ES_USER=str,                      str=elasticsearch user, default: 
 	 ES_INDEX=str,                     str=elasticsearch index, default: perf_scale_ci
 	 JENKINS_USER=str,                 str=Jenkins user, default: 
 	 JENKINS_API_TOKEN=str,            str=Jenkins API token to authenticate, default: 
