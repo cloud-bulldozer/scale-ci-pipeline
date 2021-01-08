@@ -31,7 +31,7 @@
         time ansible-playbook -i inventory -vvv delete_single_ocp.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-delete-ocp.timing
         time ansible-playbook -i inventory -vvv ocp_on_osp.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-install-ocp.timing
         fi
-        git clone https://github.com/openshift-scale/scale-ci-deploy.git
+        git clone https://github.com/cloud-bulldozer/scale-ci-deploy.git
         cd scale-ci-deploy
         # disable openshift install as we already installed via jetpack
         export OPENSHIFT_INSTALL=false

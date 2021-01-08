@@ -456,7 +456,7 @@
     - git:
         branches:
         - '*/master'
-        url: https://github.com/openshift-scale/scale-ci-deploy.git
+        url: https://github.com/cloud-bulldozer/scale-ci-deploy.git
     triggers: []
     wrappers:
     - workspace-cleanup:
