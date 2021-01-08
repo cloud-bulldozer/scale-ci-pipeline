@@ -95,7 +95,7 @@ $ podman run -d --name scale-ci-jenkins --net=host quay.io/openshift-scale/scale
 Access the jenkins at http://<host>:8080, the plugins needed are pre-installed.
 Once we have the jenkins up and running, run the scale-ci-watcher to push your templates to the test jenkins instance:
 ```
-$ git clone https://github.com/openshift-scale/scale-ci-pipeline.git
+$ git clone https://github.com/cloud-bulldozer/scale-ci-pipeline.git
 $ cd scale-ci-pipeline
 $ # Set the variables in the scale-ci-watcher-env.sh and source it
 $ source scale-ci-watcher-env.sh

@@ -151,7 +151,7 @@
         - '*/master'
         name: origin
         refspec: +refs/heads/*:refs/remotes/origin/*
-        url: https://github.com/openshift-scale/scale-ci-pipeline.git
+        url: https://github.com/cloud-bulldozer/scale-ci-pipeline.git
         wipe-workspace: true
     triggers: []
     wrappers:

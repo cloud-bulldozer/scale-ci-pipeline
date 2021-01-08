@@ -27,7 +27,7 @@
         description: ''
         name: JENKINS_URL
     - string:
-        default: https://github.com/openshift-scale/scale-ci-pipeline.git
+        default: https://github.com/cloud-bulldozer/scale-ci-pipeline.git
         description: ''
         name: SCALE_CI_WATCHER_REPO
     - string:
