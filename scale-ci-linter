@@ -4,18 +4,33 @@ set -eo pipefail
 
 templates_path="$PWD/jjb/dynamic"
 
-pushd $templates_path
-for template in $(ls $templates_path); do 
-	if [[ "$template" != "README.md" ]]; then
-		echo "--------------------------------"	
-		echo "Running the linter for $template"
-		echo "--------------------------------"
-		yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}" $templates_path/$template
-		echo "--------------------------------"	
-		echo "Running jenkins-jobs test for $template"
-		echo "--------------------------------"
-		jenkins-jobs test $templates_path/$template
-
-	fi
-done
-popd
+if [ $# -eq 0 ] ; then
+  pushd $templates_path
+  for template in $(ls $templates_path); do 
+    if [[ "$template" != "README.md" ]]; then
+      echo "--------------------------------"	
+      echo "Running the linter for $template"
+      echo "--------------------------------"
+      yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}" $templates_path/$template
+      echo "--------------------------------"	
+      echo "Running jenkins-jobs test for $template"
+      echo "--------------------------------"
+      jenkins-jobs -l ERROR test $templates_path/$template >/dev/null
+    fi
+  done
+  popd
+else
+  if test  -f $1 ; then
+    echo "--------------------------------"   
+    echo "Running the linter for $1"
+    echo "--------------------------------"
+    yamllint -d "{extends: relaxed, rules: {line-length: {max: 200}}}" $1
+    echo "--------------------------------"   
+    echo "Running jenkins-jobs test for $1"
+    echo "--------------------------------"
+    jenkins-jobs -l ERROR test $1 >/dev/null
+  else
+    echo "ERROR: File $1 not found"
+    exit 1
+  fi
+fi
