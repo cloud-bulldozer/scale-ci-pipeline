@@ -67,16 +67,12 @@
 
             [ ! -z ${CLEANUP_CLUSTERS} ] && [ ${CLEANUP_CLUSTERS} == "false" ] && WRAPPER_OPTIONS+=" --cleanup-clusters False"
 
-            if [ ! -z ${ELASTICSEARCH_HOST} ] ; then
-              if [ -z ${ELASTICSEARCH_PORT} ] ; then
-                echo "ERROR: Missing port for elasticsearch"
-                exit 1
-              else
-                WRAPPER_OPTIONS+=" --server ${ELASTICSEARCH_HOST} --port ${ELASTICSEARCH_PORT}"
-                [ ! -z ${ELASTICSEARCH_INDEX} ] && WRAPPER_OPTIONS+=" --index ${ELASTICSEARCH_INDEX}"
-                [ ! -z ${ELASTICSEARCH_UUID} ]  && WRAPPER_OPTIONS+=" --uuid ${ELASTICSEARCH_UUID}"
+            if [ ! -z ${ELASTICSEARCH_URL} ] ; then
+              WRAPPER_OPTIONS+=" --es-url ${ELASTICSEARCH_URL}"
+              [ ! -z ${ELASTICSEARCH_INDEX} ] && WRAPPER_OPTIONS+=" --es-index ${ELASTICSEARCH_INDEX}"
+              [ ! -z ${ELASTICSEARCH_UUID} ]  && WRAPPER_OPTIONS+=" --uuid ${ELASTICSEARCH_UUID}"
                 if [ ! -z ${ELASTICSEARCH_SKIP_SSL_VERIFY} ] && [ ${ELASTICSEARCH_SKIP_SSL_VERIFY} == "true" ] ; then
-                  WRAPPER_OPTIONS+=" --sslskipverify True"
+                  WRAPPER_OPTIONS+=" --es-insecure"
                 fi
               fi
             fi
@@ -136,17 +132,11 @@
           name: PROXY_HOST
       - string:
           default: ''
-          description: "Mapped to <b>--server</b>, elasticsearch server host address or hostname where to upload results"
-          name: ELASTICSEARCH_HOST
-      - validating-string:
-          default: ''
-          description: "Mapped to <b>--port</b>, elasticsearch server port for ELASTICSEARCH_HOST"
-          name: ELASTICSEARCH_PORT
-          regex: '[0-9]*'
-          msg: "Port must be a number"
+          description: "Mapped to <b>--es-url</b>, elasticsearch connection URL, including protocol and port if required"
+          name: ELASTICSEARCH_URL
       - string:
           default: ''
-          description: "Mapped to <b>--index</b>, elasticsearch server index prefix"
+          description: "Mapped to <b>--es-index</b>, elasticsearch server index prefix"
           name: ELASTICSEARCH_INDEX
       - string:
           default: ''
@@ -154,7 +144,7 @@
           name: ELASTICSEARCH_UUID
       - bool:
           default: false
-          description: "Mapped to <b>--sslskipverify</b>, disable TLS verification when connecting elasticsearch using SSL"
+          description: "Mapped to <b>--es-insecure</b>, disable TLS verification when connecting elasticsearch using SSL"
           name: ELASTICSEARCH_SKIP_SSL_VERIFY
       - string:
           default: '/etc/ocm/deploy_config.yml'
