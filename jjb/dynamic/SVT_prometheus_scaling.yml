@@ -6,7 +6,7 @@
         set -x
 
         if [[ ! -d "${WORKSPACE}/perf-dept" ]]; then
-        git clone https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
+        git clone --depth=1 https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
         fi
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
@@ -33,7 +33,7 @@
         if [[ -d "/root/scale-cd-jobs" ]]; then
         rm -rf /root/scale-cd-jobs
         fi
-        git clone https://github.com/chaitanyaenr/scale-cd-jobs.git /root/scale-cd-jobs
+        git clone --depth=1 https://github.com/chaitanyaenr/scale-cd-jobs.git /root/scale-cd-jobs
         cd /root/scale-cd-jobs/build-scripts
         cd /root/svt/openshift_tooling/pbench
         if [[ $CONTAINERIZED == "true" ]]; then
@@ -42,7 +42,7 @@
         rm -rf /tmp/jenkins_prometheus/
         mkdir -p /tmp/jenkins_prometheus/
         cd /tmp/jenkins_prometheus/
-        git clone https://github.com/openshift/svt.git
+        git clone --depth=1 https://github.com/openshift/svt.git
         cd svt/openshift_scalability/ci/scripts/prometheus/
         chmod +x 'prometheus-loader.sh'
         ./prometheus-loader.sh ${REFRESH_INTERVAL} ${CONCURRENCY} ${GRAPH_PERIOD} ${DURATION} ${ENABLE_PBENCH} '${PBENCH_COPY_RESULTS}' '${PBENCH_USER_BENCHMARK}' ${TEST_NAME}

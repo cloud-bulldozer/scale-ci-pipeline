@@ -91,7 +91,7 @@ function update_scale_ci_jobs() {
 	echo "                 Running scale-ci-watcher                         "
 	echo "------------------------------------------------------------------"
 	if [[ ! -d "$SCALE_CI_WATCHER_REPO_PATH" ]]; then
-        	git clone $SCALE_CI_WATCHER_REPO $SCALE_CI_WATCHER_REPO_PATH
+        	git clone --depth=1 $SCALE_CI_WATCHER_REPO $SCALE_CI_WATCHER_REPO_PATH
 		pushd $SCALE_CI_WATCHER_REPO_PATH
 		git checkout $SCALE_CI_WATCHER_REPO_BRANCH
 		popd

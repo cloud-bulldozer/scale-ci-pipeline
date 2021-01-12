@@ -8,7 +8,7 @@
         echo "Run ID is $RUN_ID"
 
         # get perf keys to access orchestration host and set ssh session options
-        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        git clone --depth=1 https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
         export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
