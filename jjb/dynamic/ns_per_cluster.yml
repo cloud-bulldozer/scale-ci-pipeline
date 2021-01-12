@@ -6,7 +6,7 @@
         set -e
 
         if [[ ! -d "${WORKSPACE}/perf-dept" ]]; then
-        git clone https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
+        git clone --depth=1 https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
         fi
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
@@ -22,7 +22,7 @@
         if [[ -d "/root/scale-cd-jobs" ]]; then
         rm -rf /root/scale-cd-jobs
         fi
-        git clone https://github.com/chaitanyaenr/scale-cd-jobs.git /root/scale-cd-jobs
+        git clone --depth=1 https://github.com/chaitanyaenr/scale-cd-jobs.git /root/scale-cd-jobs
         cd /root/scale-cd-jobs/build-scripts
         ./cluster_limits_ns.sh.python $SETUP_PBENCH $CONTAINERIZED $CLEAR_RESULTS $MOVE_RESULTS $TOOLING_INVENTORY $FIRST_RUN_PROJECTS $SECOND_RUN_PROJECTS $THIRD_RUN_PROJECTS $MODE
         exit
@@ -33,7 +33,7 @@
         if [[ -d "/root/scale-cd-jobs" ]]; then
         rm -rf /root/scale-cd-jobs
         fi
-        git clone https://github.com/chaitanyaenr/scale-cd-jobs.git /root/scale-cd-jobs
+        git clone --depth=1 https://github.com/chaitanyaenr/scale-cd-jobs.git /root/scale-cd-jobs
         cd /root/scale-cd-jobs/build-scripts
         if [[ $CONTAINERIZED == "true" ]]; then
         ./controller.sh

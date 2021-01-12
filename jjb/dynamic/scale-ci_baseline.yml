@@ -6,7 +6,7 @@
         set -eo pipefail
 
         # get perf keys to access orchestration host and set ssh session options
-        git clone https://${SSHKEY_TOKEN}@${SSHKEY_REPO}
+        git clone --depth=1 https://${SSHKEY_TOKEN}@${SSHKEY_REPO}
         if [ -f ${WORKSPACE}/${SSHKEY_REPOPATH_PUB} ] && [ -f ${WORKSPACE}/${SSHKEY_REPOPATH_PRIV} ]
         then
                 export PUBLIC_KEY=${WORKSPACE}/${SSHKEY_REPOPATH_PUB}
