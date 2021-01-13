@@ -38,7 +38,7 @@
             echo "INFO: Installing python requirements..."
             mkdir -p ${REMOTE_WORKSPACE}
             [[ ! -d "${REMOTE_WORKSPACE}/osde2e-scale-wrapper" ]] && git clone https://github.com/cloud-bulldozer/osde2e-scale-wrapper.git ${REMOTE_WORKSPACE}/osde2e-scale-wrapper
-            pip3 install -r ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/requirements.txt
+            sudo pip3 install -r ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/requirements.txt
           ENDSSH
 
           # Run installation script
@@ -71,9 +71,8 @@
               WRAPPER_OPTIONS+=" --es-url ${ELASTICSEARCH_URL}"
               [ ! -z ${ELASTICSEARCH_INDEX} ] && WRAPPER_OPTIONS+=" --es-index ${ELASTICSEARCH_INDEX}"
               [ ! -z ${ELASTICSEARCH_UUID} ]  && WRAPPER_OPTIONS+=" --uuid ${ELASTICSEARCH_UUID}"
-                if [ ! -z ${ELASTICSEARCH_SKIP_SSL_VERIFY} ] && [ ${ELASTICSEARCH_SKIP_SSL_VERIFY} == "true" ] ; then
-                  WRAPPER_OPTIONS+=" --es-insecure"
-                fi
+              if [ ! -z ${ELASTICSEARCH_SKIP_SSL_VERIFY} ] && [ ${ELASTICSEARCH_SKIP_SSL_VERIFY} == "true" ] ; then
+                WRAPPER_OPTIONS+=" --es-insecure"
               fi
             fi
 
