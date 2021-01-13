@@ -132,6 +132,10 @@
         default: false
         description: ''
         name: KRAKEN
+    - bool:
+        default: false
+        description: ''
+        name: 'SCALE_CI_MS_ROSA'
     - string:
         default: ''
         description: ''
@@ -250,6 +254,10 @@
         default: 'scale-ci'
         description: ''
         name: NODE_LABEL
+    - string:
+        default: ''
+        description: ''
+        name: SCALE_CI_MS_ROSA_PROPERTIES_FILE
     pipeline-scm:
       lightweight-checkout: false
       scm:
