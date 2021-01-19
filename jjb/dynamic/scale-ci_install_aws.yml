@@ -19,7 +19,7 @@
         ansible --version
         for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
         do
-        time ansible-playbook -vv -i inventory OCP-4.X/install-on-aws.yml | tee $(date +"%Y%m%d-%H%M%S")-install.timing
+        time ansible-playbook -vv -i inventory OCP-4.X/install-on-aws.yml -e platform=aws | tee $(date +"%Y%m%d-%H%M%S")-install.timing
         done
     concurrent: true
     description: |

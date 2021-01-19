@@ -29,7 +29,7 @@
         echo "[undercloud]" >> inventory
         echo "${ORCHESTRATION_HOST} ansible_user=${ORCHESTRATION_USER}" >> inventory
         time ansible-playbook -i inventory -vvv delete_single_ocp.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-delete-ocp.timing
-        time ansible-playbook -i inventory -vvv ocp_on_osp.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-install-ocp.timing
+        time ansible-playbook -i inventory -vvv ocp_on_osp.yml -e platform=osp | tee $(date +"%Y%m%d-%H%M%S")-jetpack-install-ocp.timing
         fi
         git clone --depth=1 https://github.com/cloud-bulldozer/scale-ci-deploy.git
         cd scale-ci-deploy
