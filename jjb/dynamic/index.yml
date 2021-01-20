@@ -21,7 +21,7 @@
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
         # run the indexing script
-        ./elasticsearch-indexing/index.sh
+        ./indexing/jenkins/index.sh
     concurrent: true
     description: Indexes Jenkins job info and status into Elasticsearch<!-- Managed by Jenkins
       Job Builder --><!-- Managed by Jenkins Job Builder -->
@@ -146,7 +146,7 @@
         - '*/master'
         name: origin
         refspec: +refs/heads/*:refs/remotes/origin/*
-        url: https://github.com/cloud-bulldozer/scale-ci-pipeline.git
+        url: https://github.com/cloud-bulldozer/e2e-benchmarking.git
         wipe-workspace: true
     triggers: []
     wrappers:
