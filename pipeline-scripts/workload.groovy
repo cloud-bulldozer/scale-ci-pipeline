@@ -52,11 +52,11 @@ stage (workload) {
 		else if (workload == "RIPSAW-CLUSTER-DENSITY") {
 			if (pipeline_stage != "1") {
 				job_parameters = job_parameters.minus([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS']])
-				if (pipeline_stage == "3") {
+				if (pipeline_stage == "2") {
 					job_parameters.add([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS_V2'] ])
-				} else if (pipeline_stage == "4") {
+				} else if (pipeline_stage == "3") {
 					job_parameters.add([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS_V3'] ])
-				} else if (pipeline_stage == "5") {
+				} else if (pipeline_stage == "4") {
 					job_parameters.add([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS_V4'] ])
 				} else if (pipeline_stage == "5") {
 					job_parameters.add([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS_V5'] ])
