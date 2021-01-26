@@ -73,12 +73,12 @@ Adding new workloads is managed by scale-ci-watcher and it expects the following
 - JJB template: It is the job definition in yaml ( xml is also supported, watcher takes care of converting it to yaml )
 - Properties file: It consists of all the vars/parameters needed to build the job
 
-There are many existing jobs in scale-ci-pipeline which can serve as an example/template job. One example is the kubelet-density scale test. To create a new workload using kubelet-density as a template, follow these steps:
+There are many existing jobs in scale-ci-pipeline which can serve as an example/template job. One example is the node-density scale test. To create a new workload using node-density as a template, follow these steps:
 ```
 $ # step 1: copy one of the existing job template and edit it with the workload specific stuff
-$ cp scale-ci-pipeline/jjb/dynamic/kubelet-density.yml scale-ci-pipeline/jjb/dynamic/scale-ci_$workload.yaml
+$ cp scale-ci-pipeline/jjb/dynamic/node-density.yml scale-ci-pipeline/jjb/dynamic/scale-ci_$workload.yaml
 $ # step 2: copy the properties file and edit it with the workload specific stuff
-$ cp scale-ci-pipeline/properties-files/kubelet-density.properties scale-ci-pipeline/properties-files/$workload.properties
+$ cp scale-ci-pipeline/properties-files/node-density.properties scale-ci-pipeline/properties-files/$workload.properties
 $ # step 3: add the new workload to the Jenkinsfile ( Applicable only in the case of a new workload, this is not needed for a existing workload )
 $ vi scale-ci-pipeline/Jenkinsfile
 $ # step 4: add the workoad to the scale-ci-pipeline ( workload option and properties file path vars, applicable only in the case of a new workload )
