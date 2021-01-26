@@ -109,12 +109,12 @@ node (node_label) {
 			}
 			if (kubelet_density_light == "TRUE") {
 				env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_LIGHT_PROPERTIES_FILE
-				env.WORKLOAD="RIPSAW-KUBELET-DENSITY-LIGHT"
+				env.WORKLOAD="RIPSAW-NODE-DENSITY-LIGHT"
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (kubelet_density == "TRUE") {
 				env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_PROPERTIES_FILE
-				env.WORKLOAD="RIPSAW-KUBELET-DENSITY"
+				env.WORKLOAD="RIPSAW-NODE-DENSITY"
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (cluster_density == "TRUE") {
@@ -299,17 +299,17 @@ node (node_label) {
 			load "pipeline-scripts/workload.groovy"
 		}
 
-		// stage to run kubelet-density scale test
+		// stage to run node-density scale test
 		if (kubelet_density == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_PROPERTIES_FILE
-			env.WORKLOAD="RIPSAW-KUBELET-DENSITY"
+			env.WORKLOAD="RIPSAW-NODE-DENSITY"
 			load "pipeline-scripts/workload.groovy"
 		}
 
-		// stage to run kubelet-density-light scale test
+		// stage to run node-density-light scale test
 		if (kubelet_density_light == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=KUBELET_DENSITY_LIGHT_PROPERTIES_FILE
-			env.WORKLOAD="RIPSAW-KUBELET-DENSITY-LIGHT"
+			env.WORKLOAD="RIPSAW-NODE-DENSITY-LIGHT"
 			load "pipeline-scripts/workload.groovy"
 		}
 
