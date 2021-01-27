@@ -65,6 +65,8 @@
 
             [ ! -z ${DRY_RUN} ] && [ ${DRY_RUN} == "true" ] && WRAPPER_OPTIONS+=" --dry-run"
 
+            [ ! -z ${OSDE2E_SKIP_HEALTH_CHECK} ] && [ ${OSDE2E_SKIP_HEALTH_CHECK} == "true" ] && WRAPPER_OPTIONS+=" --skip-health-check"
+
             [ ! -z ${CLEANUP_CLUSTERS} ] && [ ${CLEANUP_CLUSTERS} == "false" ] && WRAPPER_OPTIONS+=" --cleanup-clusters False"
 
             if [ ! -z ${ELASTICSEARCH_URL} ] ; then
@@ -161,6 +163,10 @@
           default: false
           description: "Mapped to <b>--dry-run</b>, perform a dry-run installation without creating any cluster"
           name: DRY_RUN
+      - bool:
+          default: false
+          description: "Mapped to <b>--skip-health-check</b>, do not execute health check tests after each cluster installation"
+          name: OSDE2E_SKIP_HEALTH_CHECK
       - validating-string:
           default: '1'
           description: "Mapped to <b>--cluster-count</b>, Total number of clusters to create"
