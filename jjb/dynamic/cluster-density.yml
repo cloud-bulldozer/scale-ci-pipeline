@@ -19,13 +19,11 @@
         export KUBECONFIG=${WORKSPACE}/kubeconfig
 
         # run tests
-        export TERM=screen-256color
         pushd workloads/kube-burner
         ./run_clusterdensity_test_fromgit.sh
     concurrent: true
     description: |
-      Cluster-density workload is used to measure control plane density for OpenShift. This test loads several objects across the cluster using cluster loader.
-      This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
+      Cluster-density workload is used to measure control plane density for OpenShift. This test loads several objects across the cluster using kube-burner.
     disabled: false
     name: RIPSAW-CLUSTER-DENSITY
     node: scale-ci
