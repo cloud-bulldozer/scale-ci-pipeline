@@ -4,8 +4,9 @@
     builders:
     - shell: |+
         set -o pipefail
-        set -ex
+        set -eux
 
+        echo "Installing OCP cluster $OPENSHIFT_CLUSTER_NAME on $PLATFORM with $OPENSHIFT_NETWORK_TYPE"
         git clone --depth=1 https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
         export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
@@ -13,22 +14,26 @@
 
         # Create inventory File:
         echo "[orchestration]" > inventory
-        echo "${ORCHESTRATION_HOST}" >> inventory
+        echo "${ORCHESTRATION_HOST}" >> inventory  
 
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
         for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
         do
-        time ansible-playbook -vv -i inventory OCP-4.X/install-on-gcp.yml | tee $(date +"%Y%m%d-%H%M%S")-install.timing
+        time ansible-playbook -vv -i inventory OCP-4.X/deploy-cluster.yml -e platform=$PLATFORM | tee $(date +"%Y%m%d-%H%M%S")-install.timing
         done
     concurrent: true
     description: |
-      Installs and configures OCP 4.x cluster on GCP.
+      Installs and configures OCP 4.x cluster on AWS.
       This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
     disabled: false
-    name: ATS-SCALE-CI-OCP-GCP-DEPLOY
+    name: ATS-SCALE-CI-OCP-AWS-DEPLOY
     node: scale-ci
     parameters:
+    - string:
+        default: "aws"
+        description: Platform can be either aws, azure or gcp
+        name: PLATFORM
     - string:
         default: "root"
         description: The user for the Orchestration host.
@@ -43,15 +48,15 @@
         name: SSHKEY_TOKEN
     - bool:
         default: false
+        description: Installs OCP cluster on AWS w/FIPS.
+        name: FIPS
+    - bool:
+        default: false
         description: destroys the cluster created using scale-ci-deploy.
         name: OPENSHIFT_CLEANUP
     - bool:
-        default: false
-        description: Installs OCP cluster on GCP w/FIPS.
-        name: FIPS
-    - bool:
         default: true
-        description: Installs OCP cluster on GCP.
+        description: Installs OCP cluster on AWS.
         name: OPENSHIFT_INSTALL
     - bool:
         default: true
@@ -151,7 +156,7 @@
         name: CERBERUS_URL
     - bool:
         default: true
-        description: cerberus will watch the nodes when set
+        description: cerberus will watch the nodes when enabled
         name: WATCH_NODES
     - bool:
         default: true
@@ -218,25 +223,21 @@
         description: gopath
         name: GOPATH
     - string:
-        default: ""
-        description: The service account is needed for GCP API access.
-        name: GCP_SERVICE_ACCOUNT
+        default: "default"
+        description: Default AWS profile to use.
+        name: AWS_PROFILE
     - password:
-        default: ""
-        description: Service account email.
-        name: GCP_SERVICE_ACCOUNT_EMAIL
+        default: ''
+        description: AWS access key id.
+        name: AWS_ACCESS_KEY_ID
     - password:
-        default: ""
-        description: Path to the GCP auth key file, this is need to authenticate to google cloud.
-        name: GCP_AUTH_KEY_FILE
+        default: ''
+        description: AWS secret access key.
+        name: AWS_SECRET_ACCESS_KEY
     - string:
         default: ""
-        description: Project to use.
-        name: GCP_PROJECT
-    - string:
-        default: ""
-        description: The GCP region to install on to
-        name: GCP_REGION
+        description: AWS region to host the instances on which ocp is installed.
+        name: AWS_REGION
     - string:
         default: ""
         description: Base domain for OCP install.
@@ -254,11 +255,11 @@
         description: openshift worker node count.
         name: OPENSHIFT_WORKER_COUNT
     - string:
-        default: "n1-standard-4"
+        default: "m5.xlarge"
         description: openshift master instance type.
         name: OPENSHIFT_MASTER_INSTANCE_TYPE
     - string:
-        default: "n1-standard-4"
+        default: "m5.large"
         description: openshift worker instance type.
         name: OPENSHIFT_WORKER_INSTANCE_TYPE
     - string:
@@ -322,11 +323,11 @@
         description: Machineset label prefix
         name: MACHINESET_METADATA_LABEL_PREFIX
     - string:
-        default: "n1-standard-4"
+        default: "m5.xlarge"
         description: Infra node instance type
         name: OPENSHIFT_INFRA_NODE_INSTANCE_TYPE
     - string:
-        default: "n1-standard-4"
+        default: "m5.xlarge"
         description: Workload node instance type
         name: OPENSHIFT_WORKLOAD_NODE_INSTANCE_TYPE
     - string:
@@ -334,7 +335,7 @@
         description: Infra node volume size
         name: OPENSHIFT_INFRA_NODE_VOLUME_SIZE
     - string:
-        default: "pd-ssd"
+        default: "gp2"
         description: Infra node volume type
         name: OPENSHIFT_INFRA_NODE_VOLUME_TYPE
     - string:
@@ -346,7 +347,7 @@
         description: Workload node volume size
         name: OPENSHIFT_WORKLOAD_NODE_VOLUME_SIZE
     - string:
-        default: "pd-ssd"
+        default: "gp2"
         description: Workload node volume type
         name: OPENSHIFT_WORKLOAD_NODE_VOLUME_TYPE
     - string:
@@ -358,7 +359,7 @@
         description: Retention period for the prometheus data
         name: OPENSHIFT_PROMETHEUS_RETENTION_PERIOD
     - string:
-        default: "standard"
+        default: "gp2"
         description: Prometheus stprage class
         name: OPENSHIFT_PROMETHEUS_STORAGE_CLASS
     - string:
@@ -366,7 +367,7 @@
         description: Prometheus storage size
         name: OPENSHIFT_PROMETHEUS_STORAGE_SIZE
     - string:
-        default: "standard"
+        default: "gp2"
         description: Alertmanager storage class
         name: OPENSHIFT_ALERTMANAGER_STORAGE_CLASS
     - string:
@@ -381,6 +382,50 @@
         default: "1"
         description: Number of iterations to run the job
         name: JOB_ITERATIONS
+    - string:
+        default: ""
+        description: The service account is needed for GCP API access.
+        name: GCP_SERVICE_ACCOUNT
+    - password:
+        default: ""
+        description: Service account email.
+        name: GCP_SERVICE_ACCOUNT_EMAIL
+    - password:
+        default: ""
+        description: Path to the GCP auth key file, this is need to authenticate to google cloud.
+        name: GCP_AUTH_KEY_FILE
+    - string:
+        default: ""
+        description: Project to use.
+        name: GCP_PROJECT
+    - string:
+        default: ""
+        description: The GCP region to install on to
+        name: GCP_REGION
+    - password:
+        default: ''
+        description: The id of the subscription to Azure to use. Use `az account show` to find id
+        name: AZURE_SUBSCRIPTION_ID
+    - password:
+        default: ''
+        description: The Azure tenantId from `az account show`
+        name: AZURE_TENANT_ID
+    - password:
+        default: ''
+        description: The Azure service principal id to use for this cluster. Create a service principal (one time) with `az ad sp create-for-rbac --role Owner --name test-sp`
+        name: AZURE_SERVICE_PRINCIPAL_CLIENT_ID
+    - password:
+        default: ""
+        description: The service principal password. This should be shown in the return on the `az ad sp create-for-rbac` command ran above to create the service principal
+        name: AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET
+    - password:
+        default: ""
+        description: The resource group in which the base domain is located
+        name: AZURE_BASE_DOMAIN_RESOURCE_GROUP_NAME
+    - string:
+        default: ""
+        description: "The Azure region to install on to. Example: `centralus`"
+        name: AZURE_REGION
     - string:
         default: ''
         description: ''
@@ -440,7 +485,7 @@
     publishers:
     - archive:
         allow-empty: true
-        artifacts: '*.timing,OCP-4.X/scale-ci-gcp-artifacts/kubeconfig,OCP-4.X/scale-ci-gcp-artifacts/openshift_install.log'
+        artifacts: '*.timing,OCP-4.X/scale-ci-aws-artifacts/kubeconfig,OCP-4.X/scale-ci-aws-artifacts/openshift_install.log'
         case-sensitive: true
         default-excludes: true
         fingerprint: false
