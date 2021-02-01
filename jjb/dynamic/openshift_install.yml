@@ -14,7 +14,7 @@
 
         # Create inventory File:
         echo "[orchestration]" > inventory
-        echo "${ORCHESTRATION_HOST}" >> inventory  
+        echo "${ORCHESTRATION_HOST}" >> inventory
 
         export ANSIBLE_FORCE_COLOR=true
         ansible --version
@@ -24,10 +24,10 @@
         done
     concurrent: true
     description: |
-      Installs and configures OCP 4.x cluster on AWS.
+      Installs and configures OCP 4.x cluster.
       This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
     disabled: false
-    name: ATS-SCALE-CI-OCP-AWS-DEPLOY
+    name: ATS-SCALE-CI-OCP-$PLATFORM-DEPLOY
     node: scale-ci
     parameters:
     - string:
