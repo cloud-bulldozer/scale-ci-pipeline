@@ -37,8 +37,14 @@
             sudo /usr/bin/yum -y install python3 python3-pip golang-bin make
             echo "INFO: Installing python requirements..."
             mkdir -p ${REMOTE_WORKSPACE}
-            [[ ! -d "${REMOTE_WORKSPACE}/osde2e-scale-wrapper" ]] && git clone https://github.com/cloud-bulldozer/osde2e-scale-wrapper.git ${REMOTE_WORKSPACE}/osde2e-scale-wrapper
-            sudo pip3 install -r ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/requirements.txt
+            if [[ ! -d "${REMOTE_WORKSPACE}/perfscale-managed-services" ]] ; then
+              git clone https://github.com/cloud-bulldozer/perfscale-managed-services.git ${REMOTE_WORKSPACE}/perfscale-managed-services
+            else
+              cd ${REMOTE_WORKSPACE}/perfscale-managed-services
+              remote=\$(git remote -v | grep "cloud-bulldozer/perfscale-managed-services.git (fetch)" | cut -f 1)
+              git pull \${remote} main
+            fi
+            sudo pip3 install -r ${REMOTE_WORKSPACE}/perfscale-managed-services/requirements.txt
           ENDSSH
 
           # Run installation script
