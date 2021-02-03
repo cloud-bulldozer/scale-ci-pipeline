@@ -36,6 +36,7 @@ def kraken = KRAKEN.toString().toUpperCase()
 def rosa = SCALE_CI_MS_ROSA.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 def run_id = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
+def scale_ci_diagnosis = SCALE_CI_DIAGNOSIS.toString().toUpperCase()
 
 node (node_label) {
 	env.RUN_ID = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
@@ -359,6 +360,13 @@ node (node_label) {
 		if (kraken == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=KRAKEN_PROPERTY_FILE
 			env.WORKLOAD="KRAKEN"
+			load "pipeline-scripts/workload.groovy"
+		}
+
+		//stage to run scale-ci-diagnosis
+		if (scale_ci_diagnosis == "TRUE") {
+			env.WORKLOAD_PROPERTIES_FILE=SCALE_CI_DIAGNOSIS_PROPERTIES_FILE
+			env.WORKLOAD="SCALE_CI_DIAGNOSIS"
 			load "pipeline-scripts/workload.groovy"
 		}
 
