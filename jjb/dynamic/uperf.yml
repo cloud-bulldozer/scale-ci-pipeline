@@ -47,7 +47,7 @@
     concurrent: true
     description: |-
       Uperf is a network performance tool
-      This job is managed by https://github.com/cloud-bulldozer/plow.git
+      This job is managed by https://github.com/cloud-bulldozer/e2e-benchmarking.git
       <!-- Managed by Jenkins Job Builder -->
     disabled: false
     name: RIPSAW-UPERF
@@ -283,7 +283,7 @@
         - '*/master'
         name: origin
         refspec: +refs/heads/*:refs/remotes/origin/*
-        url: https://github.com/cloud-bulldozer/plow.git
+        url: https://github.com/cloud-bulldozer/e2e-benchmarking.git
         wipe-workspace: true
     triggers: []
     wrappers:
