@@ -46,12 +46,12 @@
         description: Burst queries
         name: BURST
     - string:
-        default: 'https://search-cloud-perf-lqrf3jjtaqo7727m7ynd2xyt4y.us-west-2.es.amazonaws.com'
+        default: 'https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com:443'
         description: Elasticsearch server host address set to index results from kube-burner. You can use basic authentication using the notation http(s)://[username]:[password]@[address]
         name: ES_SERVER
     - string:
         default: 'ripsaw-kube-burner'
-        description: Elasticsearch server index .
+        description: Elasticsearch server index.
         name: ES_INDEX
     - string:
         default: ""
@@ -86,7 +86,7 @@
         description: "Prometheus step size, useful for long benchmarks"
         name: STEP_SIZE
     - string:
-        default: metrics-aggregated.yaml
+        default: metrics.yaml
         description: "Metric profile that indicates what prometheus metrics kube-burner will collect, accepts metrics.yaml or metrics-aggregated.yaml"
         name: METRICS_PROFILE
     - string:
