@@ -65,6 +65,8 @@
               WRAPPER_OPTIONS+=" --account-config ${CONFIG_FILE_LOCATION}"
             fi
 
+            [ ! -z ${CLUSTER_NAME_SEED} ] && [ -f ${CLUSTER_NAME_SEED} ] && WRAPPER_OPTIONS+=" --cluster-name-seed ${CLUSTER_NAME_SEED}"
+
             [ ! -z ${AWS_CREDENTIALS_FILE_LOCATION} ] && [ -f ${AWS_CREDENTIALS_FILE_LOCATION} ] && WRAPPER_OPTIONS+=" --aws-account-file ${AWS_CREDENTIALS_FILE_LOCATION}"
 
             [ ! -z ${USER_SET_OVERRIDE} ] && WRAPPER_OPTIONS+=" --user-override ${AWS_CREDENTIALS_FILE_LOCATION}"
@@ -173,6 +175,10 @@
           default: false
           description: "Mapped to <b>--skip-health-check</b>, do not execute health check tests after each cluster installation"
           name: OSDE2E_SKIP_HEALTH_CHECK
+      - string:
+        default: 'osde2e'
+        description: "Mapped to <b>--cluster-name-seed</b>, used to generate cluster names, no more than 6 chars are allowed"
+        name: CLUSTER_NAME_SEED
       - validating-string:
           default: '1'
           description: "Mapped to <b>--cluster-count</b>, Total number of clusters to create"
