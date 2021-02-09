@@ -135,6 +135,10 @@
     - bool:
         default: false
         description: ''
+        name: 'SCALE_CI_MS_OSDE2E'
+    - bool:
+        default: false
+        description: ''
         name: 'SCALE_CI_MS_ROSA'
     - string:
         default: ''
@@ -254,6 +258,10 @@
         default: 'scale-ci'
         description: ''
         name: NODE_LABEL
+    - string:
+        default: ''
+        description: ''
+        name: SCALE_CI_MS_OSDE2E_PROPERTIES_FILE
     - string:
         default: ''
         description: ''
