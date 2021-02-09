@@ -34,7 +34,7 @@
             set -e
             eval REMOTE_WORKSPACE=${REMOTE_WORKSPACE}
             echo "INFO: Installing rpm requirements..."
-            sudo /usr/bin/yum -y install python3 python3-pip
+            sudo /usr/bin/yum -y install python3 python3-pip golang-bin make
             echo "INFO: Installing python requirements..."
             mkdir -p ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}
             echo "INFO: Using ${REMOTE_WORKSPACE}/run-${RUN_FOLDER} as working directory on Jump host ${JUMP_HOST}"
@@ -47,27 +47,28 @@
           ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
             set -e
 
+            # adding ~/go/bin to path to be able to compile osd2e tool
+            PATH="\${HOME}/go/bin:\${PATH}"
+            export PATH
+
             # Parameter checks
             WRAPPER_OPTIONS="--path ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}"
-
-            if [ -z ${ROSA_TOKEN} ] ; then
-              echo "ERROR: Rosa token is required but it is not defined, exiting..."
+            if [ -z ${CONFIG_FILE_LOCATION} ] || [ ! -f ${CONFIG_FILE_LOCATION} ] ; then
+              echo "ERROR: Config file ${CONFIG_FILE_LOCATION} not found, exiting..."
               exit 1
             else
-              WRAPPER_OPTIONS+=" --rosa-token ${ROSA_TOKEN}"
+              WRAPPER_OPTIONS+=" --account-config ${CONFIG_FILE_LOCATION}"
             fi
 
             [ ! -z ${CLUSTER_NAME_SEED} ] && WRAPPER_OPTIONS+=" --cluster-name-seed ${CLUSTER_NAME_SEED}"
 
-            [ ! -z ${ROSA_ENV} ] && WRAPPER_OPTIONS+=" --rosa-env ${ROSA_ENV}"
+            [ ! -z ${AWS_CREDENTIALS_FILE_LOCATION} ] && [ -f ${AWS_CREDENTIALS_FILE_LOCATION} ] && WRAPPER_OPTIONS+=" --aws-account-file ${AWS_CREDENTIALS_FILE_LOCATION}"
 
-            [ ! -z ${ROSA_MULTIAZ} ] && [ ${ROSA_MULTIAZ} == "true" ] && WRAPPER_OPTIONS+=" --rosa-multi-az"
+            [ ! -z ${USER_SET_OVERRIDE} ] && WRAPPER_OPTIONS+=" --user-override ${AWS_CREDENTIALS_FILE_LOCATION}"
 
-            [ ! -z ${ROSA_ADDONS} ] && WRAPPER_OPTIONS+=" --rosa-addons ${ROSA_ADDONS}"
+            [ ! -z ${DRY_RUN} ] && [ ${DRY_RUN} == "true" ] && WRAPPER_OPTIONS+=" --dry-run"
 
-            [ ! -z ${ROSA_CLI} ] && WRAPPER_OPTIONS+=" --rosa-cli ${ROSA_CLI}"
-
-            [ ! -z ${AWS_PROFILE} ] && WRAPPER_OPTIONS+=" --aws-profile ${AWS_PROFILE}"
+            [ ! -z ${OSDE2E_SKIP_HEALTH_CHECK} ] && [ ${OSDE2E_SKIP_HEALTH_CHECK} == "true" ] && WRAPPER_OPTIONS+=" --skip-health-check"
 
             [ ! -z ${CLEANUP_CLUSTERS} ] && [ ${CLEANUP_CLUSTERS} == "false" ] && WRAPPER_OPTIONS+=" --cleanup-clusters False"
 
@@ -87,12 +88,15 @@
 
             [ ! -z ${EXPIRATION_TIME} ] && WRAPPER_OPTIONS+=" --expire ${EXPIRATION_TIME}"
 
+            [ ! -z ${OSDE2E_COMMAND} ] && WRAPPER_OPTIONS+=" --command ${OSDE2E_COMMAND}"
+
             [ ! -z ${LOG_LEVEL} ] && WRAPPER_OPTIONS+=" --log-level ${LOG_LEVEL}"
             [ ! -z ${LOG_FILE} ] && WRAPPER_OPTIONS+=" --log-file ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/${LOG_FILE}"
 
             # Wrapper execution
-            echo "INFO: Running python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/rosa/rosa-wrapper.py \${WRAPPER_OPTIONS}"
-            python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/rosa/rosa-wrapper.py \${WRAPPER_OPTIONS}
+            export AWS_PROFILE='openshift-perfscale'
+            echo "INFO: Running python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e/osde2e-wrapper.py \${WRAPPER_OPTIONS}"
+            python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e/osde2e-wrapper.py \${WRAPPER_OPTIONS}
           ENDSSH
 
           # Compress logs before downloading
@@ -106,14 +110,13 @@
               fi
             fi
           ENDSSH
-
           # Getting run directory to archive as artifacts
           echo "INFO: Downloading ${REMOTE_WORKSPACE}/run-${RUN_FOLDER} folder from ${JUMP_HOST} to be archieved as artifacts"
-          rsync -avzh --exclude='perfscale-managed-services' --exclude='rosa' -e "ssh ${OPTIONS} -i ${PRIVATE_KEY}" ${SSH_USER}@${JUMP_HOST}:${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/ ${WORKSPACE}/artifacts/
+          rsync -avzh --exclude='perfscale-managed-services' --exclude='osde2e' --exclude='account_config.yaml' --exclude='*/cluster_account.yaml' -e "ssh ${OPTIONS} -i ${PRIVATE_KEY}" ${SSH_USER}@${JUMP_HOST}:${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/ ${WORKSPACE}/artifacts/
     concurrent: false
-    description: OCM installation test on AWS using ROSA cli.
+    description: OCM installation test on AWS using OSDE2E tool.
     disabled: false
-    name: 'SCALE-CI-MS-ROSA'
+    name: 'SCALE-CI-MS-OSDE2E'
     parameters:
       - password:
           default: ''
@@ -160,37 +163,29 @@
           description: "Mapped to <b>--es-insecure</b>, disable TLS verification when connecting elasticsearch using SSL"
           name: ELASTICSEARCH_SKIP_SSL_VERIFY
       - string:
-          default: ''
+          default: '/etc/ocm/deploy_config.yml'
+          description: "Mapped to <b>--account-config</b>, configuration file required to execute wrapper"
+          name: CONFIG_FILE_LOCATION
+      - string:
+          default: 'osde2e'
           description: "Mapped to <b>--cluster-name-seed</b>, used to generate cluster names, no more than 6 chars are allowed"
           name: CLUSTER_NAME_SEED
       - string:
           default: ''
-          description: "Mapped to <b>--rosa-token</b>, required token from cloud.redhat.com to use OCM Services"
-          name: ROSA_TOKEN
+          description: "Mapped to <b>--aws-account-file</b>, file containing authentication parameters for AWS"
+          name: AWS_CREDENTIALS_FILE_LOCATION
+      - string:
+          default: ''
+          description: "Mapped to <b>--command</b>, full path to the osde2e and osde2ectl command directory. If not provided we will download and compile the latest"
+          name: OSDE2E_COMMAND
       - bool:
           default: false
-          description: "Mapped to <b>--rosa-init</b>, xecute `rosa init` command to configure AWS account before installing"
-          name: ROSA_INIT
-      - string:
-          default: ''
-          description: "Mapped to <b>--rosa-env</b>, ROSA environment to provide as --env to `rosa login` command"
-          name: ROSA_ENV
+          description: "Mapped to <b>--dry-run</b>, perform a dry-run installation without creating any cluster"
+          name: DRY_RUN
       - bool:
           default: false
-          description: "Mapped to <b>--rosa-multi-az</b>, Create cluster using all the AZs availables on the AWS Region"
-          name: ROSA_MULTIAZ
-      - string:
-          default: ''
-          description: "Mapped to <b>--rosa-addons</b>, Comma separated list of addons to be added to the cluster after installation is completed"
-          name: ROSA_ADDONS
-      - string:
-          default: ''
-          description: "Mapped to <b>--rosa-cli</b>, full path to the rosa binary. If not provided we will download the latest version from GitHub"
-          name: ROSA_CLI
-      - string:
-          default: ''
-          description: "Mapped to <b>--aws-profile</b>, AWS profile to use if more than one are present on aws config file"
-          name: AWS_PROFILE
+          description: "Mapped to <b>--skip-health-check</b>, do not execute health check tests after each cluster installation"
+          name: OSDE2E_SKIP_HEALTH_CHECK
       - validating-string:
           default: '1'
           description: "Mapped to <b>--cluster-count</b>, Total number of clusters to create"
@@ -246,7 +241,7 @@
     publishers:
       - archive:
           artifacts: 'artifacts/**/*'
-          excludes: 'artifacts/perfscale-managed-services/**/*,artifacts/rosa'
+          excludes: 'artifacts/perfscale-managed-services/**/*,artifacts/osde2e/**/*,artifacts/account_config.yaml,artifacts/**/cluster_account.yaml'
           allow-empty: 'true'
       - workspace-cleanup
     triggers: []

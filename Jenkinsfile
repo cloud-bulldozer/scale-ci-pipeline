@@ -33,6 +33,7 @@ def byo = BYO_SCALE_TEST.toString().toUpperCase()
 def baseline = BASELINE_SCALE_TEST.toString().toUpperCase()
 def run_uperf = UPERF.toString().toUpperCase()
 def kraken = KRAKEN.toString().toUpperCase()
+def osde2e = SCALE_CI_MS_OSDE2E.toString().toUpperCase()
 def rosa = SCALE_CI_MS_ROSA.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 def run_id = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
@@ -77,6 +78,11 @@ node (node_label) {
 		if (openshiftv4_install_on_osp == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_OSP_PROPERTY_FILE
 			env.WORKLOAD="ATS-SCALE-CI-OCP-OSP-DEPLOY"
+			load "pipeline-scripts/workload.groovy"
+		}
+		if (osde2e == "TRUE") {
+			env.WORKLOAD_PROPERTIES_FILE=SCALE_CI_MS_OSDE2E_PROPERTIES_FILE
+			env.WORKLOAD="SCALE-CI-MS-OSDE2E"
 			load "pipeline-scripts/workload.groovy"
 		}
 		if (rosa == "TRUE") {
