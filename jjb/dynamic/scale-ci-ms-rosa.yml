@@ -176,9 +176,9 @@
           description: "Mapped to <b>--skip-health-check</b>, do not execute health check tests after each cluster installation"
           name: OSDE2E_SKIP_HEALTH_CHECK
       - string:
-        default: 'osde2e'
-        description: "Mapped to <b>--cluster-name-seed</b>, used to generate cluster names, no more than 6 chars are allowed"
-        name: CLUSTER_NAME_SEED
+          default: 'osde2e'
+          description: "Mapped to <b>--cluster-name-seed</b>, used to generate cluster names, no more than 6 chars are allowed"
+          name: CLUSTER_NAME_SEED
       - validating-string:
           default: '1'
           description: "Mapped to <b>--cluster-count</b>, Total number of clusters to create"
