@@ -149,6 +149,10 @@
         default: "http://0.0.0.0:8080"
         description: Cerberus url where the go/no-go signal is exposed
         name: CERBERUS_URL
+     - string:
+        default: "8080"
+        description: Cerberus port where the go/no-go signal is exposed
+        name: CERBERUS_PORT
     - bool:
         default: true
         description: cerberus will watch the nodes when enabled
