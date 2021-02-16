@@ -14,6 +14,7 @@
         chmod 600 ${PRIVATE_KEY}
 
         # Capture data
+        cd utils/scale-ci-diagnosis/
         ./ocp_diagnosis.sh
     concurrent: true
     description: |
@@ -105,7 +106,7 @@
     - git:
         branches:
         - '*/master'
-        url: https://github.com/openshift-scale/scale-ci-diagnosis.git
+        url: https://github.com/cloud-bulldozer/e2e-benchmarking.git
     triggers: []
     wrappers:
     - workspace-cleanup:
