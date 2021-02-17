@@ -23,8 +23,8 @@
               echo "${SSH_USER}	soft	nofile	99999" >> /etc/security/limits.d/osde2e.conf
             fi
             if [[ ! -f /etc/sysctl.d/99-osde2e.conf ]] ; then
-              echo "user.max_inotify_instances = 20000" > /etc/sysctl.d/99-osde2e.conf
-              echo "user.max_inotify_watches = 20000" >> /etc/sysctl.d/99-osde2e.conf
+              echo "user.max_inotify_instances = 40000" > /etc/sysctl.d/99-osde2e.conf
+              echo "user.max_inotify_watches = 40000" >> /etc/sysctl.d/99-osde2e.conf
               sysctl -p
             fi
           ENDSSH
