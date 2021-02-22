@@ -1,0 +1,156 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+      - shell: |+
+          #!/bin/bash
+          echo "INFO: Getting perf-dept keys"
+          [[ ! -d "${WORKSPACE}/perf-dept" ]] && git clone --depth=1 https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
+          export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+          chmod 600 ${PRIVATE_KEY}
+
+          export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
+          [[ "${USE_PROXY}" == "true" ]] && OPTIONS+=" -o ProxyCommand=\"ssh -i ${PRIVATE_KEY} -W %h:%p ${PROXY_USER}@${PROXY_HOST}\""
+
+          # set kubeconfig files list
+          echo "INFO: Setting kubeconfig files"
+          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+            touch ${REMOTE_FOLDER}/kube_files
+            set -e
+            if [ "${KUBECONFIG_TYPE}" == "Folder" ]; then
+              echo "INFO: Getting kubeconfig files from ${REMOTE_FOLDER}"
+              find ${REMOTE_FOLDER} -name "*kubeconfig*" > ${REMOTE_FOLDER}/kube_files
+            elif [ "${KUBECONFIG_TYPE}" == "Text" ]; then
+              echo "INFO: Dump kubeconfig from text to ${REMOTE_FOLDER}/kubeconfig"
+              echo "${KUBECONFIG_FILE}" > ${REMOTE_FOLDER}/kubeconfig
+              echo "${REMOTE_FOLDER}/kubeconfig" > ${REMOTE_FOLDER}/kube_files
+            else
+              echo "ERROR: Bad Kubeconfig type selected: ${KUBECONFIG_TYPE}, Exiting..."
+              exit 1
+            fi
+            if [ \$(cat ${REMOTE_FOLDER}/kube_files | wc -l) -ne 0 ] ; then
+              echo "INFO: Kubeconfig files found:"
+              cat ${REMOTE_FOLDER}/kube_files
+            else
+              echo "ERROR: No kubeconfig files found on ${REMOTE_FOLDER}. Exiting..."
+              exit 1
+            fi
+          ENDSSH
+          [ $? -eq 0 ] || exit 1
+
+          echo "INFO: Verifying clusters integritry"
+          # Verify clusters integrity
+          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+            touch ${REMOTE_FOLDER}/health_kube_files
+            for kube_file in \$(cat ${REMOTE_FOLDER}/kube_files) ; do
+              export KUBECONFIG=\${kube_file}
+              oc whoami 2>&1 >/dev/null
+              if [ \$? -ne 0 ] ; then
+                echo "ERROR: Cannot connect to OCP env defined on file \${KUBECONFIG}, it wont be in the next check"
+              else
+                echo "INFO: oc command verified with kubeconfig file \${KUBECONFIG}, it will be in the next check"
+                echo ${kube_file} >> ${REMOTE_FOLDER}/health_kube_files
+              fi
+            done
+            if [ \$(cat ${REMOTE_FOLDER}/health_kube_files | wc -l) -ne 0 ] ; then
+              echo "INFO: Kubeconfig files for health environments:"
+              cat ${REMOTE_FOLDER}/health_kube_files
+            else
+              echo "ERROR: No health clusters found on ${REMOTE_FOLDER}. Exiting..."
+              exit 1
+            fi
+          ENDSSH
+          [ $? -eq 0 ] || exit 1
+          echo "INFO: Checking existing ready worker nodes"
+          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+            touch ${REMOTE_FOLDER}/ready_kube_files
+            for kube_file in \$(cat ${REMOTE_FOLDER}/health_kube_files) ; do
+              export KUBECONFIG=\${kube_file}
+              WORKER_NODES=\$(oc get nodes | awk '{print \$2" "\$3}' | grep Ready | awk '{print \$2}' | grep worker | wc -l)
+              if [ \${WORKER_NODES} -eq 0 ] ; then
+                echo "ERROR: No worker nodes availables on OCP defined on file \${KUBECONFIG}, cluster wont be in the next check"
+                oc get nodes
+              else
+               echo "INFO: Detected \${WORKER_NODES} ready node(s) labeled as worker on OCP defined on file \${KUBECONFIG}, it will be in the next check"
+                echo ${kube_file} >> ${REMOTE_FOLDER}/ready_kube_files
+              fi
+            done
+            if [ \$(cat ${REMOTE_FOLDER}/ready_kube_files | wc -l) -ne 0 ] ; then
+              echo "INFO: Kubeconfig files for environments ready to test:"
+              cat ${REMOTE_FOLDER}/ready_kube_files
+            else
+              echo "ERROR: No clusters found on ${REMOTE_FOLDER}. Exiting..."
+              exit 1
+            fi
+          ENDSSH
+          [ $? -eq 0 ] || exit 1
+
+          echo "INFO: Executing test scripts on jump host ${JUMP_HOST}"
+          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+            for kube_file in \$(cat ${REMOTE_FOLDER}/ready_kube_files) ; do
+              export KUBECONFIG=\${kube_file}
+              for test in \$(find ${REMOTE_FOLDER}/perfscale-managed-services/tests/ocp -type f) ; do
+                echo "INFO: Executing test \${test}"
+                chmod u+x \${test} && \${test}
+                if [ \$? -ne 0 ] ; then
+                  echo "ERROR: Test \${test} failed."
+                else
+                  echo "INFO: Test \${test} executed"
+                fi
+              done
+            done
+          ENDSSH
+          [ $? -eq 0 ] || exit 1
+    concurrent: false
+    description: "Tests to be executed on a OCP cluster installed by OCM"
+    disabled: false
+    name: 'SCALE-CI-MS-TESTS'
+    parameters:
+      - password:
+          default: ''
+          description: "Github token to access github.com/redhat-performance/perf-dept.git repo"
+          name: GITHUB_TOKEN
+      - choice:
+          name: KUBECONFIG_TYPE
+          description: "<b>Folder</b>: Folder located on the jump host where installation was executed. Job will launch a test for each kubeconfig file found on its subfolders<br><b>Text</b>: Kubeconfig file content"
+          choices:
+            - "Folder"
+            - "Text"
+      - text:
+          default: ''
+          description: "Paste kubeconfig file content and select <b>Text</b> on <b>KUBECONFIG_TYPE</b>"
+          name: KUBECONFIG_FILE
+      - string:
+          default: ''
+          description: "The jump host where executing the wrapper"
+          name: JUMP_HOST
+      - string:
+          default: ''
+          description: "Folder on JUMP_HOST where installation was executed"
+          name: REMOTE_FOLDER
+      - string:
+          default: root
+          description: "The user to use when sshing to the JUMP_HOST"
+          name: SSH_USER
+      - bool:
+          default: false
+          description: "Use the ProxyCommand to access the JUMP_HOST"
+          name: USE_PROXY
+      - string:
+          default: ''
+          description: "The name to use in the ssh ProxyCommand"
+          name: PROXY_USER
+      - string:
+          default: ''
+          description: "The server to use in the ssh ProxyCommand"
+          name: PROXY_HOST
+    project-type: freestyle
+    publishers:
+      - workspace-cleanup
+    triggers: []
+    wrappers:
+      - timestamps
+      - workspace-cleanup
+      - mask-passwords
+      - ansicolor:
+          colormap: xterm
