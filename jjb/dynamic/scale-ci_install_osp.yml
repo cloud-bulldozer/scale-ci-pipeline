@@ -28,7 +28,7 @@
         if [ $rem -eq 0 ]
         then
           echo "Using kuryr as Network Type"
-          export OPENSHIFT_NETWORK_TYPE=kuryr
+          export OPENSHIFT_NETWORK_TYPE=Kuryr
         else
           echo "Using OpenshiftSDN as Network Type"
           export OPENSHIFT_NETWORK_TYPE=OpenshiftSDN
