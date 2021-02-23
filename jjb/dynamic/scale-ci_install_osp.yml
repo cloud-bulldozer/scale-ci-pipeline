@@ -21,6 +21,18 @@
         cp ci/ocp_install_vars.yml vars/shift_stack_vars.yaml
         for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
         do
+        
+        # Get the day of week and set networkType as OpenshiftSDN on odd days and kuryr on even days.
+        DOW=$(date +%u)
+        rem=$(( $DOW % 2 ))
+        if [ $rem -eq 0 ]
+        then
+          echo "Using kuryr as Network Type"
+          export OPENSHIFT_NETWORK_TYPE=kuryr
+        else
+          echo "Using OpenshiftSDN as Network Type"
+          export OPENSHIFT_NETWORK_TYPE=OpenshiftSDN
+
         if [ $INSTALL_OSP == true ]
         then
         time ansible-playbook -vvv main.yml | tee $(date +"%Y%m%d-%H%M%S")-jetpack-install.timing
