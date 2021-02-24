@@ -36,14 +36,9 @@
             echo "INFO: Installing rpm requirements..."
             sudo /usr/bin/yum -y install python3 python3-pip golang-bin make
             echo "INFO: Installing python requirements..."
-            mkdir -p ${REMOTE_WORKSPACE}
-            if [[ ! -d "${REMOTE_WORKSPACE}/perfscale-managed-services" ]] ; then
-              git clone https://github.com/cloud-bulldozer/perfscale-managed-services.git ${REMOTE_WORKSPACE}/perfscale-managed-services
-            else
-              cd ${REMOTE_WORKSPACE}/perfscale-managed-services
-              remote=\$(git remote -v | grep "cloud-bulldozer/perfscale-managed-services.git (fetch)" | cut -f 1)
-              git pull \${remote} main
-            fi
+            mkdir -p ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}
+            echo "INFO: Using ${REMOTE_WORKSPACE}/run-${RUN_FOLDER} as working directory on Jump host ${JUMP_HOST}"
+            git clone https://github.com/cloud-bulldozer/perfscale-managed-services.git ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services
             sudo pip3 install -r ${REMOTE_WORKSPACE}/perfscale-managed-services/requirements.txt
           ENDSSH
 
@@ -65,7 +60,7 @@
               WRAPPER_OPTIONS+=" --account-config ${CONFIG_FILE_LOCATION}"
             fi
 
-            [ ! -z ${CLUSTER_NAME_SEED} ] && [ -f ${CLUSTER_NAME_SEED} ] && WRAPPER_OPTIONS+=" --cluster-name-seed ${CLUSTER_NAME_SEED}"
+            [ ! -z ${CLUSTER_NAME_SEED} ] && WRAPPER_OPTIONS+=" --cluster-name-seed ${CLUSTER_NAME_SEED}"
 
             [ ! -z ${AWS_CREDENTIALS_FILE_LOCATION} ] && [ -f ${AWS_CREDENTIALS_FILE_LOCATION} ] && WRAPPER_OPTIONS+=" --aws-account-file ${AWS_CREDENTIALS_FILE_LOCATION}"
 
@@ -99,8 +94,8 @@
             [ ! -z ${LOG_FILE} ] && WRAPPER_OPTIONS+=" --log-file ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/${LOG_FILE}"
 
             # Wrapper execution
-            echo "INFO: Running python3 ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/osde2e-wrapper.py \${WRAPPER_OPTIONS}"
-            python3 ${REMOTE_WORKSPACE}/osde2e-scale-wrapper/osde2e-wrapper.py \${WRAPPER_OPTIONS}
+            echo "INFO: Running python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e-wrapper.py \${WRAPPER_OPTIONS}"
+            python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e-wrapper.py \${WRAPPER_OPTIONS}
           ENDSSH
 
           # Getting run directory to archive as artifacts
@@ -230,7 +225,7 @@
     publishers:
       - archive:
           artifacts: 'artifacts/**/*'
-          excludes: 'artifacts/osde2e/**/*,artifacts/account_config.yaml,artifacts/**/cluster_account.yaml'
+          excludes: 'artifacts/perfscale-managed-services/**/*,artifacts/osde2e/**/*,artifacts/account_config.yaml,artifacts/**/cluster_account.yaml'
           allow-empty: 'true'
       - workspace-cleanup
     triggers: []
