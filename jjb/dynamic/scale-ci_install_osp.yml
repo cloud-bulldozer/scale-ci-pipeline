@@ -22,16 +22,20 @@
         for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
         do
         
-        # Get the day of week and set networkType as OpenshiftSDN on odd days and kuryr on even days.
-        DOW=$(date +%u)
-        rem=$(( $DOW % 2 ))
-        if [ $rem -eq 0 ]
+        # Get the day of week and set networkType as OpenshiftSDN on odd days and kuryr on even days in case no netork is defined manually.
+        if [ $OPENSHIFT_NETWORK_TYPE == "" ]
         then
-          echo "Using kuryr as Network Type"
-          export OPENSHIFT_NETWORK_TYPE=Kuryr
-        else
-          echo "Using OpenshiftSDN as Network Type"
-          export OPENSHIFT_NETWORK_TYPE=OpenshiftSDN
+            DOW=$(date +%u)
+            rem=$(( $DOW % 2 ))
+            if [ $rem -eq 0 ]
+            then
+                echo "Using kuryr as Network Type"
+                export OPENSHIFT_NETWORK_TYPE=kuryr
+            else
+                echo "Using OpenshiftSDN as Network Type"
+                export OPENSHIFT_NETWORK_TYPE=OpenshiftSDN
+            fi
+        fi
 
         if [ $INSTALL_OSP == true ]
         then
