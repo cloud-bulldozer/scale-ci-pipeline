@@ -1,0 +1,55 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+      - shell: |+
+            #!/bin/bash
+
+            set +e
+            echo "Building image..."
+            podman build -f tests/Dockerfile --tag tox-test:latest .
+            echo "Running tests..."
+            podman run --rm -ti tox-test:latest
+            echo "Cleaning up temporary image..."
+            podman rmi -f tox-test:latest
+    concurrent: false
+    description: Nightly test run on perfscale-managed-services.
+    disabled: false
+    name: 'NIGHTLY-PERFSCALE-MANAGED-SERVICES'
+    parameters:
+    - label:
+        name: node_label
+        description: "Label of the node to build in"
+        matching-label: "success"
+        node-eligibility: "all"
+        default: "scale-ci"
+    - git-parameter:
+        name: branch
+        type: PT_BRANCH_TAG
+        sortMode: ASCENDING
+        defaultValue: origin/main
+        selectedValue: TOP
+        quickFilterEnabled: true
+    project-type: freestyle
+    publishers:
+      - workspace-cleanup
+    label: simple
+    scm:
+    - git:
+        branches:
+        - '**'
+        url: https://github.com/cloud-bulldozer/perfscale-managed-services.git
+        wipe-workspace: true
+        refspec: '+refs/heads/*:refs/remotes/remoteName/*'
+    triggers:
+    - timed:
+        cron: 'H 00 * * *'
+    - parameterized-timer:
+        cron: 'H 00 * * * % branch=origin/0.0.1' #Builds latest release
+    wrappers:
+      - timestamps
+      - workspace-cleanup:
+            dirmatch: false
+      - mask-passwords
+      - ansicolor:
+          colormap: xterm

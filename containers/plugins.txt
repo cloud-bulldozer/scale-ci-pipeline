@@ -80,6 +80,7 @@ jsch:0.1.55.2
 config-file-provider:3.7.0
 publish-over:0.22
 parameterized-trigger:2.39
+parameterized-scheduler:0.9.2
 authentication-tokens:1.4
 docker-workflow:1.25
 jdk-tool:1.4
