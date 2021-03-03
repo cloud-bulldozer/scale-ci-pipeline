@@ -23,7 +23,7 @@
         do
         
         # Get the day of week and set networkType as OpenshiftSDN on odd days and kuryr on even days in case no network is defined manually.
-        if [ $OPENSHIFT_NETWORK_TYPE == "" ]
+        if [ -z "$OPENSHIFT_NETWORK_TYPE" ]
         then
             DOW=$(date +%u)
             rem=$(( $DOW % 2 ))
