@@ -16,8 +16,8 @@
 
         # fetch the kubeconfig from the orchestration host
         echo "Fetching the  kubeconfig from the orchestration host"
-        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
-        export KUBECONFIG=${WORKSPACE}/kubeconfig
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG} ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=$WORKSPACE/kubeconfig
 
         # delete benchmark status file if exists and set the path
         #rm /tmp/uperf_$BUILD_NUMBER.status || true
@@ -66,7 +66,7 @@
     - string:
         default: "~/.kube/config"
         description: Location(absolute path) of kubeconfig on orchestration host.
-        name: KUBECONFIG_FILE
+        name: KUBECONFIG
     - raw:
         xml: |
           <hudson.model.PasswordParameterDefinition>
