@@ -1,0 +1,219 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -o pipefail
+        set -eux
+
+        # get perf keys to access orchestration host and set ssh session options
+        git clone --depth=1 https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
+        chmod 600 ${PRIVATE_KEY}
+
+        # fetch the kubeconfig from the orchestration host
+        echo "Fetching the  kubeconfig from the orchestration host"
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=${WORKSPACE}/kubeconfig
+
+        # run tests
+        pushd workloads/router-perf-v2/
+        ./ingress-performance.sh
+    concurrent: true
+    description: |
+      This test is a data-plane workload generator that runs http requests through HAProxy into deployed pods.
+      This job is managed by https://github.com/cloud-bulldozer/e2e-benchmarking/tree/master/workloads/router-perf-v2
+    disabled: false
+    name: INGRESS-PERFORMANCE
+    node: scale-ci
+    parameters:
+    - string:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - string:
+        default: ""
+        description: The machine intended to run the oc commands and launch the workload.
+        name: ORCHESTRATION_HOST
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: "/root/.kube/config"
+        description: Location(absolute path) of kubeconfig on orchestration host.
+        name: KUBECONFIG
+    - string:
+        default: podman
+        description: Engine used to spin up the local kube-burner container that creates the required infrastructure
+        name: ENGINE
+    - string:
+        default: 120
+        description: Workload duration in seconds
+        name: RUNTIME
+    - string:
+        default: List of HTTP terminations to test
+        description: http edge passthrough reencrypt mix
+        name: TERMINATIONS
+    - string:
+        default: "/1024.html"
+        description: URL path to use in the benchmark
+        name: URL_PATH
+    - string:
+        default: 100
+        description: Number of routes of each termination to test
+        name: NUMBER_OF_ROUTES
+    - string:
+        default: 1 40 200
+        description: List with the number of keep alive requests to perform in the same HTTP session
+        name: KEEPALIVE_REQUESTS
+    - string:
+        default: 1 10 100
+        description: List with the number of clients (threads per target route)
+        name: CLIENTS
+    - bool:
+        default: true
+        description: Use TLS session reuse.
+        name: TLS_REUSE
+    - string:
+        default: 0
+        description: Ramp-up period, in seconds
+        name: RAMP_UP
+    - string:
+        default: 3
+        description: Number of samples to perform of each test
+        name: SAMPLES
+    - bool:
+        default: true
+        description: Enable hostNetwork in the mb client
+        name: HOST_NETWORK
+    - string:
+        default: 2
+        description: Number of routers to test 
+        name: NUMBER_OF_ROUTERS
+    - string:
+        default: "{node-role.kubernetes.io/workload: }"
+        description: Node selector of the mb client
+        name: NODE_SELECTOR
+    - string:
+        default: 10s
+        description: Quiet period after each test iteration
+        name: QUIET_PERIOD
+    - string:
+        default: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com:443"
+        description: Elasticsearch endpoint to send metrics
+        name: ES_SERVER
+    - string:
+        default: router-test-results
+        description: Elasticsearch index
+        name: ES_INDEX
+    - string:
+        default: ""
+        description: Elasticsearch endpoint used to fetch baseline results
+        name: ES_SERVER_BASELINE
+    - string:
+        default: ""
+        description: Baseline UUID to compare the results with
+        name: BASELINE_UUID
+    - string:
+        default: ""
+        description: Path to service account key to generate google sheets
+        name: GSHEET_KEY_LOCATION
+    - string:
+        default: ""
+        description: It will push your local results CSV to Google Spreadsheets and send an email with the attachment (optional)
+        name: EMAIL_ID_FOR_RESULTS_SHEET
+    - string:
+        default: 5
+        description: Accepeted deviation in percentage for throughput when compared to a baseline run
+        name: THROUGHPUT_TOLERANCE
+    - string:
+        default: 5
+        description: Accepeted deviation in percentage for latency when compared to a baseline run
+        name: LATENCY_TOLERANCE 
+    - string:
+        default: NodePort
+        description: K8S service type to use
+        name: SERVICE_TYPE
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers:
+    - raw:
+        xml: |
+          <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.35.2">
+          <configs>
+          <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+          <hudson.plugins.parameterizedtrigger.NodeParameters />
+          <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          <properties>SSHKEY_TOKEN=${SSHKEY_TOKEN}
+          ORCHESTRATION_HOST=${ORCHESTRATION_HOST}
+          ORCHESTRATION_USER=${ORCHESTRATION_USER}
+          JENKINS_BUILD_TAG=${BUILD_TAG}
+          JENKINS_NODE_NAME=${NODE_NAME}
+          JENKINS_BUILD_URL=${BUILD_URL}
+          ES_SERVER=${JENKINS_ES_SERVER}
+          JENKINS_USER=${JENKINS_USER}
+          JENKINS_API_TOKEN=${JENKINS_API_TOKEN}</properties>
+          <textParamValueOnNewLine>false</textParamValueOnNewLine>
+          </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          </configs>
+          <projects>INDEXER, </projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <triggerFromChildProjects>false</triggerFromChildProjects>
+          </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          </configs>
+          </hudson.plugins.parameterizedtrigger.BuildTrigger>
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/cloud-bulldozer/e2e-benchmarking.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm

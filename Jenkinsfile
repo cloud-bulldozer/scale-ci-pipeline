@@ -92,7 +92,7 @@ node (node_label) {
 		}
 		if (http == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
-			env.WORKLOAD="ATS-SCALE-CI-HTTP"
+			env.WORKLOAD="INGRESS-PERFORMANCE"
 			load "pipeline-scripts/workload.groovy"
 		}
 		if (run_uperf == "TRUE") {
@@ -110,7 +110,7 @@ node (node_label) {
 			env.PIPELINE_STAGE=2
 			if (http == "TRUE") {
 				env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
-				env.WORKLOAD="ATS-SCALE-CI-HTTP"
+				env.WORKLOAD="INGRESS-PERFORMANCE"
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (kubelet_density_light == "TRUE") {
@@ -266,7 +266,7 @@ node (node_label) {
 		// stage to run http scale test
 		if (http == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
-			env.WORKLOAD="ATS-SCALE-CI-HTTP"
+			env.WORKLOAD="INGRESS-PERFORMANCE"
 			load "pipeline-scripts/workload.groovy"
 		}
 
