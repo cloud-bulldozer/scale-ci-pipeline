@@ -75,7 +75,7 @@
     - bool:
         default: true
         description: ''
-        name: HTTP_TEST
+        name: INGRESS_PERFORMANCE
     - bool:
         default: false
         description: ''
@@ -190,7 +190,7 @@
     - string:
         default: ''
         description: ''
-        name: HTTP_TEST_PROPERTY_FILE
+        name: INGRESS_PERFORMANCE_PROPERTY_FILE
     - string:
         default: ''
         description: ''

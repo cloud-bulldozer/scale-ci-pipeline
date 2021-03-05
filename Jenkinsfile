@@ -21,7 +21,7 @@ def kubelet_density = KUBELET_DENSITY.toString().toUpperCase()
 def kubelet_density_light = KUBELET_DENSITY_LIGHT.toString().toUpperCase()
 def install_openstack = OPENSTACK_INSTALL.toString().toUpperCase()
 def browbeat = BROWBEAT_INSTALL.toString().toUpperCase()
-def http = HTTP_TEST.toString().toUpperCase()
+def ingress_performance = INGRESS_PERFORMANCE.toString().toUpperCase()
 def logging = LOGGING_SCALE_TEST.toString().toUpperCase()
 def pgbench_test = PGBENCH_TEST.toString().toUpperCase()
 def prometheus_test = PROMETHEUS_TEST.toString().toUpperCase()
@@ -90,8 +90,8 @@ node (node_label) {
 			env.WORKLOAD="SCALE-CI-MS-ROSA"
 			load "pipeline-scripts/workload.groovy"
 		}
-		if (http == "TRUE") {
-			env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
+		if (ingress_performance == "TRUE") {
+			env.WORKLOAD_PROPERTIES_FILE=INGRESS_PERFORMANCE_PROPERTY_FILE
 			env.WORKLOAD="INGRESS-PERFORMANCE"
 			load "pipeline-scripts/workload.groovy"
 		}
@@ -108,8 +108,8 @@ node (node_label) {
 
 		if (stage_two == "TRUE") {
 			env.PIPELINE_STAGE=2
-			if (http == "TRUE") {
-				env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
+			if (ingress_performance == "TRUE") {
+				env.WORKLOAD_PROPERTIES_FILE=INGRESS_PERFORMANCE_PROPERTY_FILE
 				env.WORKLOAD="INGRESS-PERFORMANCE"
 				load "pipeline-scripts/workload.groovy"
 			}
@@ -263,9 +263,9 @@ node (node_label) {
 			load "pipeline-scripts/workload.groovy"
 		}
 
-		// stage to run http scale test
-		if (http == "TRUE") {
-			env.WORKLOAD_PROPERTIES_FILE=HTTP_TEST_PROPERTY_FILE
+		// stage to run ingress-performance scale test
+		if (ingress_performance == "TRUE") {
+			env.WORKLOAD_PROPERTIES_FILE=INGRESS_PERFORMANCE_PROPERTY_FILE
 			env.WORKLOAD="INGRESS-PERFORMANCE"
 			load "pipeline-scripts/workload.groovy"
 		}
