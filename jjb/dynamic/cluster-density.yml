@@ -14,9 +14,8 @@
 
         # fetch the kubeconfig from the orchestration host
         echo "Fetching the kubeconfig from the orchestration host"
-        KUBECONFIG_FILE=${KUBECONFIG_FILE:-~/.kube/config}
-        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
-        export KUBECONFIG=${WORKSPACE}/kubeconfig
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG} ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=$WORKSPACE/kubeconfig
 
         # run tests
         pushd workloads/kube-burner
@@ -63,7 +62,7 @@
     - string:
         default: "~/.kube/config"
         description: Location(absolute path) of kubeconfig on orchestration host.
-        name: KUBECONFIG_FILE
+        name: KUBECONFIG
     - string:
         default: ""
         description: Future use for pbench and prometheus scraper to place results into git repo that holds results data.
