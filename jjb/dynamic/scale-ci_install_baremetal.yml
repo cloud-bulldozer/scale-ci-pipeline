@@ -1,0 +1,286 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        #!/bin/bash
+        set -o pipefail
+        set -eux
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        chmod 600 ${PRIVATE_KEY}
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/JetSki-Configs
+        cp JetSki-Configs/ci/group_vars/all.yml ansible-ipi-install/group_vars
+        cp JetSki-Configs/ci/inventory/hosts ansible-ipi-install/inventory/jetski/hosts
+        pushd ansible-ipi-install
+        if [ ${ROUTABLE_API} == true ]
+        then
+             sed -i "/^extcidrnet/c extcidrnet=\"${BAREMETAL_NETWORK_CIDR}\"" inventory/jetski/hosts
+             sed -i "/^cluster_random=/c cluster_random=false" inventory/jetski/hosts
+             sed -i "/^cluster=/c cluster=\"${BAREMETAL_NETWORK_VLAN}\"" inventory/jetski/hosts
+             sed -i "/^domain=/c domain=\"rdu2.scalelab.redhat.com\"" inventory/jetski/hosts
+        fi
+        ansible-playbook -i inventory/jetski/hosts playbook-jetski.yml
+    concurrent: false
+    description: |
+      Installs and configures OCP 4.x cluster on Baremetal.
+      This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
+    disabled: false
+    name: ATS-SCALE-CI-OCP-BM-DEPLOY
+    node: baremetal-telco
+    parameters:
+    - string:
+        default: "scale"
+        description: The lab to run CI in
+        name: LAB_NAME
+    - string:
+        default: ""
+        description: extcidrnet for the Baremetal network
+        name: BAREMETAL_NETWORK_CIDR
+    - string:
+        default: ""
+        description: vlan number for public external
+        name: BAREMETAL_NETWORK_VLAN
+    - string:
+        default: ""
+        description: The URL of the foreman host
+        name: FOREMAN_URL
+    - bool:
+        default: false
+        description: Rebuild the orchestration host through foreman
+        name: REBUILD_ORCHESTRATION
+    - bool:
+        default: false
+        description: Rebuild the orchestration host through foreman
+        name: JUMBO_MTU
+    - bool:
+        default: false
+        description: Rebuild the orchestration host through foreman
+        name: ROUTABLE_API
+    - string:
+        default: "kni"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: ""
+        description: Host with the kubeconfig and oc client.
+        name: ORCHESTRATION_HOST
+    - password:
+        default: ""
+        description: Password to access the orchestration host
+        name: ANSIBLE_SSH_PASSWORD
+    - password:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - password:
+        default: ""
+        description: pull secret
+        name: OPENSHIFT_INSTALL_PULL_SECRET
+    - bool:
+        default: true
+        description: Enables/disables infra node creation using machinesets
+        name: OPENSHIFT_TOGGLE_INFRA_NODE
+    - bool:
+        default: true
+        description: Enable mutable grafana instance
+        name: ENABLE_DITTYBOPPER
+    - string:
+        default: "/home/kni/clusterconfigs/auth/config"
+        description: path to the kubeconfig
+        name: KUBECONFIG_PATH
+    - string:
+        default: ""
+        description: Scale lab cloud name to use.
+        name: CLOUD_NAME
+    - string:
+        default: ""
+        description: openshift release number to deploy
+        name: OPENSHIFT_RELEASE
+    - string:
+        default: "ga"
+        description: openshift build to deploy
+        name: OPENSHIFT_BUILD
+    - string:
+        default: "2"
+        description: openshift worker node count.
+        name: OPENSHIFT_WORKER_COUNT
+    - bool:
+        default: false
+        description: Configures the cluster to enable running workloads.
+        name: OPENSHIFT_POST_CONFIG
+    - string:
+        default: "~/cerberus.yaml"
+        description: path to the cerberus config
+        name: CERBERUS_CONFIG_PATH
+    - bool:
+        default: false
+        description: Enable Cerberus
+        name: CERBERUS_ENABLE
+    - string:
+        default: "quay.io/openshift-scale/cerberus:latest"
+        description: cerberus image
+        name: CERBERUS_IMAGE
+    - string:
+        default: "http://0.0.0.0:8080"
+        description: Cerberus url where the go/no-go signal is exposed
+        name: CERBERUS_URL
+    - bool:
+        default: true
+        description: cerberus will watch the nodes when enabled
+        name: WATCH_NODES
+    - bool:
+        default: true
+        description: cerberus will watch cluster operators when enabled
+        name: WATCH_CLUSTER_OPERATORS
+    - bool:
+        default: true
+        description: cerberus will launch a simple http server to expose the go/no-go signal when enabled
+        name: CERBERUS_PUBLISH_STATUS
+    - bool:
+        default: false
+        description: cerberus will run inspection on the failed components when enabled. This assumes that the distribution is ocp vs kube.
+        name: INSPECT_COMPONENTS
+    - bool:
+        default: false
+        description: cerberus will report the failures on slack when enabled
+        name: SLACK_INTEGRATION
+    - string:
+        default: ""
+        description: slack token to talk the api
+        name: SLACK_API_TOKEN
+    - string:
+        default: ""
+        description: slack channel to report the failures
+        name: SLACK_CHANNEL
+    - string:
+        default: "{Monday: , Tuesday: , Wednesday: , Thursday: , Friday: , Saturday: , Sunday: }"
+        description: list of watcher id's to ping in case of failures
+        name: WATCHER_SLACK_ID
+    - string:
+        default: ""
+        description: slack alias to ping when watcher id's are not defined
+        name: SLACK_TEAM_ALIAS
+    - string:
+        default: "5"
+        description: number of iterations to run when daemon mode is not enabled
+        name: ITERATIONS
+    - string:
+        default: "30"
+        description: duration to sleep/wait between each iteration
+        name: SLEEP_TIME
+    - bool:
+        default: true
+        description: when enabled will run cerberus forever
+        name: DAEMON_MODE
+    - string:
+        default: ""
+        description: Path to the auth dir where the kubeconfig exists, this var is used with flexy install jobs.
+        name: KUBECONFIG_AUTH_DIR_PATH
+    - string:
+        default: "1"
+        description: Number of iterations to run the job
+        name: JOB_ITERATIONS
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_USER
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_API_TOKEN
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
+        name: JENKINS_ES_SERVER
+        trim: 'false'
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers:
+    - archive:
+        allow-empty: true
+        artifacts: '*.timing'
+        case-sensitive: true
+        default-excludes: true
+        fingerprint: false
+        only-if-success: false
+    - raw:
+        xml: |
+          <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.35.2">
+          <configs>
+          <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+          <hudson.plugins.parameterizedtrigger.NodeParameters />
+          <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          <properties>SSHKEY_TOKEN=${SSHKEY_TOKEN}
+          ORCHESTRATION_HOST=${ORCHESTRATION_HOST}
+          ORCHESTRATION_USER=${ORCHESTRATION_USER}
+          JENKINS_BUILD_TAG=${BUILD_TAG}
+          JENKINS_NODE_NAME=${NODE_NAME}
+          JENKINS_BUILD_URL=${BUILD_URL}
+          ES_SERVER=${JENKINS_ES_SERVER}
+          JENKINS_USER=${JENKINS_USER}
+          JENKINS_API_TOKEN=${JENKINS_API_TOKEN}</properties>
+          <textParamValueOnNewLine>false</textParamValueOnNewLine>
+          </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          </configs>
+          <projects>INDEXER, </projects>
+          <condition>ALWAYS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <triggerFromChildProjects>false</triggerFromChildProjects>
+          </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          </configs>
+          </hudson.plugins.parameterizedtrigger.BuildTrigger>
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/redhat-performance/JetSki
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm

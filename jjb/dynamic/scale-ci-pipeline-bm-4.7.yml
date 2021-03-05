@@ -1,8 +1,12 @@
 - job:
+    block-downstream: false
+    block-upstream: false
     concurrent: true
-    description: 'Collection of Jenkins jobs to install, configure, scaleup ocp and run various performance and scale tests on OpenShift across various public and private clouds. '
+    description: Collection of Jenkins jobs to install, configure, scaleup ocp and
+      run various performance and scale tests on OpenShift across various public and
+      private clouds. <!-- Managed by Jenkins Job Builder -->
     disabled: false
-    name: SCALE-CI-PIPELINE
+    name: SCALE-CI-PIPELINE-BM-4.7
     parameters:
     - bool:
         default: true
@@ -14,26 +18,27 @@
         name: PIPELINE
     - bool:
         default: true
-        description: 'runs router, object-density, cluster-density workloads typically at 25 node scale'
+        description: runs router, object-density, cluster-density workloads typically
+          at 25 node scale
         name: STAGE_TWO
     - bool:
         default: false
-        description: 'runs cluster-density workload typically at 100 node scale'
+        description: runs cluster-density workload typically at 100 node scale
         name: STAGE_THREE
     - bool:
         default: false
-        description: 'runs cluster-density workload typically at 250 node scale'
+        description: runs cluster-density workload typically at 250 node scale
         name: STAGE_FOUR
     - bool:
         default: false
-        description: 'runs cluster-density workload typically at 500 node scale'
+        description: runs cluster-density workload typically at 500 node scale
         name: STAGE_FIVE
     - bool:
         default: false
-        description: 'runs cluster-density workload typically at 1000 node scale'
+        description: runs cluster-density workload typically at 1000 node scale
         name: STAGE_SIX
     - bool:
-        default: false
+        default: true
         description: ''
         name: SCALE_CI_BUILD_TRACKER
     - bool:
@@ -45,7 +50,7 @@
         description: ''
         name: BROWBEAT_INSTALL
     - bool:
-        default: true
+        default: false
         description: ''
         name: OPENSHIFTv4_INSTALL_ON_AWS
     - bool:
@@ -61,7 +66,7 @@
         description: ''
         name: OPENSHIFTV4_INSTALL_ON_OSP
     - bool:
-        default: false
+        default: true
         description: ''
         name: OPENSHIFTV4_INSTALL_ON_BM
     - bool:
@@ -139,21 +144,22 @@
     - bool:
         default: false
         description: ''
-        name: 'SCALE_CI_MS_OSDE2E'
+        name: SCALE_CI_MS_OSDE2E
     - bool:
         default: false
         description: ''
-        name: 'SCALE_CI_MS_ROSA'
+        name: SCALE_CI_MS_ROSA
     - bool:
         default: false
         description: 'Caputers Prometheus DB and Cluster information using must-gather.'
         name: SCALE_CI_DIAGNOSIS
     - string:
-        default: ''
+        default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/watcher/watcher.properties
         description: ''
         name: SCALE_CI_WATCHER_PROPERTY_FILE
     - string:
         default: ''
+        description: ''
         name: SCALE_CI_BUILD_TRACKER_PROPERTY_FILE
     - string:
         default: ''
@@ -184,7 +190,7 @@
         description: ''
         name: OPENSHIFTv4_ON_OSP_PROPERTY_FILE
     - string:
-        default: ''
+        default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/baremetal/4.7/openshift_install.properties 
         description: ''
         name: OPENSHIFTv4_ON_BM_PROPERTY_FILE
     - string:
@@ -265,15 +271,8 @@
         name: KUBELET_DENSITY_LIGHT_PROPERTIES_FILE
     - string:
         default: ''
+        description: ''
         name: KRAKEN_PROPERTY_FILE
-    - string:
-        default: 'scale-ci'
-        description: ''
-        name: NODE_LABEL
-    - string:
-        default: ''
-        description: ''
-        name: SCALE_CI_MS_OSDE2E_PROPERTIES_FILE
     - string:
         default: ''
         description: ''
@@ -281,13 +280,25 @@
     - string:
         default: ''
         description: ''
+        name: SCALE_CI_MS_OSDE2E_PROPERTIES_FILE
+    - string:
+        default: ''
+        description: ''
         name: SCALE_CI_DIAGNOSIS_PROPERTIES_FILE
+    - string:
+        default: scale-ci
+        description: ''
+        name: NODE_LABEL
     pipeline-scm:
       lightweight-checkout: false
+      sandbox: 'false'
       scm:
       - git:
           branches:
           - '*master'
+          git-tool: Default
+          name: origin
+          refspec: +refs/heads/*:refs/remotes/origin/*
           url: https://github.com/cloud-bulldozer/scale-ci-pipeline.git
           wipe-workspace: true
       script-path: Jenkinsfile
@@ -296,40 +307,39 @@
     - raw:
         xml: |
           <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
-          <gitLabConnection />
-          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+                <gitLabConnection />
+              </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
     - raw:
         xml: |
           <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
-          <enabled>false</enabled>
-          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+                <enabled>false</enabled>
+              </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
     - raw:
         xml: |
           <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
-          <ownership>
-          <ownershipEnabled>true</ownershipEnabled>
-          <primaryOwnerId>nelluri</primaryOwnerId>
-          <coownersIds class="sorted-set">
-          <string>xlisovsk</string>
-          </coownersIds>
-          </ownership>
-          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
-    - raw:
-        xml: |
-          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
-          <autoRebuild>false</autoRebuild>
-          <rebuildDisabled>false</rebuildDisabled>
-          </com.sonyericsson.rebuild.RebuildSettings>
+                <ownership>
+                  <ownershipEnabled>true</ownershipEnabled>
+                  <primaryOwnerId>nelluri</primaryOwnerId>
+                  <coownersIds class="sorted-set">
+                    <string>xlisovsk</string>
+                  </coownersIds>
+                </ownership>
+              </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - rebuild:
+        auto-rebuild: false
+        rebuild-disabled: false
     - raw:
         xml: |
           <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
-          <maxConcurrentPerNode>0</maxConcurrentPerNode>
-          <maxConcurrentTotal>0</maxConcurrentTotal>
-          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
-          <throttleEnabled>false</throttleEnabled>
-          <throttleOption>project</throttleOption>
-          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
-          <paramsToUseForLimit />
-          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+                <maxConcurrentPerNode>0</maxConcurrentPerNode>
+                <maxConcurrentTotal>0</maxConcurrentTotal>
+                <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+                <throttleEnabled>false</throttleEnabled>
+                <throttleOption>project</throttleOption>
+                <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+                <paramsToUseForLimit />
+              </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
     triggers:
-    - timed: '0 01 * * 1,3,5'
+    - timed: 0 01 * * 1,3,5
+    wrappers: []
