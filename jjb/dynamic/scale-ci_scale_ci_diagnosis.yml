@@ -1,0 +1,113 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -o pipefail
+        set -eux
+
+        # get perf keys to access orchestration host and set ssh session options
+        git clone --depth=1 https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
+        chmod 600 ${PRIVATE_KEY}
+
+        # Capture data
+        cd utils/scale-ci-diagnosis/
+        ./ocp_diagnosis.sh
+    concurrent: true
+    description: |
+      This job captures Prometheus DB and cluster information using must-gather. Also stores data to the pbench/snappy server.
+      This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
+    disabled: false
+    name: SCALE_CI_DIAGNOSIS
+    node: scale-ci
+    parameters:
+    - string:
+        default: "/root"
+        description: Output directory to store the captured Prometheus data within cluster.
+        name: OUTPUT_DIR
+    - bool:
+        default: true
+        description: Captures Prometheus data when enabled.
+        name: PROMETHEUS_CAPTURE
+    - string:
+        default: "full"
+        description: wal or full, wal captures the write ahead log and full captures the entire prometheus DB.
+        name: PROMETHEUS_CAPTURE_TYPE
+    - bool:
+        default: true
+        description: gathers cluster data including information about all the operator managed components.
+        name: OPENSHIFT_MUST_GATHER
+    - string:
+        default: "data_server"
+        description: data_server or pbench. Move the data to the pbench or snappy data-server.
+        name: STORAGE_MODE
+    - string:
+        default: ''
+        description: Snappy data server URL.
+        name: DATA_SERVER_URL
+    - string:
+        default: ''
+        description: Snappy data server Username.
+        name: DATA_SERVER_USERNAME
+    - password:
+        default: ""
+        description: Snappy data server password.
+        name: DATA_SERVER_PASSWORD
+    - string:
+        default: ''
+        description: File directory in snappy server to store data.
+        name: SNAPPY_FILE_DIR
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/cloud-bulldozer/e2e-benchmarking.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false

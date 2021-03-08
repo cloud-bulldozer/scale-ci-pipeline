@@ -140,6 +140,10 @@
         default: false
         description: ''
         name: 'SCALE_CI_MS_ROSA'
+    - bool:
+        default: false
+        description: 'Caputers Prometheus DB and Cluster information using must-gather.'
+        name: SCALE_CI_DIAGNOSIS
     - string:
         default: ''
         description: ''
@@ -266,6 +270,10 @@
         default: ''
         description: ''
         name: SCALE_CI_MS_ROSA_PROPERTIES_FILE
+    - string:
+        default: ''
+        description: ''
+        name: SCALE_CI_DIAGNOSIS_PROPERTIES_FILE
     pipeline-scm:
       lightweight-checkout: false
       scm:
