@@ -94,7 +94,6 @@
             [ ! -z ${LOG_FILE} ] && WRAPPER_OPTIONS+=" --log-file ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/${LOG_FILE}"
 
             # Wrapper execution
-            export AWS_PROFILE='openshift-perfscale'
             echo "INFO: Running python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e/osde2e-wrapper.py \${WRAPPER_OPTIONS}"
             python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e/osde2e-wrapper.py \${WRAPPER_OPTIONS}
           ENDSSH
