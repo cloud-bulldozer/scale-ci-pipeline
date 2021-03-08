@@ -91,7 +91,7 @@
         name: HOST_NETWORK
     - string:
         default: 2
-        description: Number of routers to test 
+        description: Number of routers to test
         name: NUMBER_OF_ROUTERS
     - string:
         default: "{node-role.kubernetes.io/workload: }"
@@ -132,7 +132,7 @@
     - string:
         default: 5
         description: Accepeted deviation in percentage for latency when compared to a baseline run
-        name: LATENCY_TOLERANCE 
+        name: LATENCY_TOLERANCE
     - string:
         default: NodePort
         description: K8S service type to use

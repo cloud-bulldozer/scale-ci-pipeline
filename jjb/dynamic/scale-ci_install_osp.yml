@@ -21,7 +21,6 @@
         cp ci/ocp_install_vars.yml vars/shift_stack_vars.yaml
         for (( iter=1; iter<=$JOB_ITERATIONS; iter++ ))
         do
-        
         # Get the day of week and set networkType as OpenshiftSDN on odd days and kuryr on even days in case no network is defined manually.
         if [ -z "$OPENSHIFT_NETWORK_TYPE" ]
         then
