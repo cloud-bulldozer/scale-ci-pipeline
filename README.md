@@ -68,6 +68,8 @@ Baseline | Base/Idle cluster | Captures performance data of the base cluster wit
 Uperf | Networking | uperf benchmarks testing node to node, pod to pod, and svc to svc throughput and latency for TCP and UDP protocols | :heavy_check_mark: | :x: | :heavy_check_mark: |
 Kraken | Base/Idle cluster | Injects chaos scenarios into the cluster | :heavy_check_mark: | NA | :heavy_check_mark: |
 scale_ci_diagnosis | Storing Metrics | Captures Prometheus DB and cluster information using must-gather  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:
+Upgrades | Cluster upgrades | UPgrades to the latest versions | :heavy_check_mark: | :x: | :heavy_check_mark: |
+
 ### Modifying/Adding new workloads to the scale-ci-pipeline
 
 Adding new workloads is managed by scale-ci-watcher and it expects the following:

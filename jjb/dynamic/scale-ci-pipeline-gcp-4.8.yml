@@ -17,23 +17,23 @@
     - bool:
         default: true
         description: runs router, object-density, cluster-density workloads typically
-          at 25 node scale
+          at 25 node scale. Please set this only when pipeline option is selected.
         name: STAGE_TWO
     - bool:
         default: false
-        description: runs cluster-density workload typically at 100 node scale
+        description: runs cluster-density workload typically at 100 node scale. Please set this only when pipeline option is selected.
         name: STAGE_THREE
     - bool:
         default: false
-        description: runs cluster-density workload typically at 250 node scale
+        description: runs cluster-density workload typically at 250 node scale. Please set this only when pipeline option is selected.
         name: STAGE_FOUR
     - bool:
         default: false
-        description: runs cluster-density workload typically at 500 node scale
+        description: runs cluster-density workload typically at 500 node scale. Please set this only when pipeline option is selected.
         name: STAGE_FIVE
     - bool:
         default: false
-        description: runs cluster-density workload typically at 1000 node scale
+        description: runs cluster-density workload typically at 1000 node scale. Please set this only when pipeline option is selected.
         name: STAGE_SIX
     - bool:
         default: true
@@ -147,6 +147,10 @@
         default: false
         description: 'Caputers Prometheus DB and Cluster information using must-gather.'
         name: SCALE_CI_DIAGNOSIS
+    - bool:
+        default: false
+        description: ''
+        name: UPGRADES
     - string:
         default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/watcher/watcher.properties
         description: ''
@@ -306,6 +310,10 @@
         default: ''
         description: ''
         name: SCALE_CI_DIAGNOSIS_PROPERTIES_FILE
+    - string:
+        default: ''
+        description: ''
+        name: UPGRADES_PROPERTIES_FILE
     - string:
         default: scale-ci
         description: ''

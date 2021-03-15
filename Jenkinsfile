@@ -35,6 +35,7 @@ def run_uperf = UPERF.toString().toUpperCase()
 def kraken = KRAKEN.toString().toUpperCase()
 def osde2e = SCALE_CI_MS_OSDE2E.toString().toUpperCase()
 def rosa = SCALE_CI_MS_ROSA.toString().toUpperCase()
+def upgrades = UPGRADES.toString().toUpperCase()
 def node_label = NODE_LABEL.toString()
 def run_id = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
 def scale_ci_diagnosis = SCALE_CI_DIAGNOSIS.toString().toUpperCase()
@@ -185,13 +186,31 @@ node (node_label) {
 				env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
 				load "pipeline-scripts/workload.groovy"
 			}
- 			if (ocpv4_scale == "TRUE") {
+		}
+
+		// Run upgrades
+		if ( upgrades == "TRUE" ) {
+			env.PIPELINE_STAGE="upgrades"
+			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+			env.WORKLOAD="ATS-SCALE-CI-SCALE"
+			load "pipeline-scripts/workload.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=CLUSTER_DENSITY_PROPERTIES_FILE
+			env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
+			load "pipeline-scripts/workload.groovy"
+			env.WORKLOAD_PROPERTIES_FILE=UPGRADES_PROPERTIES_FILE
+			env.WORKLOAD="UPGRADES"
+			load "pipeline-scripts/workload.groovy"
+		}
+
+		// Last stage - scale down the cluster
+		if (stage_six == "TRUE") {
+			env.PIPELINE_STAGE="6"
+			if (ocpv4_scale == "TRUE") {
 				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
 				env.WORKLOAD="ATS-SCALE-CI-SCALE"
 				load "pipeline-scripts/workload.groovy"
 			}
 		}
-
 	} else {
 
 		// Queries UMB message to capture the OCP 4.x payloads
@@ -376,6 +395,12 @@ node (node_label) {
 			load "pipeline-scripts/workload.groovy"
 		}
 
+		// stage to run upgrades
+                if ( upgrades == "TRUE" ) {
+                        env.WORKLOAD_PROPERTIES_FILE=UPGRADES_PROPERTIES_FILE
+                        env.WORKLOAD="UPGRADES"
+                        load "pipeline-scripts/workload.groovy"
+                }
 	}
 
 		// cleanup the workspace

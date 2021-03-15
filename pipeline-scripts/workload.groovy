@@ -46,6 +46,8 @@ stage (workload) {
 					job_parameters.add([$class: 'StringParameterValue', name: 'SCALE', value: properties['SCALE_V5'] ])
 				} else if (pipeline_stage == "6") {
 					job_parameters.add([$class: 'StringParameterValue', name: 'SCALE', value: properties['SCALE_V6'] ])
+				} else if (pipeline_stage == "upgrades") {
+					job_parameters.add([$class: 'StringParameterValue', name: 'SCALE', value: properties['SCALE_UPGRADES'] ])
 				}
 			}
 		}
@@ -60,6 +62,8 @@ stage (workload) {
 					job_parameters.add([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS_V4'] ])
 				} else if (pipeline_stage == "6") {
 					job_parameters.add([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS_V5'] ])
+				} else if (pipeline_stage == "upgrades") {
+					job_parameters.add([$class: 'StringParameterValue', name: 'JOB_ITERATIONS', value: properties['JOB_ITERATIONS_FOR_UPGRADES'] ])
 				}
 			}
 		}

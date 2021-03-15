@@ -1,0 +1,135 @@
+- job:
+    block-downstream: false
+    block-upstream: false
+    builders:
+    - shell: |+
+        set -x
+
+        # get perf keys to access orchestration host and set ssh session options
+        git clone --depth=1 https://${SSHKEY_TOKEN}@github.com/redhat-performance/perf-dept.git
+        export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
+        export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+        export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=1200"
+        chmod 600 ${PRIVATE_KEY}
+
+        # fetch the kubeconfig from the orchestration host
+        echo "Fetching the kubeconfig from the orchestration host"
+        KUBECONFIG_FILE=${KUBECONFIG_FILE:-~/.kube/config}
+        scp ${OPTIONS} -i ${PRIVATE_KEY} ${ORCHESTRATION_USER}@${ORCHESTRATION_HOST}:${KUBECONFIG_FILE} ${WORKSPACE}/kubeconfig
+        export KUBECONFIG=${WORKSPACE}/kubeconfig
+
+        # run upgrades
+        pushd workloads/upgrade-perf
+        ./run_upgrade_fromgit.sh
+    concurrent: true
+    description: |
+      This workload upgrades an OpenShift cluster to the latest available or the specified version.
+    disabled: false
+    name: UPGRADES
+    node: scale-ci
+    parameters:
+    - string:
+        default: ""
+        description: Token to access private repo containing ssh keys.
+        name: SSHKEY_TOKEN
+    - string:
+        default: ""
+        description: The machine intended to run the oc commands and launch the workload.
+        name: ORCHESTRATION_HOST
+    - string:
+        default: "root"
+        description: The user for the Orchestration host.
+        name: ORCHESTRATION_USER
+    - string:
+        default: "~/.kube/config"
+        description: Location(absolute path) of kubeconfig on orchestration host.
+        name: KUBECONFIG
+    - string:
+        default: 'https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com:443'
+        description: Elasticsearch server host address set to index result. You can use basic authentication using the notation http(s)://[username]:[password]@[address]
+        name: ES_SERVER
+    - string:
+        default: ''
+        description: Elasticsearch server index.
+        name: ES_INDEX
+    - string:
+        default: ""
+        description: URL to check the status of the cluster using cerberus
+        name: CERBERUS_URL
+    - string:
+        default: ""
+        description: The version to upgrade to. The version must be on the list of previous or available updates.
+        name: VERSION
+    - string:
+        default: ""
+        description: This is an optional location of an image to upgrade to.
+        name: TOIMAGE
+    - string:
+        default: ""
+        description: Upgrades to the latest version available in the channel when set to true.
+        name: LATEST
+    - string:
+        default: ""
+        description: "Channel to set for the upgrade to find the image to upgrade to, they can found at https://github.com/openshift/cincinnati-graph-data/blob/master/channels/. The channel set on the cluster is not tweaked if this variable is not set."
+        name: CHANNEL
+    - string:
+        default: "5"
+        description: How long (in seconds) to have the test wait inbetween ready checks
+        name: POLL_INTERVAL
+    - string:
+        default: "240"
+        description: "Timeout value (in minutes) for the upgrade. NOTE: there is no rollback on failure"
+        name: TIMEOUT
+    project-type: freestyle
+    properties:
+    - raw:
+        xml: |
+          <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.28" />
+    - raw:
+        xml: |
+          <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.3">
+          <gitLabConnection />
+          </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    - raw:
+        xml: |
+          <org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty plugin="zmq-event-publisher@0.0.5">
+          <enabled>false</enabled>
+          </org.jenkinsci.plugins.ZMQEventPublisher.HudsonNotificationProperty>
+    - raw:
+        xml: |
+          <com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty plugin="ownership@0.11.0">
+          <ownership>
+          <ownershipEnabled>true</ownershipEnabled>
+          <primaryOwnerId>nelluri</primaryOwnerId>
+          <coownersIds class="sorted-set" />
+          </ownership>
+          </com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty>
+    - raw:
+        xml: |
+          <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+          <autoRebuild>false</autoRebuild>
+          <rebuildDisabled>false</rebuildDisabled>
+          </com.sonyericsson.rebuild.RebuildSettings>
+    - raw:
+        xml: |
+          <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.0.1">
+          <maxConcurrentPerNode>0</maxConcurrentPerNode>
+          <maxConcurrentTotal>0</maxConcurrentTotal>
+          <categories class="java.util.concurrent.CopyOnWriteArrayList" />
+          <throttleEnabled>false</throttleEnabled>
+          <throttleOption>project</throttleOption>
+          <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
+          <paramsToUseForLimit />
+          </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
+    publishers: []
+    scm:
+    - git:
+        branches:
+        - '*/master'
+        url: https://github.com/cloud-bulldozer/e2e-benchmarking.git
+    triggers: []
+    wrappers:
+    - workspace-cleanup:
+        dirmatch: false
+    - ansicolor:
+        colormap: xterm
