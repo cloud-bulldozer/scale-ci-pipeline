@@ -39,7 +39,7 @@
             mkdir -p ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}
             echo "INFO: Using ${REMOTE_WORKSPACE}/run-${RUN_FOLDER} as working directory on Jump host ${JUMP_HOST}"
             git clone https://github.com/cloud-bulldozer/perfscale-managed-services.git ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services
-            sudo pip3 install -r ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/requirements.txt
+            sudo pip3 install -r ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e/requirements.txt
           ENDSSH
 
           # Run installation script
