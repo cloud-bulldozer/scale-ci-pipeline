@@ -9,4 +9,4 @@ ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
 COPY plugins.txt /usr/share/jenkins/plugins.txt
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
 USER root
-RUN apk add py-pip python3-dev libffi-dev openssl-dev gcc libc-dev make
+RUN apk add ansible py-pip python3-dev libffi-dev openssl-dev gcc libc-dev make
