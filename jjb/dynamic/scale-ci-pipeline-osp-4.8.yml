@@ -50,10 +50,6 @@
     - bool:
         default: false
         description: ''
-        name: OPENSHIFTv3_INSTALL
-    - bool:
-        default: false
-        description: ''
         name: OPENSHIFTv4_INSTALL_ON_AWS
     - bool:
         default: false
@@ -76,17 +72,13 @@
         description: ''
         name: CONFORMANCE
     - bool:
-        default: false
-        description: ''
-        name: OPENSHIFTv3_SCALE
-    - bool:
         default: true
         description: ''
         name: OPENSHIFTv4_SCALE
     - bool:
         default: true
         description: ''
-        name: HTTP_TEST
+        name: INGRESS_PERFORMANCE
     - bool:
         default: false
         description: ''
@@ -95,10 +87,6 @@
         default: false
         description: ''
         name: DEPLOYMENTS_PER_NS
-    - bool:
-        default: false
-        description: ''
-        name: NETWORKING
     - bool:
         default: false
         description: ''
@@ -116,7 +104,7 @@
         description: ''
         name: KUBELET_DENSITY
     - bool:
-        default: true
+        default: false
         description: ''
         name: KUBELET_DENSITY_LIGHT
     - bool:
@@ -147,6 +135,14 @@
         default: false
         description: ''
         name: KRAKEN
+    - bool:
+        default: false
+        description: ''
+        name: SCALE_CI_MS_OSDE2E
+    - bool:
+        default: false
+        description: ''
+        name: SCALE_CI_MS_ROSA
     - bool:
         default: false
         description: 'Caputers Prometheus DB and Cluster information using must-gather.'
@@ -207,11 +203,6 @@
         name: CONFORMANCE_PROPERTY_FILE
         trim: 'false'
     - string:
-        default: ''
-        description: ''
-        name: OPENSHIFTv3_SCALE_PROPERTY_FILE
-        trim: 'false'
-    - string:
         default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/osp-future/scaleup.properties
         description: ''
         name: OPENSHIFTv4_SCALE_PROPERTY_FILE
@@ -219,7 +210,7 @@
     - string:
         default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/osp-future/http.properties
         description: ''
-        name: HTTP_TEST_PROPERTY_FILE
+        name: INGRESS_PERFORMANCE_PROPERTY_FILE
         trim: 'false'
     - string:
         default: ''
@@ -230,11 +221,6 @@
         default: ''
         description: ''
         name: DEPLOYMENTS_PER_NS_PROPERTY_FILE
-        trim: 'false'
-    - string:
-        default: ''
-        description: ''
-        name: NETWORKING_PROPERTY_FILE
         trim: 'false'
     - string:
         default: ''
@@ -307,15 +293,6 @@
         name: KRAKEN_PROPERTY_FILE
         trim: 'false'
     - string:
-        default: jetpack
-        description: ''
-        name: NODE_LABEL
-        trim: 'false'
-    - bool:
-        default: false
-        description: ''
-        name: SCALE_CI_MS_ROSA
-    - string:
         default: ''
         description: ''
         name: SCALE_CI_MS_ROSA_PROPERTIES_FILE
@@ -323,7 +300,17 @@
     - string:
         default: ''
         description: ''
+        name: SCALE_CI_MS_OSDE2E_PROPERTIES_FILE
+        trim: 'false'
+    - string:
+        default: ''
+        description: ''
         name: SCALE_CI_DIAGNOSIS_PROPERTIES_FILE
+    - string:
+        default: jetpack
+        description: ''
+        name: NODE_LABEL
+        trim: 'false'
     pipeline-scm:
       lightweight-checkout: false
       scm:
@@ -332,7 +319,7 @@
           - '*master'
           name: origin
           refspec: +refs/heads/*:refs/remotes/origin/*
-          url: https://github.com/openshift-scale/scale-ci-pipeline.git
+          url: https://github.com/cloud-bulldozer/scale-ci-pipeline.git
           wipe-workspace: true
       script-path: Jenkinsfile
     project-type: pipeline
