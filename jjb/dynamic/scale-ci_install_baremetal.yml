@@ -52,7 +52,7 @@
         name: REBUILD_ORCHESTRATION
     - bool:
         default: false
-        description: Rebuild the orchestration host through foreman
+        description: MTU of the baremetal network
         name: JUMBO_MTU
     - bool:
         default: false

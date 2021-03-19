@@ -286,7 +286,7 @@
         description: ''
         name: SCALE_CI_DIAGNOSIS_PROPERTIES_FILE
     - string:
-        default: scale-ci
+        default: baremetal-telco
         description: ''
         name: NODE_LABEL
     pipeline-scm:
