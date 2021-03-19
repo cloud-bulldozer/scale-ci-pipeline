@@ -63,6 +63,10 @@
     - bool:
         default: false
         description: ''
+        name: OPENSHIFTV4_INSTALL_ON_BM
+    - bool:
+        default: false
+        description: ''
         name: TOOLING
     - bool:
         default: false
@@ -179,6 +183,11 @@
         default: ''
         description: ''
         name: OPENSHIFTv4_ON_OSP_PROPERTY_FILE
+    - string:
+        default: ''
+        description: ''
+        name: OPENSHIFTv4_ON_BM_PROPERTY_FILE
+        trim: 'false'
     - string:
         default: ''
         description: ''
