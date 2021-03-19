@@ -111,7 +111,7 @@
           # Getting run directory to archive as artifacts
           echo "INFO: Downloading ${REMOTE_WORKSPACE}/run-${RUN_FOLDER} folder from ${JUMP_HOST} to be archieved as artifacts"
           rsync -avzh --exclude='perfscale-managed-services' --exclude='rosa' -e "ssh ${OPTIONS} -i ${PRIVATE_KEY}" ${SSH_USER}@${JUMP_HOST}:${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/ ${WORKSPACE}/artifacts/
-    concurrent: false
+    concurrent: true
     description: OCM installation test on AWS using ROSA cli.
     disabled: false
     name: 'SCALE-CI-MS-ROSA'
