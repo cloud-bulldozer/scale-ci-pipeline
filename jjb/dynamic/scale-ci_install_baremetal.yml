@@ -21,7 +21,7 @@
              sed -i "/^cluster=/c cluster=\"${BAREMETAL_NETWORK_VLAN}\"" inventory/jetski/hosts
              sed -i "/^domain=/c domain=\"rdu2.scalelab.redhat.com\"" inventory/jetski/hosts
         fi
-        ansible-playbook -i inventory/jetski/hosts playbook-jetski.yml
+        time ansible-playbook -i inventory/jetski/hosts playbook-jetski.yml | tee $(date +"%Y%m%d-%H%M%S")-jetski-install.timing
     concurrent: false
     description: |
       Installs and configures OCP 4.x cluster on Baremetal.
