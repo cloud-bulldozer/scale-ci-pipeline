@@ -50,7 +50,7 @@
         description: Engine used to spin up the local kube-burner container that creates the required infrastructure
         name: ENGINE
     - string:
-        default: 120
+        default: 60
         description: Workload duration in seconds
         name: RUNTIME
     - string:
@@ -63,26 +63,38 @@
         name: URL_PATH
     - string:
         default: 100
-        description: Number of routes of each termination to test
-        name: NUMBER_OF_ROUTES
+        description: Number of routes of each termination to create in the small scale scenario
+        name: SMALL_SCALE_NUMBER_OF_ROUTES
     - string:
-        default: 1 40 200
+        default: 500
+        description: Number of routes of each termination to create in the large scale scenario
+        name: LARGE_SCALE_NUMBER_OF_ROUTES
+    - string:
+        default: 0 1 50
         description: List with the number of keep alive requests to perform in the same HTTP session
         name: KEEPALIVE_REQUESTS
     - string:
-        default: 1 10 100
-        description: List with the number of clients (threads per target route)
-        name: CLIENTS
+        default: 1 40 200
+        description: Threads/route to use in the small scale scenario
+        name: SMALL_SCALE_CLIENTS
+    - string:
+        default: 1 20 80
+        description: Threads/route to use in the small scale scenario with mix termination
+        name: SMALL_SCALE_CLIENTS_MIX
+    - string:
+        default: 1 20 80
+        description: Threads/route to use in the large scale scenario
+        name: LARGE_SCALE_CLIENTS
+    - string:
+        default: 1 10 20
+        description: Threads/route to use in the large scale scenario with mix termination
+        name: LARGE_SCALE_CLIENTS_MIX
     - bool:
         default: true
         description: Use TLS session reuse.
         name: TLS_REUSE
     - string:
-        default: 0
-        description: Ramp-up period, in seconds
-        name: RAMP_UP
-    - string:
-        default: 3
+        default: 2
         description: Number of samples to perform of each test
         name: SAMPLES
     - bool:
@@ -115,8 +127,12 @@
         name: ES_SERVER_BASELINE
     - string:
         default: ""
-        description: Baseline UUID to compare the results with
-        name: BASELINE_UUID
+        description: Baseline UUID to compare small scale results with
+        name: SMALL_SCALE_BASELINE_UUID
+    - string:
+        default: ""
+        description: Baseline UUID to compare large scale results with
+        name: LARGE_SCALE_BASELINE_UUID
     - string:
         default: ""
         description: Path to service account key to generate google sheets
