@@ -131,6 +131,14 @@
         name: SMALL_SCALE_BASELINE_UUID
     - string:
         default: ""
+        description: Small scale baseline test name prefix (optional)
+        name: SMALL_SCALE_BASELINE_PREFIX
+    - string:
+        default: ""
+        description: Large scale baseline test name prefix (optional)
+        name: LARGE_SCALE_BASELINE_PREFIX
+    - string:
+        default: ""
         description: Baseline UUID to compare large scale results with
         name: LARGE_SCALE_BASELINE_UUID
     - string:
