@@ -258,7 +258,7 @@
         description: ''
         name: UPERF_PROPERTIES_FILE
     - string:
-        default: ''
+        default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/baremetal/4.7/cluster_density.properties
         description: ''
         name: CLUSTER_DENSITY_PROPERTIES_FILE
     - string:
