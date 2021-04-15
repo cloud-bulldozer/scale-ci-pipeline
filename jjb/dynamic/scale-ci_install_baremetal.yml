@@ -10,9 +10,9 @@
         export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
-        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/JetSki-Configs
-        cp JetSki-Configs/ci/group_vars/all.yml ansible-ipi-install/group_vars
-        cp JetSki-Configs/ci/inventory/hosts ansible-ipi-install/inventory/jetski/hosts
+        git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/J-Fleet
+        cp J-Fleet/ci/JetSki/group_vars/all.yml ansible-ipi-install/group_vars
+        cp J-Fleet/ci/JetSki/inventory/hosts ansible-ipi-install/inventory/jetski/hosts
         pushd ansible-ipi-install
         if [ ${ROUTABLE_API} == true ]
         then
