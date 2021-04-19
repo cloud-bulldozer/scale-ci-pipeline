@@ -3,11 +3,11 @@
 def contact = "nelluri@redhat.com"
 def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def pipeline = PIPELINE.toString().toUpperCase()
-def stage_two = STAGE_TWO.toString().toUpperCase()
-def stage_three = STAGE_THREE.toString().toUpperCase()
-def stage_four = STAGE_FOUR.toString().toUpperCase()
-def stage_five = STAGE_FIVE.toString().toUpperCase()
-def stage_six = STAGE_SIX.toString().toUpperCase()
+def stage_two = STAGE_TWO.toString().toUpperCase() ?: "FALSE"
+def stage_three = STAGE_THREE.toString().toUpperCase() ?: "FALSE"
+def stage_four = STAGE_FOUR.toString().toUpperCase() ?: "FALSE"
+def stage_five = STAGE_FIVE.toString().toUpperCase() ?: "FALSE"
+def stage_six = STAGE_SIX.toString().toUpperCase() ?: "FALSE"
 def build_tracker = SCALE_CI_BUILD_TRACKER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
