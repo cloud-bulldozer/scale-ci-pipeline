@@ -10,24 +10,30 @@
         export PUBLIC_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2.pub
         export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
         chmod 600 ${PRIVATE_KEY}
+
+        echo "Copy JetSki config from Git"
         git clone https://${SSHKEY_TOKEN}@github.com/redhat-performance/J-Fleet
         cp J-Fleet/ci/JetSki/group_vars/all.yml ansible-ipi-install/group_vars
         cp J-Fleet/ci/JetSki/inventory/hosts ansible-ipi-install/inventory/jetski/hosts
-        pushd ansible-ipi-install
-        if [ ${ROUTABLE_API} == true ]
-        then
-             sed -i "/^extcidrnet/c extcidrnet=\"${BAREMETAL_NETWORK_CIDR}\"" inventory/jetski/hosts
-             sed -i "/^cluster_random=/c cluster_random=false" inventory/jetski/hosts
-             sed -i "/^cluster=/c cluster=\"${BAREMETAL_NETWORK_VLAN}\"" inventory/jetski/hosts
-             sed -i "/^domain=/c domain=\"rdu2.scalelab.redhat.com\"" inventory/jetski/hosts
-        fi
-        time ansible-playbook -i inventory/jetski/hosts playbook-jetski.yml | tee $(date +"%Y%m%d-%H%M%S")-jetski-install.timing
+
+        echo "Copying files from JetSki deploy job space"
+        pushd ../ATS-SCALE-CI-OCP-BM-DEPLOY
+        cp ansible-ipi-install/ocpinv.json ${WORKSPACE}/ansible-ipi-install/
+        cp ansible-ipi-install/ocpdeployednodeinv.json ${WORKSPACE}/ansible-ipi-install/
+        cp ansible-ipi-install/ocpnondeployednodeinv.json ${WORKSPACE}/ansible-ipi-install/
+        cp ansible-ipi-install/inventory/jetski/hosts ${WORKSPACE}/ansible-ipi-install/inventory/jetski/hosts
+
+        pushd ${WORKSPACE}/ansible-ipi-install
+        echo "Update worker_count to ${OPENSHIFT_WORKER_SCALEUP_TARGET}"
+        export OPENSHIFT_WORKER_COUNT="${OPENSHIFT_WORKER_SCALEUP_TARGET}"
+        
+        time ansible-playbook -i inventory/jetski/hosts playbook-jetski-scaleup.yml | tee $(date +"%Y%m%d-%H%M%S")-jetski-install.timing
     concurrent: false
     description: |
-      Installs and configures OCP 4.x cluster on Baremetal.
+      Scaleup OCP 4.x cluster on Baremetal to OPENSHIFT_WORKER_SCALEUP_TARGET count.
       This job is managed by https://github.com/openshift-scale/scale-ci-pipeline
     disabled: false
-    name: ATS-SCALE-CI-OCP-BM-DEPLOY
+    name: ATS-SCALE-CI-OCP-BM-SCALEUP
     node: baremetal-telco
     parameters:
     - string:
@@ -106,6 +112,10 @@
         default: "2"
         description: openshift worker node count.
         name: OPENSHIFT_WORKER_COUNT
+    - string:
+        default: "4"
+        description: openshift worker node scaleup target.
+        name: OPENSHIFT_WORKER_SCALEUP_TARGET        
     - bool:
         default: false
         description: Configures the cluster to enable running workloads.

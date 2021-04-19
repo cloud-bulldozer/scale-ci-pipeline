@@ -22,22 +22,6 @@
           at 25 node scale
         name: STAGE_TWO
     - bool:
-        default: false
-        description: runs cluster-density workload typically at 100 node scale
-        name: STAGE_THREE
-    - bool:
-        default: false
-        description: runs cluster-density workload typically at 250 node scale
-        name: STAGE_FOUR
-    - bool:
-        default: false
-        description: runs cluster-density workload typically at 500 node scale
-        name: STAGE_FIVE
-    - bool:
-        default: false
-        description: runs cluster-density workload typically at 1000 node scale
-        name: STAGE_SIX
-    - bool:
         default: true
         description: ''
         name: SCALE_CI_BUILD_TRACKER

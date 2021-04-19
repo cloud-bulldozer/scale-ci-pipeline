@@ -108,9 +108,15 @@ node (node_label) {
 			load "pipeline-scripts/workload.groovy"
 		}
 		if (ocpv4_scale == "TRUE") {
-			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
-			env.WORKLOAD="ATS-SCALE-CI-SCALE"
-			load "pipeline-scripts/workload.groovy"
+			if (openshiftv4_install_on_bm == "TRUE") {
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
+				load "pipeline-scripts/workload.groovy"
+			} else {		
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-SCALE"
+				load "pipeline-scripts/workload.groovy"
+			}
 		}
 
 		if (stage_two == "TRUE") {
@@ -136,9 +142,15 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
-				env.WORKLOAD="ATS-SCALE-CI-SCALE"
-				load "pipeline-scripts/workload.groovy"
+				if (openshiftv4_install_on_bm == "TRUE") {
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
+					load "pipeline-scripts/workload.groovy"
+				} else {
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-SCALE"
+					load "pipeline-scripts/workload.groovy"
+				}
 			}
 		}
 
@@ -150,9 +162,15 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
-				env.WORKLOAD="ATS-SCALE-CI-SCALE"
- 				load "pipeline-scripts/workload.groovy"
+				if (openshiftv4_install_on_bm == "TRUE") {
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
+					load "pipeline-scripts/workload.groovy"
+				} else {		
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-SCALE"
+					load "pipeline-scripts/workload.groovy"
+				}
 			}
  		}
 
@@ -164,9 +182,15 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
-				env.WORKLOAD="ATS-SCALE-CI-SCALE"
-				load "pipeline-scripts/workload.groovy"
+				if (openshiftv4_install_on_bm == "TRUE") {
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
+					load "pipeline-scripts/workload.groovy"
+				} else {		
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-SCALE"
+					load "pipeline-scripts/workload.groovy"
+				}
 			}
 		}
 
@@ -178,9 +202,15 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
-				env.WORKLOAD="ATS-SCALE-CI-SCALE"
-				load "pipeline-scripts/workload.groovy"
+				if (openshiftv4_install_on_bm == "TRUE") {
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
+					load "pipeline-scripts/workload.groovy"
+				} else {		
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-SCALE"
+					load "pipeline-scripts/workload.groovy"
+				}
 			}
 		}
 
@@ -191,10 +221,16 @@ node (node_label) {
 				env.WORKLOAD="RIPSAW-CLUSTER-DENSITY"
 				load "pipeline-scripts/workload.groovy"
 			}
- 			if (ocpv4_scale == "TRUE") {
-				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
-				env.WORKLOAD="ATS-SCALE-CI-SCALE"
-				load "pipeline-scripts/workload.groovy"
+			if (ocpv4_scale == "TRUE") {
+				if (openshiftv4_install_on_bm == "TRUE") {
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
+					load "pipeline-scripts/workload.groovy"
+				} else {		
+					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+					env.WORKLOAD="ATS-SCALE-CI-SCALE"
+					load "pipeline-scripts/workload.groovy"
+				}
 			}
 		}
 
@@ -271,10 +307,16 @@ node (node_label) {
 		}
 
 		// stage to run OCP 4.X scaleup
-		if (ocpv4_scale == "TRUE") {
-			env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
-			env.WORKLOAD="ATS-SCALE-CI-SCALE"
-			load "pipeline-scripts/workload.groovy"
+		if (ocpv4_scale == "TRUE") {	
+			if (openshiftv4_install_on_bm == "TRUE") {
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
+				load "pipeline-scripts/workload.groovy"
+			} else {		
+				env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-SCALE"
+				load "pipeline-scripts/workload.groovy"
+			}
 		}
 
 		// stage to run ingress-performance scale test
