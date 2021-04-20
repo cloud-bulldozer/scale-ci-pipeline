@@ -64,11 +64,7 @@
     - string:
         default: ""
         description: Comma separated ansible tags
-        name: WEBFUSE_SKIPTAGS
-    - bool:
-        default: false
-        description: Configures the cluster to enable running workloads.
-        name: OPENSHIFT_POST_CONFIG             
+        name: WEBFUSE_SKIPTAGS             
     - string:
         default: "~/cerberus.yaml"
         description: path to the cerberus config

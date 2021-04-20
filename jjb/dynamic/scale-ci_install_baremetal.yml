@@ -106,10 +106,6 @@
         default: "2"
         description: openshift worker node count.
         name: OPENSHIFT_WORKER_COUNT
-    - bool:
-        default: false
-        description: Configures the cluster to enable running workloads.
-        name: OPENSHIFT_POST_CONFIG
     - string:
         default: "~/cerberus.yaml"
         description: path to the cerberus config

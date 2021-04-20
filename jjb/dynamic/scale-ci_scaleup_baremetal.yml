@@ -115,11 +115,7 @@
     - string:
         default: "4"
         description: openshift worker node scaleup target.
-        name: OPENSHIFT_WORKER_SCALEUP_TARGET        
-    - bool:
-        default: false
-        description: Configures the cluster to enable running workloads.
-        name: OPENSHIFT_POST_CONFIG
+        name: OPENSHIFT_WORKER_SCALEUP_TARGET 
     - string:
         default: "~/cerberus.yaml"
         description: path to the cerberus config
