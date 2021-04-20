@@ -3,11 +3,12 @@
 def contact = "nelluri@redhat.com"
 def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def pipeline = PIPELINE.toString().toUpperCase()
-def stage_two = STAGE_TWO.toString().toUpperCase() ?: "FALSE"
-def stage_three = STAGE_THREE.toString().toUpperCase() ?: "FALSE"
-def stage_four = STAGE_FOUR.toString().toUpperCase() ?: "FALSE"
-def stage_five = STAGE_FIVE.toString().toUpperCase() ?: "FALSE"
-def stage_six = STAGE_SIX.toString().toUpperCase() ?: "FALSE"
+def stage_two = STAGE_TWO ?: "FALSE"
+def stage_three = env.STAGE_THREE.toString().toUpperCase() ? "stage_three=${env.STAGE_THREE}" : "FALSE"
+def stage_four = env.STAGE_FOUR.toString().toUpperCase() ? "stage_four=${env.STAGE_FOUR}" : "FALSE"
+def stage_five = env.STAGE_FIVE.toString().toUpperCase() ? "stage_five=${env.STAGE_FIVE}" : "FALSE"
+def stage_six = env.STAGE_SIX.toString().toUpperCase() ? "stage_six=${env.STAGE_SIX}" : "FALSE"
+def webfuse_install = env.WEBFUSE_INSTALL.toString().toUpperCase() ? "webfuse_install=${env.WEBFUSE_INSTALL}" : "FALSE"
 def build_tracker = SCALE_CI_BUILD_TRACKER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
@@ -92,6 +93,15 @@ node (node_label) {
 			env.WORKLOAD="ATS-SCALE-CI-OCP-BM-DEPLOY"
 			load "pipeline-scripts/workload.groovy"
 		}
+
+		if (webfuse_install == "TRUE") {
+			if (openshiftv4_install_on_bm == "TRUE") {
+				env.WORKLOAD_PROPERTIES_FILE=WEBFUSE_PROPERTY_FILE
+				env.WORKLOAD="ATS-SCALE-CI-OCP-POST-CONFIG-WEBFUSE"
+				load "pipeline-scripts/workload.groovy"
+			}
+		}
+
 		if (rosa == "TRUE") {
 			env.WORKLOAD_PROPERTIES_FILE=SCALE_CI_MS_ROSA_PROPERTIES_FILE
 			env.WORKLOAD="SCALE-CI-MS-ROSA"
@@ -162,11 +172,7 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				if (openshiftv4_install_on_bm == "TRUE") {
-					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
-					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
-					load "pipeline-scripts/workload.groovy"
-				} else {		
+				if (openshiftv4_install_on_bm == "FALSE") {		
 					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
 					env.WORKLOAD="ATS-SCALE-CI-SCALE"
 					load "pipeline-scripts/workload.groovy"
@@ -182,11 +188,7 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				if (openshiftv4_install_on_bm == "TRUE") {
-					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
-					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
-					load "pipeline-scripts/workload.groovy"
-				} else {		
+				if (openshiftv4_install_on_bm == "FALSE") {		
 					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
 					env.WORKLOAD="ATS-SCALE-CI-SCALE"
 					load "pipeline-scripts/workload.groovy"
@@ -202,11 +204,7 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				if (openshiftv4_install_on_bm == "TRUE") {
-					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
-					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
-					load "pipeline-scripts/workload.groovy"
-				} else {		
+				if (openshiftv4_install_on_bm == "FALSE") {		
 					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
 					env.WORKLOAD="ATS-SCALE-CI-SCALE"
 					load "pipeline-scripts/workload.groovy"
@@ -222,11 +220,7 @@ node (node_label) {
 				load "pipeline-scripts/workload.groovy"
 			}
 			if (ocpv4_scale == "TRUE") {
-				if (openshiftv4_install_on_bm == "TRUE") {
-					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_ON_BM_PROPERTY_FILE
-					env.WORKLOAD="ATS-SCALE-CI-OCP-BM-SCALEUP"
-					load "pipeline-scripts/workload.groovy"
-				} else {		
+				if (openshiftv4_install_on_bm == "FALSE") {		
 					env.WORKLOAD_PROPERTIES_FILE=OPENSHIFTv4_SCALE_PROPERTY_FILE
 					env.WORKLOAD="ATS-SCALE-CI-SCALE"
 					load "pipeline-scripts/workload.groovy"

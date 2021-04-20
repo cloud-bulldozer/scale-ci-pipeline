@@ -22,6 +22,10 @@
           at 25 node scale
         name: STAGE_TWO
     - bool:
+        default: false
+        description: To install webfuse operators and workloads on the cluster
+        name: WEBFUSE_INSTALL        
+    - bool:
         default: true
         description: ''
         name: SCALE_CI_BUILD_TRACKER
@@ -177,6 +181,10 @@
         default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/baremetal/4.7/openshift_install.properties 
         description: ''
         name: OPENSHIFTv4_ON_BM_PROPERTY_FILE
+    - string:
+        default: http://dell-r510-01.perf.lab.eng.rdu2.redhat.com/perfscale_ci/properties/baremetal/4.7/webfuse_install.properties 
+        description: ''
+        name: WEBFUSE_PROPERTY_FILE        
     - string:
         default: ''
         description: ''
