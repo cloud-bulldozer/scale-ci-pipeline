@@ -50,6 +50,7 @@
         cd scale-ci-deploy
         # disable openshift install as we already installed via jetpack
         export OPENSHIFT_INSTALL=false
+        export DYNAMIC_DEPLOY_PATH=$OPENSHIFT_CLUSTER_NAME
         time ansible-playbook -i ../inventory -vvv OCP-4.X/install-on-osp.yml | tee $(date +"%Y%m%d-%H%M%S")-post-install.timing
         done
     concurrent: false
