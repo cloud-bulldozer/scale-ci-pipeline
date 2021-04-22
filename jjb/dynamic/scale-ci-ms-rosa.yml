@@ -245,6 +245,10 @@
           name: CLEANUP_CLUSTERS
       - bool:
           default: true
+          description: "Delete all clusters at the end of the job"
+          name: CLEANUP_CLUSTERS
+      - bool:
+          default: true
           description: "Compress log files created before being downloaded in the Jenkins host as artifacts"
           name: COMPRESS_LOGS
     project-type: freestyle
