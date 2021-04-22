@@ -70,8 +70,6 @@
 
             [ ! -z ${OSDE2E_SKIP_HEALTH_CHECK} ] && [ ${OSDE2E_SKIP_HEALTH_CHECK} == "true" ] && WRAPPER_OPTIONS+=" --skip-health-check"
 
-            [ ! -z ${CLEANUP_CLUSTERS} ] && [ ${CLEANUP_CLUSTERS} == "false" ] && WRAPPER_OPTIONS+=" --cleanup-clusters False"
-
             if [ ! -z ${ELASTICSEARCH_URL} ] ; then
               WRAPPER_OPTIONS+=" --es-url ${ELASTICSEARCH_URL}"
               [ ! -z ${ELASTICSEARCH_INDEX} ] && WRAPPER_OPTIONS+=" --es-index ${ELASTICSEARCH_INDEX}"
@@ -191,10 +189,6 @@
           name: NUMBER_OF_CLUSTERS
           regex: '[0-9]*'
           msg: "Must be a number"
-      - bool:
-          default: true
-          description: "Mapped to <b>--cleanup-clusters</b>, cleanup any non-error state clusters upon test completion"
-          name: CLEANUP_CLUSTERS
       - validating-string:
           default: ''
           description: "Mapped to <b>--batch-size</b>, number of cluster to install on parallel"
@@ -233,11 +227,56 @@
             - WARNING
             - DEBUG
       - bool:
+          default: false
+          description: "Delete all clusters at the end of the job"
+          name: CLEANUP_CLUSTERS
+      - bool:
           default: true
           description: "Compress log files created before being downloaded in the Jenkins host as artifacts"
           name: COMPRESS_LOGS
     project-type: freestyle
     publishers:
+      - postbuildscript:
+          builders:
+            - role: BOTH
+              build-on:
+                - SUCCESS
+                - FAILURE
+                - UNSTABLE
+                - NOT_BUILT
+                - ABORTED
+              build-steps:
+                - conditional-step:
+                    condition-kind: boolean-expression
+                    condition-expression: ${CLEANUP_CLUSTERS}
+                    steps:
+                      - shell: |+
+                          #!/bin/bash
+                          set -e
+                          echo "INFO: Getting perf-dept keys"
+                          export RUN_FOLDER=${BUILD_TIMESTAMP}
+                          export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
+                          export OPTIONS="-o StrictHostKeyChecking=no -o ServerAliveInterval=1 -o ConnectionAttempts=100"
+                          [[ "${USE_PROXY}" == "true" ]] && OPTIONS+=" -o ProxyCommand=\"ssh -i ${PRIVATE_KEY} -W %h:%p ${PROXY_USER}@${PROXY_HOST}\""
+                          # Delete clusters after tests are executed
+                          echo "INFO: Delete clusters"
+                          ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
+                            set -e
+                            # Parameter checks
+                            WRAPPER_OPTIONS="--only-delete-clusters --path ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}"
+                            if [ -z ${CONFIG_FILE_LOCATION} ] || [ ! -f ${CONFIG_FILE_LOCATION} ] ; then
+                              echo "ERROR: Config file ${CONFIG_FILE_LOCATION} not found, exiting..."
+                              exit 1
+                            else
+                              WRAPPER_OPTIONS+=" --account-config ${CONFIG_FILE_LOCATION}"
+                            fi
+                            [ ! -z ${OSDE2E_COMMAND} ] && WRAPPER_OPTIONS+=" --command ${OSDE2E_COMMAND}"
+                            [ ! -z ${LOG_LEVEL} ] && WRAPPER_OPTIONS+=" --log-level ${LOG_LEVEL}"
+                            [ ! -z ${LOG_FILE} ] && WRAPPER_OPTIONS+=" --log-file ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/${LOG_FILE}"
+                            # Wrapper execution
+                            echo "INFO: Running python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e/osde2e-wrapper.py \${WRAPPER_OPTIONS}"
+                            python3 ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}/perfscale-managed-services/osde2e/osde2e-wrapper.py \${WRAPPER_OPTIONS}
+                          ENDSSH
       - archive:
           artifacts: 'artifacts/**/*'
           excludes: 'artifacts/perfscale-managed-services/**/*,artifacts/osde2e/**/*,artifacts/account_config.yaml,artifacts/**/cluster_account.yaml'
