@@ -118,3 +118,4 @@ ansicolor:0.7.3
 metrics:4.0.2.6
 validating-string-parameter:2.8
 oic-auth:1.8
+build-timestamp:1.0.3
