@@ -3,12 +3,12 @@
 def contact = "nelluri@redhat.com"
 def watcher = SCALE_CI_WATCHER.toString().toUpperCase()
 def pipeline = PIPELINE.toString().toUpperCase()
-def stage_two = STAGE_TWO ?: "FALSE"
-def stage_three = env.STAGE_THREE.toString().toUpperCase() ? "stage_three=${env.STAGE_THREE}" : "FALSE"
-def stage_four = env.STAGE_FOUR.toString().toUpperCase() ? "stage_four=${env.STAGE_FOUR}" : "FALSE"
-def stage_five = env.STAGE_FIVE.toString().toUpperCase() ? "stage_five=${env.STAGE_FIVE}" : "FALSE"
-def stage_six = env.STAGE_SIX.toString().toUpperCase() ? "stage_six=${env.STAGE_SIX}" : "FALSE"
-def webfuse_install = env.WEBFUSE_INSTALL.toString().toUpperCase() ? "webfuse_install=${env.WEBFUSE_INSTALL}" : "FALSE"
+def stage_two = env.STAGE_TWO.toString().toUpperCase() ?: ""
+def stage_three = env.STAGE_THREE.toString().toUpperCase() ?: ""
+def stage_four = env.STAGE_FOUR.toString().toUpperCase() ?: ""
+def stage_five = env.STAGE_FIVE.toString().toUpperCase() ?: ""
+def stage_six = env.STAGE_SIX.toString().toUpperCase() ?: ""
+def webfuse_install = env.WEBFUSE_INSTALL.toString().toUpperCase() ?: ""
 def build_tracker = SCALE_CI_BUILD_TRACKER.toString().toUpperCase()
 def tooling = TOOLING.toString().toUpperCase()
 def run_conformance = CONFORMANCE.toString().toUpperCase()
