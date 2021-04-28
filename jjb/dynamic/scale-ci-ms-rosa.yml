@@ -5,7 +5,7 @@
       - shell: |+
           #!/bin/bash
           set -e
-          export RUN_FOLDER=$(date +%Y%m%d-%H%M%S)
+          export RUN_FOLDER=${BUILD_TIMESTAMP}
           echo "INFO: Getting perf-dept keys"
           [[ ! -d "${WORKSPACE}/perf-dept" ]] && git clone --depth=1 https://${GITHUB_TOKEN}@github.com/redhat-performance/perf-dept.git
           export PRIVATE_KEY=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2
@@ -241,10 +241,6 @@
             - DEBUG
       - bool:
           default: false
-          description: "Delete all clusters at the end of the job"
-          name: CLEANUP_CLUSTERS
-      - bool:
-          default: true
           description: "Delete all clusters at the end of the job"
           name: CLEANUP_CLUSTERS
       - bool:
