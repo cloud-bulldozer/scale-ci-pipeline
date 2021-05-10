@@ -29,12 +29,32 @@
             fi
           ENDSSH
 
+          echo "INFO: Install execution requirements on jenkins host $(hostname -f) with UID ${EUID}"
+          set +e
+          if [[ ! $(command -v rsync) ]] ; then
+            if [[ ${EUID} -ne 0 ]] ; then
+              echo "WARNING: Job not running as root, required packages wont be installed"
+            else
+              if [[ ! $(command -v yum) ]] ; then
+                echo "WARNING: 'yum' command not found, required packages wont be installed"
+              else
+                yum -y install rsync
+              fi
+            fi
+          else
+            echo "INFO: rsync tool available on the system"
+          fi
+          set -e
+
           echo "INFO: Install execution requirements on jump host ${JUMP_HOST}"
           ssh ${OPTIONS} -i ${PRIVATE_KEY} ${SSH_USER}@${JUMP_HOST} 'bash -s' <<ENDSSH
-            set -e
             eval REMOTE_WORKSPACE=${REMOTE_WORKSPACE}
             echo "INFO: Installing rpm requirements..."
-            sudo /usr/bin/yum -y install python3 python3-pip golang-bin make
+            if [[ ! \$(command -v yum) ]] ; then
+              echo "WARNING: 'yum' command not found, required packages wont be installed"
+            else
+              sudo yum -y install python3 python3-pip golang-bin make
+            fi
             echo "INFO: Installing python requirements..."
             mkdir -p ${REMOTE_WORKSPACE}/run-${RUN_FOLDER}
             echo "INFO: Using ${REMOTE_WORKSPACE}/run-${RUN_FOLDER} as working directory on Jump host ${JUMP_HOST}"
