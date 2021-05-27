@@ -118,5 +118,6 @@ ansicolor:0.7.3
 metrics:4.0.2.6
 validating-string-parameter:2.8
 oic-auth:1.8
+postbuildscript:2.11.0
 build-timestamp:1.0.3
 parameter-separator:1.3
