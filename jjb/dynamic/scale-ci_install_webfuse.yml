@@ -19,8 +19,11 @@
         # Create inventory file
         echo "[orchestration]" > hosts
         echo "${ORCHESTRATION_HOST}   ansible_user=${ORCHESTRATION_USER}   ansible_ssh_private_key_file=${WORKSPACE}/perf-dept/ssh_keys/id_rsa_pbench_ec2" >> hosts
-
-        time ansible-playbook -i hosts ${WEBFUSE_PLAYBOOK} --tags ${WEBFUSE_TAGS} --skip-tags ${WEBFUSE_SKIPTAGS} | tee $(date +"%Y%m%d-%H%M%S")-jetski-install.timing
+        if [ -z ${WEBFUSE_SKIPTAGS} ]; then
+          time ansible-playbook -i hosts ${WEBFUSE_PLAYBOOK} | tee $(date +"%Y%m%d-%H%M%S")-jetski-install.timing
+        else
+          time ansible-playbook -i hosts ${WEBFUSE_PLAYBOOK} --skip-tags ${WEBFUSE_SKIPTAGS} | tee $(date +"%Y%m%d-%H%M%S")-jetski-install.timing
+        fi
     concurrent: false
     description: |
       Installs and configures VZW operators on the OCP cluster.
@@ -54,13 +57,9 @@
         description: openshift build to deploy
         name: OPENSHIFT_BUILD
     - string:
-        default: "webscale.yml"
+        default: webscale.yml
         description: Playbook to install webfuse operators
         name: WEBFUSE_PLAYBOOK
-    - string:
-        default: ""
-        description: Comma separated ansible tags 
-        name: WEBFUSE_TAGS
     - string:
         default: ""
         description: Comma separated ansible tags
