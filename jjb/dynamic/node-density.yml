@@ -45,7 +45,7 @@
         description: Burst queries
         name: BURST
     - string:
-        default: 'https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com:443'
+        default: 'http://es-instance.com:9200'
         description: Elasticsearch server host address set to index results from kube-burner. You can use basic authentication using the notation http(s)://[username]:[password]@[address]
         name: ES_SERVER
     - string:
