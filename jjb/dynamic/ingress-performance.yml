@@ -114,7 +114,7 @@
         description: Quiet period after each test iteration
         name: QUIET_PERIOD
     - string:
-        default: "https://search-perfscale-dev-chmf5l4sh66lvxbnadi4bznl3a.us-west-2.es.amazonaws.com:443"
+        default: 'http://es-instance.com:9200'
         description: Elasticsearch endpoint to send metrics
         name: ES_SERVER
     - string:
